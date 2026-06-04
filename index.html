@@ -169,6 +169,32 @@
   .ident-call{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--amber);}
   .ident-grid{font-size:11px;letter-spacing:.16em;color:var(--green);}
 
+  /* setup wizard */
+  #wizardModal{align-items:center;padding:20px;}
+  .wizard{width:100%;max-width:430px;background:var(--panel2);border:1px solid var(--amber-dim);
+    border-radius:14px;padding:28px 22px 24px;box-shadow:0 20px 60px rgba(0,0,0,.75);}
+  .wiz-steps{display:flex;align-items:center;margin-bottom:26px;}
+  .wiz-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);color:var(--ink-dim);
+    font-size:10px;font-weight:700;letter-spacing:0;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;transition:.25s;}
+  .wiz-dot.on{border-color:var(--amber);color:var(--amber);}
+  .wiz-dot.done{background:var(--amber);border-color:var(--amber);color:#1a1206;}
+  .wiz-bar{flex:1;height:1px;background:var(--line);transition:.4s;}
+  .wiz-bar.done{background:var(--amber-dim);}
+  .wiz-head{font-size:15px;font-weight:700;letter-spacing:.12em;color:var(--amber);
+    margin:0 0 5px;text-transform:uppercase;}
+  .wiz-sub{font-size:11px;color:var(--ink-dim);line-height:1.65;margin:0 0 18px;letter-spacing:.03em;}
+  .wiz-preview{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:11px 13px;margin:12px 0 16px;}
+  .wiz-prow{display:flex;justify-content:space-between;align-items:baseline;
+    padding:4px 0;border-bottom:1px solid var(--line);font-size:12px;}
+  .wiz-prow:last-child{border-bottom:none;}
+  .wiz-pk{color:var(--ink-dim);font-size:9px;letter-spacing:.14em;text-transform:uppercase;}
+  .wiz-pv{color:var(--amber);font-weight:700;letter-spacing:.06em;}
+  .wiz-nav{display:flex;gap:10px;align-items:center;margin-top:4px;}
+  .wiz-skip{background:none;border:none;color:var(--ink-dim);font-size:10px;font-family:var(--mono);
+    letter-spacing:.06em;cursor:pointer;text-decoration:underline;padding:4px 2px;margin-left:auto;}
+
   footer{margin-top:16px;font-size:9.5px;color:var(--ink-dim);line-height:1.7;text-align:center;}
   footer a{color:var(--amber-dim);}
   .proptiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
@@ -395,9 +421,9 @@
     <div class="card" id="stationCard">
       <h3>◆ My station</h3>
       <div class="formgrid">
-        <label class="wide">Callsign<input type="text" id="callIn" placeholder="W5XYZ" autocomplete="off" spellcheck="false" style="text-transform:uppercase;letter-spacing:.08em"></label>
+        <label class="wide">Callsign / Identifier<input type="text" id="callIn" placeholder="W5XYZ  ·  SWL-1234  ·  your name" autocomplete="off" spellcheck="false" style="text-transform:uppercase;letter-spacing:.08em"></label>
       </div>
-      <div class="btnrow"><button class="btn sm" id="saveCall">Save callsign</button></div>
+      <div class="btnrow"><button class="btn sm" id="saveCall">Save</button></div>
       <div class="hint" id="gridHint"></div>
     </div>
     <div class="loadbox">
@@ -533,6 +559,74 @@
   <button class="bnav-btn" id="moreBtn" aria-expanded="false" aria-haspopup="true"><span class="bicon">⋯</span>More</button>
 </nav>
 
+<!-- ============ SETUP WIZARD ============ -->
+<div class="modal" id="wizardModal" hidden>
+  <div class="wizard">
+    <div class="wiz-steps">
+      <div class="wiz-dot on" id="wd1">1</div>
+      <div class="wiz-bar" id="wb1"></div>
+      <div class="wiz-dot" id="wd2">2</div>
+      <div class="wiz-bar" id="wb2"></div>
+      <div class="wiz-dot" id="wd3">3</div>
+    </div>
+
+    <!-- Step 1: Who are you? -->
+    <div id="wiz1">
+      <p class="wiz-head">Welcome to SKYWAVE</p>
+      <p class="wiz-sub">Let's personalise your station in 60 seconds.</p>
+      <div class="formgrid" style="grid-template-columns:1fr;margin-bottom:6px">
+        <label>Callsign or identifier
+          <input type="text" id="wizCall" placeholder="W5XYZ  ·  SWL-1234  ·  your name"
+                 autocomplete="off" spellcheck="false"
+                 style="text-transform:uppercase;letter-spacing:.08em;margin-top:5px">
+        </label>
+      </div>
+      <p class="hint" style="margin:0 0 18px">No licence? Enter <b>SWL-</b> followed by your number, or just your first name.</p>
+      <div class="wiz-nav">
+        <button class="btn sm" id="wizNext1">Next →</button>
+        <button class="wiz-skip" id="wizSkip">Skip for now</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Where are you? -->
+    <div id="wiz2" hidden>
+      <p class="wiz-head">Your location</p>
+      <p class="wiz-sub">Used for grayline, sunrise/sunset, and your Maidenhead grid square.</p>
+      <div class="btnrow" style="margin-bottom:14px">
+        <button class="btn sm ghost" id="wizGPS">◉ Use my GPS</button>
+      </div>
+      <div class="formgrid" style="margin-bottom:4px">
+        <label>Latitude<input type="number" id="wizLat" placeholder="30.61" step="0.001"></label>
+        <label>Longitude<input type="number" id="wizLng" placeholder="-90.36" step="0.001"></label>
+      </div>
+      <div class="wiz-preview">
+        <div class="wiz-prow"><span class="wiz-pk">Grid</span><span class="wiz-pv" id="wizGridPrev">—</span></div>
+        <div class="wiz-prow"><span class="wiz-pk">Sunrise</span><span class="wiz-pv" id="wizSRPrev">—</span></div>
+        <div class="wiz-prow"><span class="wiz-pk">Sunset</span><span class="wiz-pv" id="wizSSPrev">—</span></div>
+      </div>
+      <div class="wiz-nav">
+        <button class="btn sm ghost" id="wizBack2">← Back</button>
+        <button class="btn sm" id="wizNext2">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: All set -->
+    <div id="wiz3" hidden>
+      <p class="wiz-head">◆ All set!</p>
+      <p class="wiz-sub">Your station is saved on this device only — no account, no server, no tracking.</p>
+      <div class="wiz-preview">
+        <div class="wiz-prow"><span class="wiz-pk">Identifier</span><span class="wiz-pv" id="wiz3Call">—</span></div>
+        <div class="wiz-prow"><span class="wiz-pk">Grid</span><span class="wiz-pv" id="wiz3Grid">—</span></div>
+        <div class="wiz-prow"><span class="wiz-pk">Sunrise</span><span class="wiz-pv" id="wiz3SR">—</span></div>
+        <div class="wiz-prow"><span class="wiz-pk">Sunset</span><span class="wiz-pv" id="wiz3SS">—</span></div>
+      </div>
+      <div class="wiz-nav">
+        <button class="btn" id="wizDone">▶ Start listening</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 "use strict";
 
@@ -576,7 +670,7 @@ function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v
 function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}}
 let FAVS=loadJSON(K.favs,[]), LOG=loadJSON(K.log,[]), MINE=loadJSON(K.mine,[]);
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
-let PREFS=loadJSON(K.prefs,{autoUpd:true,call:""});
+let PREFS=loadJSON(K.prefs,{autoUpd:true,call:"",setup:false});
 let SPOTS={pota:loadJSON(K.pota,{list:[],ts:0}),sota:loadJSON(K.sota,{list:[],ts:0})};
 let spotProg="pota",spotMode="all",spotStatus="";
 let editIdx=-1;
@@ -1160,6 +1254,37 @@ function updateDbStat(){const el=document.getElementById("dbstat");
   else el.innerHTML='Reference data loaded.<br>Update / load EiBi (Ref tab) · v'+VERSION+'.';}
 function showClear(){document.getElementById("clearBtn").hidden=!haveEibi;}
 
+/* ============ setup wizard ============ */
+function wizStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById("wiz"+i).hidden=(i!==n);
+    const d=document.getElementById("wd"+i);
+    d.className="wiz-dot"+(i<n?" done":i===n?" on":"");
+  });
+  [1,2].forEach(i=>document.getElementById("wb"+i).className="wiz-bar"+(i<n?" done":""));
+}
+function updateWiz2Preview(){
+  const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
+  if(!isFinite(la)||!isFinite(ln)){
+    ["wizGridPrev","wizSRPrev","wizSSPrev"].forEach(id=>document.getElementById(id).textContent="—");return;}
+  document.getElementById("wizGridPrev").textContent=toGrid(la,ln);
+  const st=sunTimes(new Date(),la,ln);
+  document.getElementById("wizSRPrev").textContent=st.sunrise?fmtUTC(st.sunrise)+"Z":st.polar||"—";
+  document.getElementById("wizSSPrev").textContent=st.sunset?fmtUTC(st.sunset)+"Z":st.polar||"—";
+}
+function showWizard(){
+  document.getElementById("wizLat").value=GEO.lat;
+  document.getElementById("wizLng").value=GEO.lng;
+  if(PREFS.call)document.getElementById("wizCall").value=PREFS.call;
+  updateWiz2Preview();
+  wizStep(1);
+  document.getElementById("wizardModal").hidden=false;
+}
+function closeWizard(){
+  document.getElementById("wizardModal").hidden=true;
+  PREFS.setup=true;saveJSON(K.prefs,PREFS);
+}
+
 /* ============ navigation ============ */
 function fetchKIndex(){
   const el=document.getElementById("kIdxDisplay");if(!el)return;
@@ -1236,6 +1361,42 @@ document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.addEventListener("
 document.getElementById("moreBtn").addEventListener("click",openMore);
 document.getElementById("moreScrim").addEventListener("click",closeMore);
 document.querySelectorAll(".morerow[data-tab]").forEach(r=>r.addEventListener("click",()=>showTab(r.dataset.tab)));
+
+// wizard
+document.getElementById("wizNext1").addEventListener("click",()=>{
+  const v=document.getElementById("wizCall").value.toUpperCase().replace(/[^A-Z0-9\/\-\s\.]/g,"").trim();
+  if(v){PREFS.call=v;saveJSON(K.prefs,PREFS);renderIdent();}
+  document.getElementById("wizLat").value=GEO.lat;
+  document.getElementById("wizLng").value=GEO.lng;
+  updateWiz2Preview();wizStep(2);
+});
+document.getElementById("wizSkip").addEventListener("click",closeWizard);
+document.getElementById("wizBack2").addEventListener("click",()=>wizStep(1));
+document.getElementById("wizGPS").addEventListener("click",()=>{
+  if(!navigator.geolocation){toast("No geolocation");return;}
+  const btn=document.getElementById("wizGPS");btn.textContent="Locating…";btn.disabled=true;
+  navigator.geolocation.getCurrentPosition(p=>{
+    const la=+p.coords.latitude.toFixed(3),ln=+p.coords.longitude.toFixed(3);
+    document.getElementById("wizLat").value=la;document.getElementById("wizLng").value=ln;
+    GEO={lat:la,lng:ln,label:"My location"};saveJSON(K.geo,GEO);
+    updateWiz2Preview();btn.textContent="◉ Use my GPS";btn.disabled=false;
+  },()=>{btn.textContent="◉ Use my GPS";btn.disabled=false;toast("Location denied");});
+});
+["wizLat","wizLng"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{
+  const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
+  if(isFinite(la)&&isFinite(ln)){GEO={lat:la,lng:ln,label:"custom"};saveJSON(K.geo,GEO);}
+  updateWiz2Preview();
+}));
+document.getElementById("wizNext2").addEventListener("click",()=>{
+  document.getElementById("wiz3Call").textContent=PREFS.call||"(not set)";
+  document.getElementById("wiz3Grid").textContent=toGrid(GEO.lat,GEO.lng);
+  const st=sunTimes(new Date(),GEO.lat,GEO.lng);
+  document.getElementById("wiz3SR").textContent=st.sunrise?fmtUTC(st.sunrise)+"Z":st.polar||"—";
+  document.getElementById("wiz3SS").textContent=st.sunset?fmtUTC(st.sunset)+"Z":st.polar||"—";
+  renderGray();renderIdent();wizStep(3);
+});
+document.getElementById("wizDone").addEventListener("click",closeWizard);
+
 document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>showSub("listen",b.dataset.sub)));
 document.querySelectorAll("#seg-log button").forEach(b=>b.addEventListener("click",()=>showSub("log",b.dataset.sub)));
 document.querySelectorAll("#seg-spots button").forEach(b=>b.addEventListener("click",()=>{
@@ -1303,8 +1464,8 @@ document.getElementById("printCard").addEventListener("click",doPrint);
 // ref / update
 document.getElementById("updBtn").addEventListener("click",()=>doUpdate());
 document.getElementById("saveCall").addEventListener("click",()=>{
-  const v=document.getElementById("callIn").value.toUpperCase().replace(/[^A-Z0-9\/]/g,"").trim();
-  PREFS.call=v;saveJSON(K.prefs,PREFS);renderIdent();toast(v?"Callsign saved":"Callsign cleared");});
+  const v=document.getElementById("callIn").value.toUpperCase().replace(/[^A-Z0-9\/\-\s\.]/g,"").trim();
+  PREFS.call=v;saveJSON(K.prefs,PREFS);renderIdent();toast(v?"Saved":"Cleared");});
 document.getElementById("callIn").addEventListener("input",()=>{document.getElementById("callIn").dataset.dirty="1";});
 document.getElementById("seasonSel").addEventListener("change",syncEibiLink);
 document.getElementById("autoUpd").addEventListener("change",e=>{PREFS.autoUpd=e.target.checked;saveJSON(K.prefs,PREFS);});
@@ -1332,6 +1493,7 @@ EIBI=[];rebuildData();
 try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);
   const cached=localStorage.getItem(K.raw);if(cached)loadText(cached);}catch(e){}
 renderLastUpd();updateDbStat();renderLog();calcAnt();renderGray();renderIdent();
+if(PREFS.setup===false)showWizard();
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-tools").hidden)renderGray();},30000);
