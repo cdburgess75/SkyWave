@@ -25,7 +25,6 @@
   /* LED dark — neon glows on key elements */
   .brand h1{text-shadow:0 0 14px rgba(240,146,60,.9),0 0 32px rgba(240,146,60,.5),0 0 64px rgba(240,146,60,.25);}
   .clock .val{text-shadow:0 0 12px rgba(240,146,60,.85),0 0 28px rgba(240,146,60,.45);}
-  .ident-call{text-shadow:0 0 10px rgba(240,146,60,.75),0 0 22px rgba(240,146,60,.35);}
   .ident-grid{text-shadow:0 0 10px rgba(125,213,245,.75),0 0 22px rgba(125,213,245,.35);}
   .tag.live{box-shadow:0 0 10px rgba(125,232,122,.8),0 0 20px rgba(125,232,122,.4);}
   .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green),0 0 14px rgba(125,232,122,.18);}
@@ -44,7 +43,6 @@
   [data-theme="light"] body{background-image:none;}
   [data-theme="light"] .brand h1,
   [data-theme="light"] .clock .val,
-  [data-theme="light"] .ident-call,
   [data-theme="light"] .ident-grid,
   [data-theme="light"] .tag.live,
   [data-theme="light"] .row.now,
@@ -112,15 +110,6 @@
   .chip{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
     font-size:10.5px;letter-spacing:.08em;padding:6px 11px;border-radius:20px;cursor:pointer;}
   .chip.on{color:#000;background:var(--amber);border-color:var(--amber);font-weight:700;}
-  /* band filter chips — each carries --bc for its LED color */
-  .bchip{background:transparent;border:1px solid var(--bc,var(--line));color:var(--bc,var(--ink-dim));
-    font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:5px 10px;
-    border-radius:20px;cursor:pointer;transition:.15s;flex-shrink:0;}
-  .bchip.on{border-width:1.5px;font-weight:700;
-    text-shadow:0 0 8px var(--bc,var(--amber));box-shadow:0 0 10px var(--bc,var(--amber));}
-  [data-theme="light"] .bchip{background:var(--panel);}
-  [data-theme="light"] .bchip.on{background:var(--bc,var(--amber));color:#000;text-shadow:none;box-shadow:none;}
-
   .ctrl{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 11px;}
   input[type=text],input[type=search],input[type=number],select,textarea{
     background:var(--panel);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);
@@ -158,14 +147,9 @@
   .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
   .tag.live{color:#06170c;background:var(--green);border-color:var(--green);font-weight:700;}
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
-  .tag.band{background:transparent;border:1.5px solid var(--bc,var(--blue));color:var(--bc,var(--blue));
-    font-weight:700;font-size:9px;padding:3px 9px;border-radius:20px;letter-spacing:.1em;
-    text-shadow:0 0 8px var(--bc,var(--blue));box-shadow:0 0 8px var(--bc,var(--blue));}
-  [data-theme="light"] .tag.band{background:var(--bc,var(--blue));color:#000;text-shadow:none;box-shadow:none;border-width:1px;}
   .acts{display:flex;gap:8px;margin-top:2px;}
   .act{font-size:13px;cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;}
   .act.fav.on{color:var(--amber);text-shadow:0 0 8px rgba(240,146,60,.5);}
-  .act.log{font-size:9px;letter-spacing:.1em;border:1px solid var(--amber-dim);border-radius:4px;padding:2px 5px;text-transform:uppercase;color:var(--amber);}
 
   .empty{text-align:center;color:var(--ink-dim);font-size:12px;padding:34px 10px;line-height:1.7;letter-spacing:.04em;}
 
@@ -345,8 +329,7 @@
 <nav class="sidenav" id="sideNav">
   <div class="snav-brand">SKY<br>WAVE</div>
   <button class="snav-btn on" data-tab="listen"><span class="bicon">▶</span>Listen</button>
-  <button class="snav-btn" data-tab="log"><span class="bicon">✦</span>Log</button>
-  <button class="snav-btn" data-tab="spots"><span class="bicon">◎</span>Spots</button>
+  <button class="snav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
   <button class="snav-btn" data-tab="tools"><span class="bicon">⚙</span>Tools</button>
   <button class="snav-btn" data-tab="ref"><span class="bicon">◆</span>Ref</button>
   <button class="snav-btn" data-tab="prop"><span class="bicon">≈</span>Prop</button>
@@ -361,7 +344,7 @@
         <button class="kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode">⛶ Kiosk</button>
       </div>
     </div>
-    <div class="ident"><span id="hdrCall" class="ident-call"></span><span id="hdrGrid" class="ident-grid"></span></div>
+    <div class="ident"><span id="hdrGrid" class="ident-grid"></span></div>
     <div class="clocks">
       <div class="clock"><span class="lbl">UTC · Zulu</span><span class="val" id="utc">--:--:--</span></div>
       <div class="clock local"><span class="lbl" id="locLbl">Local</span><span class="val" id="loc">--:--</span></div>
@@ -415,25 +398,14 @@
     </div>
   </section>
 
-  <!-- ============ LOG ============ -->
+  <!-- ============ SAVED ============ -->
   <section id="tab-log" hidden>
     <div class="seg" id="seg-log">
-      <button data-sub="logbook" class="on">Logbook</button>
-      <button data-sub="stars">Favorites</button>
+      <button data-sub="stars" class="on">Favorites</button>
       <button data-sub="mine">My Freq</button>
     </div>
 
-    <div id="sub-logbook">
-      <div class="btnrow">
-        <button class="btn sm" id="newLog">+ New entry</button>
-        <button class="btn ghost sm" id="expLog">Export CSV</button>
-        <button class="btn ghost sm" id="expAdif">Export ADIF</button>
-      </div>
-      <div class="count" id="logCount"></div>
-      <div class="rows" id="logRows"></div>
-    </div>
-
-    <div id="sub-stars" hidden>
+    <div id="sub-stars">
       <div class="hint" style="margin-bottom:10px">Tap ★ on any listing to keep it here. Favorites that are on the air right now are highlighted.</div>
       <div class="rows" id="starRows"></div>
     </div>
@@ -497,27 +469,6 @@
     </div>
   </section>
 
-  <!-- ============ SPOTS ============ -->
-  <section id="tab-spots" hidden>
-    <div class="seg" id="seg-spots">
-      <button data-sub="pota" class="on">POTA · Parks</button>
-      <button data-sub="sota">SOTA · Summits</button>
-    </div>
-    <div class="chips" id="spotChips">
-      <span class="chip on" data-sm="all">All modes</span>
-      <span class="chip" data-sm="cw">CW</span>
-      <span class="chip" data-sm="ssb">Phone</span>
-      <span class="chip" data-sm="data">Data</span>
-    </div>
-    <div class="chips" id="spotBandChips" style="margin-top:-5px"></div>
-    <div class="ctrl">
-      <input type="search" id="spotFilter" placeholder="filter call / ref / summit / state…" autocomplete="off">
-      <button class="btn sm" id="spotRefresh" title="refresh" style="min-width:46px">⟳</button>
-    </div>
-    <div class="count" id="spotCount"></div>
-    <div class="rows" id="spotRows"></div>
-  </section>
-
   <!-- ============ REF ============ -->
   <section id="tab-ref" hidden>
     <div class="card" id="displayCard">
@@ -532,14 +483,6 @@
         <input type="checkbox" id="hr24Toggle" checked style="accent-color:var(--amber);width:15px;height:15px">
         24-hour local clock
       </label>
-    </div>
-    <div class="card" id="stationCard">
-      <h3>◆ My station</h3>
-      <div class="formgrid">
-        <label class="wide">Callsign / Identifier<input type="text" id="callIn" placeholder="W5XYZ  ·  SWL-1234  ·  your name" autocomplete="off" spellcheck="false" style="text-transform:uppercase;letter-spacing:.08em"></label>
-      </div>
-      <div class="btnrow"><button class="btn sm" id="saveCall">Save</button></div>
-      <div class="hint" id="gridHint"></div>
     </div>
     <div class="loadbox">
       <h3>◆ Full EiBi schedule <span id="netDot" class="netdot off"></span></h3>
@@ -644,29 +587,6 @@
 
 </div><!-- /#layout -->
 
-<!-- log modal -->
-<div class="modal" id="logModal" hidden>
-  <div class="sheet">
-    <h3 id="logTitle">◆ Log entry</h3>
-    <div class="formgrid">
-      <label>Date (UTC)<input type="text" id="lgDate"></label>
-      <label>Time UTC<input type="text" id="lgTime" placeholder="1530"></label>
-      <label>Freq kHz<input type="number" id="lgFreq" inputmode="decimal"></label>
-      <label>Mode<input type="text" id="lgMode" placeholder="SSB / CW / FT8"></label>
-      <label>Station / call<input type="text" id="lgStation"></label>
-      <label>RST Sent<input type="text" id="lgRstS" placeholder="59"></label>
-      <label>RST Rcvd<input type="text" id="lgRstR" placeholder="59"></label>
-      <label class="wide">Reference (park / summit)<input type="text" id="lgRef" placeholder="US-1234"></label>
-      <label class="wide">Notes<textarea id="lgNotes" placeholder="rig, antenna, conditions…"></textarea></label>
-    </div>
-    <div class="hint" style="margin:-2px 0 12px">RST: 59 phone / 599 CW. SWL: use Sent for SINPO. Pre-filled from a spot — confirm and save.</div>
-    <div class="btnrow">
-      <button class="btn" id="lgSave">Save</button>
-      <button class="btn ghost" id="lgCancel">Cancel</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <!-- ============ MORE SHEET ============ -->
@@ -684,8 +604,7 @@
 <!-- ============ BOTTOM NAV ============ -->
 <nav class="bottomnav" id="bottomNav">
   <button class="bnav-btn on" data-tab="listen"><span class="bicon">▶</span>Listen</button>
-  <button class="bnav-btn" data-tab="log"><span class="bicon">✦</span>Log</button>
-  <button class="bnav-btn" data-tab="spots"><span class="bicon">◎</span>Spots</button>
+  <button class="bnav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
   <button class="bnav-btn" data-tab="tools"><span class="bicon">⚙</span>Tools</button>
   <button class="bnav-btn" id="moreBtn" aria-expanded="false" aria-haspopup="true"><span class="bicon">⋯</span>More</button>
 </nav>
@@ -701,18 +620,10 @@
       <div class="wiz-dot" id="wd3">3</div>
     </div>
 
-    <!-- Step 1: Who are you? -->
+    <!-- Step 1: Welcome -->
     <div id="wiz1">
       <p class="wiz-head">Welcome to SKYWAVE</p>
-      <p class="wiz-sub">Let's personalise your station in 60 seconds.</p>
-      <div class="formgrid" style="grid-template-columns:1fr;margin-bottom:6px">
-        <label>Callsign or identifier
-          <input type="text" id="wizCall" placeholder="W5XYZ  ·  SWL-1234  ·  your name"
-                 autocomplete="off" spellcheck="false"
-                 style="text-transform:uppercase;letter-spacing:.08em;margin-top:5px">
-        </label>
-      </div>
-      <p class="hint" style="margin:0 0 18px">No licence? Enter <b>SWL-</b> followed by your number, or just your first name.</p>
+      <p class="wiz-sub">Let's set up your station in 60 seconds.</p>
       <div class="wiz-nav">
         <button class="btn sm" id="wizNext1">Next →</button>
         <button class="wiz-skip" id="wizSkip">Skip for now</button>
@@ -746,7 +657,6 @@
       <p class="wiz-head">◆ All set!</p>
       <p class="wiz-sub">Your station is saved on this device only — no account, no server, no tracking.</p>
       <div class="wiz-preview">
-        <div class="wiz-prow"><span class="wiz-pk">Identifier</span><span class="wiz-pv" id="wiz3Call">—</span></div>
         <div class="wiz-prow"><span class="wiz-pk">Grid</span><span class="wiz-pv" id="wiz3Grid">—</span></div>
         <div class="wiz-prow"><span class="wiz-pk">Sunrise</span><span class="wiz-pv" id="wiz3SR">—</span></div>
         <div class="wiz-prow"><span class="wiz-pk">Sunset</span><span class="wiz-pv" id="wiz3SS">—</span></div>
@@ -794,30 +704,13 @@ const TGT={Eu:"Europe",WEu:"W Europe",EEu:"E Europe",CEu:"C Europe",SEu:"S Europ
 /* ============ state & persistence ============ */
 let DATA=[], EIBI=[], haveEibi=false, META=null;
 const K={raw:"skywave_eibi_raw_v1",meta:"skywave_eibi_meta_v1",favs:"skywave_favs_v1",
- log:"skywave_log_v1",mine:"skywave_mine_v1",geo:"skywave_geo_v1",prefs:"skywave_prefs_v1",
- pota:"skywave_pota_v1",sota:"skywave_sota_v1"};
+ mine:"skywave_mine_v1",geo:"skywave_geo_v1",prefs:"skywave_prefs_v1"};
 const STALE_DAYS=21;
 function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}}
-let FAVS=loadJSON(K.favs,[]), LOG=loadJSON(K.log,[]), MINE=loadJSON(K.mine,[]);
+let FAVS=loadJSON(K.favs,[]), MINE=loadJSON(K.mine,[]);
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
-let PREFS=loadJSON(K.prefs,{autoUpd:true,call:"",setup:false,theme:"",zoom:1,hr24:true});
-let SPOTS={pota:loadJSON(K.pota,{list:[],ts:0}),sota:loadJSON(K.sota,{list:[],ts:0})};
-let spotProg="pota",spotMode="all",spotBand="all",spotStatus="";
-const BAND_COLOR={
-  "160 m":"#ff2244",  // LED red
-  "80 m":"#ff5500",   // LED orange-red
-  "60 m":"#ffaa00",   // LED amber
-  "40 m":"#ffe600",   // LED yellow
-  "30 m":"#88ff00",   // LED chartreuse
-  "20 m":"#00ff88",   // LED green
-  "17 m":"#00ffdd",   // LED cyan
-  "15 m":"#00aaff",   // LED sky blue
-  "12 m":"#4466ff",   // LED blue-violet
-  "10 m":"#aa33ff",   // LED violet
-  "6 m":"#ff22cc",    // LED magenta
-  "2 m":"#ff0066"     // LED hot pink
-};
+let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true});
 let editIdx=-1;
 let favSet=new Set();
 function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
@@ -973,7 +866,7 @@ function rowHTML(e){
     '<div class="freq">'+fmtFreq(e.freq)+'<span class="u">'+freqUnit(e.freq)+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(e.station||"(unknown)")+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
     '<div class="right">'+tag+'<span class="time">'+esc(e.time)+(e.days?' '+esc(e.days):'')+'</span>'+
-      '<span class="acts"><span class="act fav'+fav+'" data-act="fav" '+da+'>★</span><span class="act log" data-act="log" '+da+'>log</span></span>'+
+      '<span class="acts"><span class="act fav'+fav+'" data-act="fav" '+da+'>★</span></span>'+
     '</div></div>';
 }
 function renderRows(elId,list,countId,label){
@@ -1048,96 +941,6 @@ function renderStars(){
   renderRows("starRows",list,null,"");
 }
 
-/* ============ logbook ============ */
-function closeLog(){editIdx=-1;document.getElementById("lgSave").textContent="Save";document.getElementById("logModal").hidden=true;}
-function openLog(pre,idx){pre=pre||{};const d=new Date();
-  editIdx=(typeof idx==="number")?idx:-1;
-  document.getElementById("lgSave").textContent=editIdx>=0?"Update":"Save";
-  document.getElementById("logTitle").textContent=pre.title||(editIdx>=0?"◆ Edit entry":"◆ Log entry");
-  document.getElementById("lgDate").value=pre.date||d.toISOString().slice(0,10);
-  document.getElementById("lgTime").value=pre.time||(String(d.getUTCHours()).padStart(2,"0")+String(d.getUTCMinutes()).padStart(2,"0"));
-  document.getElementById("lgFreq").value=pre.freq||"";
-  document.getElementById("lgMode").value=pre.mode||"";
-  document.getElementById("lgStation").value=pre.station||"";
-  document.getElementById("lgRstS").value=pre.rst||"";
-  document.getElementById("lgRstR").value=pre.rst_rcvd||"";
-  document.getElementById("lgRef").value=pre.ref||"";
-  document.getElementById("lgNotes").value=pre.notes||"";
-  document.getElementById("logModal").hidden=false;}
-function saveLog(){
-  const o={date:document.getElementById("lgDate").value.trim(),time:document.getElementById("lgTime").value.trim(),
-    freq:document.getElementById("lgFreq").value.trim(),mode:document.getElementById("lgMode").value.trim(),
-    station:document.getElementById("lgStation").value.trim(),
-    rst_sent:document.getElementById("lgRstS").value.trim(),
-    rst_rcvd:document.getElementById("lgRstR").value.trim(),
-    ref:document.getElementById("lgRef").value.trim(),notes:document.getElementById("lgNotes").value.trim(),created:Date.now()};
-  if(!o.freq&&!o.station){toast("Add a frequency or station");return;}
-  if(editIdx>=0){o.created=LOG[editIdx].created;LOG[editIdx]=o;}else{LOG.push(o);}
-  saveJSON(K.log,LOG);closeLog();renderLog();toast(editIdx>=0?"Updated":"Logged");}
-function logFromSpot(t){
-  const prog=(t.dataset.prog||spotProg).toUpperCase(),mode=t.dataset.md||"",call=t.dataset.call||"",
-    ref=t.dataset.ref||"",name=t.dataset.name||"",f=t.dataset.f||"";
-  const rst=/CW|FT8|FT4|RTTY|JS8|PSK|DATA|DIG|JT/i.test(mode)?"599":"59";
-  const fMHz=f?(+f/1000).toFixed(3)+" MHz":"";
-  const notes=[prog+" "+ref+(name?" — "+name:""),fMHz,mode].filter(Boolean).join(" · ");
-  openLog({title:"◆ Log "+(call||ref),freq:f,mode:mode,station:call,ref:ref,rst:rst,notes:notes});
-}
-function renderLog(){
-  const el=document.getElementById("logRows");
-  const list=LOG.map((o,i)=>({o,i})).sort((a,b)=>b.o.created-a.o.created);
-  document.getElementById("logCount").innerHTML=list.length?'<b>'+list.length+'</b> entries':"";
-  if(!list.length){el.innerHTML='<div class="empty">No log entries yet.<br>Tap <b>log</b> on a listing, or <b>+ New entry</b>.</div>';return;}
-  el.innerHTML=list.map(({o,i})=>{const realIdx=i;
-    const badge=o.mode?'<span class="badge">'+esc(o.mode)+'</span>':'';
-    const rstS=o.rst_sent||o.sinpo||"";const rstR=o.rst_rcvd||"";
-    const rstStr=rstS&&rstR?rstS+'/'+rstR:rstS?rstS:'';
-    const meta=[esc(o.date)+' '+esc(o.time)+'Z',o.ref?esc(o.ref):'',rstStr?'RST '+esc(rstStr):'',o.notes?esc(o.notes):''].filter(Boolean).join(' · ');
-    return '<div class="row"><div class="freq">'+(o.freq?fmtFreq(+o.freq):"—")+'<span class="u">'+(o.freq?freqUnit(+o.freq):'kHz')+'</span></div>'+
-    '<div class="mid"><div class="st">'+esc(o.station||"(no station)")+badge+'</div>'+
-    '<div class="meta">'+meta+'</div></div>'+
-    '<div class="right"><span class="act log" data-act="editlog" data-i="'+realIdx+'">edit</span><span class="act log" data-act="dellog" data-i="'+realIdx+'">delete</span></div></div>';}).join("");
-}
-function exportLogCSV(){
-  if(!LOG.length){toast("Log is empty");return;}
-  const rows=[["date_utc","time_utc","freq_khz","mode","station","reference","rst_sent","rst_rcvd","notes"]];
-  LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>rows.push([o.date,o.time,o.freq,o.mode||"",o.station,o.ref||"",o.rst_sent||o.sinpo||"",o.rst_rcvd||"",o.notes]));
-  const csv=rows.map(r=>r.map(c=>'"'+String(c||"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
-  downloadBlob("skywave-log.csv",csv,"text/csv");
-}
-function exportLogADIF(){
-  if(!LOG.length){toast("Log is empty");return;}
-  function tag(name,val){const s=String(val||"").trim();return s?"<"+name+":"+s.length+">"+s:"";}
-  const lines=["<ADIF_VER:5>3.1.4","<PROGRAMID:7>SKYWAVE",tag("PROGRAMVERSION",VERSION),"<EOH>",""];
-  LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>{
-    const date=(o.date||"").replace(/-/g,"");
-    const time=String(o.time||"").replace(/\D/g,"").padStart(4,"0").slice(0,4);
-    const freqMHz=o.freq?(+o.freq/1000).toFixed(6):"";
-    // Normalize mode: USB/LSB stay as-is; DATA/DIG/DIGI → MFSK as a safe ADIF fallback
-    const mode=(o.mode||"").toUpperCase().replace(/^DIG(I)?$/,"MFSK").replace(/^DATA$/,"MFSK");
-    // Detect POTA (e.g. US-1234) vs SOTA (e.g. W5/LO-001) from the Reference field
-    const ref=(o.ref||"").trim();
-    const isSota=ref.includes("/");
-    const isPota=!isSota&&/^[A-Z]{1,6}-\d+$/i.test(ref);
-    const qso=[
-      tag("QSO_DATE",date),
-      tag("TIME_ON",time),
-      tag("CALL",o.station),
-      tag("FREQ",freqMHz),
-      tag("MODE",mode),
-      tag("RST_SENT",o.rst_sent||o.sinpo||""),
-      tag("RST_RCVD",o.rst_rcvd||""),
-      PREFS.call?tag("MY_CALL",PREFS.call):"",
-      PREFS.call?tag("MY_GRIDSQUARE",toGrid(GEO.lat,GEO.lng)):"",
-      isPota?tag("POTA_REF",ref):"",
-      isSota?tag("SOTA_REF",ref):"",
-      tag("COMMENT",o.notes),
-      "<EOR>"
-    ].filter(Boolean).join("");
-    if(qso!=="<EOR>")lines.push(qso);
-  });
-  downloadBlob("skywave-log.adi",lines.join("\r\n"),"text/plain");
-}
-
 /* ============ my frequencies ============ */
 function addMine(){
   const o={freq:parseFloat(document.getElementById("mFreq").value),mode:document.getElementById("mMode").value,
@@ -1195,13 +998,8 @@ function toGrid(lat,lng){
     String.fromCharCode(97+Math.floor((lo%2)*12),97+Math.floor((la%1)*24));
 }
 function renderIdent(){
-  const c=(PREFS.call||"").toUpperCase().trim(),g=toGrid(GEO.lat,GEO.lng);
-  document.getElementById("hdrCall").textContent=c;
+  const g=toGrid(GEO.lat,GEO.lng);
   document.getElementById("hdrGrid").textContent=g;
-  const hint=document.getElementById("gridHint");
-  if(hint)hint.textContent="Grid: "+g+(GEO.label?"  ("+GEO.label+")":"");
-  if(document.getElementById("callIn")&&!document.getElementById("callIn").dataset.dirty)
-    document.getElementById("callIn").value=c;
 }
 
 /* ============ theme / zoom / kiosk / right-rail ============ */
@@ -1368,98 +1166,6 @@ function doPrint(){
   window.print();
 }
 
-/* ============ POTA / SOTA live spots ============ */
-function hamBandOf(k){for(const b of HAM)if(k>=+b[1]&&k<=+b[2])return b[0];return bandOf(k)||"";}
-function ageStr(ms){const s=Math.max(0,Date.now()-ms)/1000;if(s<60)return"now";
-  const m=Math.floor(s/60);if(m<60)return m+"m";const h=Math.floor(m/60);return h+"h "+(m%60)+"m";}
-async function getSpots(prog){
-  const urls=prog==="pota"?["https://api.pota.app/spot/activator"]
-    :["https://api-db2.sota.org.uk/api/spots/40/all","https://api2.sota.org.uk/api/spots/40/all","https://api2.sota.org.uk/api/spots/40/"];
-  for(const base of urls)for(const url of relays(base)){
-    try{const res=await fetchWithTimeout(url,{cache:"no-store"});if(!res||!res.ok)continue;
-      const data=JSON.parse(await res.text());if(Array.isArray(data)&&data.length)return data;}catch(e){}
-  }
-  return null;
-}
-function normPota(d){return d.map(x=>({freq:parseFloat(x.frequency),call:x.activator||"",ref:x.reference||"",
-  name:x.name||x.parkName||"",mode:(x.mode||"").toUpperCase(),when:new Date((x.spotTime||"")+"Z"),
-  comments:x.comments||"",loc:x.locationDesc||""}));}
-function normSota(d){return d.map(x=>{let ref=x.summitCode||"";if(x.associationCode&&!ref.includes("/"))ref=x.associationCode+"/"+ref;
-  return{freq:parseFloat(x.frequency)*1000,call:x.activatorCallsign||x.activator||"",ref:ref,
-  name:x.summitDetails||x.summitName||"",mode:(x.mode||"").toUpperCase(),when:new Date(x.timeStamp),
-  comments:x.comments||"",loc:x.associationCode||""};});}
-async function refreshSpots(){
-  const prog=spotProg;setSpotSpin(true);
-  if(!navigator.onLine){spotStatus="offline";setSpotSpin(false);renderSpots();return;}
-  spotStatus="loading";renderSpots();
-  let data=null;try{data=await getSpots(prog);}catch(e){}
-  if(data){const list=(prog==="pota"?normPota:normSota)(data).filter(s=>isFinite(s.freq)&&s.freq>0);
-    SPOTS[prog]={list,ts:Date.now()};saveJSON(K[prog],SPOTS[prog]);spotStatus="";}
-  else spotStatus="failed";
-  setSpotSpin(false);renderSpots();
-}
-function openSpots(force){renderSpots();const pack=SPOTS[spotProg]||{ts:0};
-  if(navigator.onLine&&(force||Date.now()-pack.ts>60000))refreshSpots();}
-function setSpotSpin(on){const b=document.getElementById("spotRefresh");if(!b)return;
-  b.innerHTML=on?'<span class="upd-spin">⟳</span>':'⟳';b.disabled=on;}
-function spotRowHTML(s){
-  const ms=+new Date(s.when),age=ageStr(ms),stale=Date.now()-ms>45*60000;
-  const band=hamBandOf(s.freq),md=s.mode?'<span class="badge">'+esc(s.mode)+'</span>':'';
-  const meta=[esc(s.ref),esc(s.name),esc(s.loc)].filter(Boolean).join(" · ");
-  const cmt=s.comments?'<div class="meta" style="color:var(--ink-dim)">"'+esc(s.comments)+'"</div>':'';
-  const da='data-act="spotlog" data-f="'+attr(Math.round(s.freq))+'" data-call="'+attr(s.call)+'" data-ref="'+attr(s.ref)+'" data-name="'+attr(s.name)+'" data-md="'+attr(s.mode)+'" data-prog="'+spotProg+'"';
-  const bc=band&&BAND_COLOR[band]?'style="--bc:'+BAND_COLOR[band]+'"':'';
-  return '<div class="row spotrow'+(stale?' stale':'')+'" '+da+'>'+
-    '<div class="freq">'+fmtFreq(s.freq)+'<span class="u">'+freqUnit(s.freq)+'</span></div>'+
-    '<div class="mid"><div class="st">'+esc(s.call||"?")+md+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+cmt+'</div>'+
-    '<div class="right">'+(band?'<span class="tag band" '+bc+'>'+band+'</span>':'<span class="tag">--</span>')+'<span class="time">'+age+'</span>'+
-      '<span class="acts"><span class="act log">＋ log</span></span></div></div>';
-}
-function renderBandChips(){
-  const el=document.getElementById("spotBandChips");if(!el)return;
-  const pack=SPOTS[spotProg]||{list:[]};
-  const raw=(pack.list||[]).filter(s=>isFinite(s.freq)&&s.freq>0);
-  const bands=[...new Set(raw.map(s=>hamBandOf(s.freq)).filter(Boolean))];
-  bands.sort((a,b)=>parseFloat(a)-parseFloat(b));
-  if(!bands.length){el.innerHTML="";return;}
-  const items=[{key:"all",label:"All bands",color:null},...bands.map(b=>({key:b,label:b,color:BAND_COLOR[b]||null}))];
-  el.innerHTML=items.map(({key,label,color})=>{
-    const on=key===spotBand,st=color?'style="--bc:'+color+'"':'';
-    return'<span class="bchip'+(on?' on':'')+'" data-sb="'+key+'" '+st+'>'+label+'</span>';
-  }).join("");
-  el.querySelectorAll("[data-sb]").forEach(c=>c.addEventListener("click",()=>{
-    spotBand=c.dataset.sb;renderBandChips();renderSpots();
-  }));
-}
-function renderSpots(){
-  const prog=spotProg,pack=SPOTS[prog]||{list:[],ts:0};
-  let list=(pack.list||[]).slice();
-  if(spotMode==="cw")list=list.filter(s=>s.mode==="CW");
-  else if(spotMode==="ssb")list=list.filter(s=>/SSB|USB|LSB|PHONE/.test(s.mode));
-  else if(spotMode==="data")list=list.filter(s=>/FT8|FT4|DATA|RTTY|JS8|DIG|PSK|JT/.test(s.mode));
-  if(spotBand!=="all")list=list.filter(s=>hamBandOf(s.freq)===spotBand);
-  const f=document.getElementById("spotFilter").value.trim().toLowerCase();
-  if(f)list=list.filter(s=>(s.call+" "+s.ref+" "+s.name+" "+s.loc+" "+s.mode).toLowerCase().includes(f));
-  list.sort((a,b)=>a.freq-b.freq);
-  renderBandChips();
-  const lab=document.getElementById("spotCount"),el=document.getElementById("spotRows");
-  const fresh=pack.ts?ageStr(pack.ts):null;
-  if(spotStatus==="loading")lab.innerHTML='Fetching live '+prog.toUpperCase()+' spots…';
-  else if(pack.ts)lab.innerHTML='<b>'+list.length+'</b> '+prog.toUpperCase()+' spots · '+
-    (!navigator.onLine?'⚠ offline · cached '+fresh+' old':spotStatus==="failed"?'⚠ refresh failed · cached '+fresh+' old':'updated '+fresh+(fresh==="now"?"":" ago"));
-  else lab.innerHTML="";
-  if(!list.length){
-    let m;
-    if(spotStatus==="loading")m='Fetching live '+prog.toUpperCase()+' spots…';
-    else if(spotStatus==="failed"||(navigator.onLine&&!pack.ts))
-      m='Couldn\'t load live '+prog.toUpperCase()+' spots here.<br><br>Live spots need real Safari — if you opened this inside another app\'s preview, use <b>Share → Open in Safari</b>, then tap ⟳. (In-app browsers block network requests.)';
-    else if(!navigator.onLine)m='Offline — connect to load live '+prog.toUpperCase()+' spots.'+(pack.ts?'':'<br>They\'ll cache here once fetched online.');
-    else m='No '+prog.toUpperCase()+' spots match your filter.';
-    el.innerHTML='<div class="empty">'+m+'</div>';return;
-  }
-  el.innerHTML=list.map(spotRowHTML).join("");
-}
-
 /* ============ reference tab ============ */
 function renderRef(){
   document.getElementById("refMeter").innerHTML='<h3>◆ Shortwave broadcast bands</h3>'+tableHTML(["Band","From kHz","To kHz"],METER);
@@ -1511,7 +1217,6 @@ function updateWiz2Preview(){
 function showWizard(){
   document.getElementById("wizLat").value=GEO.lat;
   document.getElementById("wizLng").value=GEO.lng;
-  if(PREFS.call)document.getElementById("wizCall").value=PREFS.call;
   updateWiz2Preview();
   wizStep(1);
   document.getElementById("wizardModal").hidden=false;
@@ -1568,7 +1273,7 @@ function closeMore(){
   document.body.style.overflow="";
 }
 function openMore(){
-  const active=["listen","log","tools","spots","ref","prop"].find(t=>!document.getElementById("tab-"+t).hidden)||"listen";
+  const active=["listen","log","tools","ref","prop"].find(t=>!document.getElementById("tab-"+t).hidden)||"listen";
   document.querySelectorAll(".morerow[data-tab]").forEach(r=>r.classList.toggle("on",r.dataset.tab===active));
   document.getElementById("moreSheet").classList.add("open");
   document.getElementById("moreScrim").classList.add("open");
@@ -1580,15 +1285,14 @@ function showTab(name){
   document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
   document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
   document.getElementById("moreBtn").classList.toggle("on",moreTabs.includes(name));
-  ["listen","log","tools","spots","ref","prop"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
+  ["listen","log","tools","ref","prop"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
   if(name==="tools")renderGray();
-  if(name==="spots")openSpots();
   if(name==="prop")renderProp();
   closeMore();
 }
 function showSub(group,sub){
   document.querySelectorAll("#seg-"+group+" button").forEach(b=>b.classList.toggle("on",b.dataset.sub===sub));
-  const map={listen:["now","search","freq"],log:["logbook","stars","mine"]};
+  const map={listen:["now","search","freq"],log:["stars","mine"]};
   map[group].forEach(s=>document.getElementById("sub-"+s).hidden=(s!==sub));
 }
 
@@ -1607,8 +1311,6 @@ document.querySelectorAll(".morerow[data-tab]").forEach(r=>r.addEventListener("c
 
 // wizard
 document.getElementById("wizNext1").addEventListener("click",()=>{
-  const v=document.getElementById("wizCall").value.toUpperCase().replace(/[^A-Z0-9\/\-\s\.]/g,"").trim();
-  if(v){PREFS.call=v;saveJSON(K.prefs,PREFS);renderIdent();}
   document.getElementById("wizLat").value=GEO.lat;
   document.getElementById("wizLng").value=GEO.lng;
   updateWiz2Preview();wizStep(2);
@@ -1631,7 +1333,6 @@ document.getElementById("wizGPS").addEventListener("click",()=>{
   updateWiz2Preview();
 }));
 document.getElementById("wizNext2").addEventListener("click",()=>{
-  document.getElementById("wiz3Call").textContent=PREFS.call||"(not set)";
   document.getElementById("wiz3Grid").textContent=toGrid(GEO.lat,GEO.lng);
   const st=sunTimes(new Date(),GEO.lat,GEO.lng);
   document.getElementById("wiz3SR").textContent=st.sunrise?fmtUTC(st.sunrise)+"Z":st.polar||"—";
@@ -1642,13 +1343,6 @@ document.getElementById("wizDone").addEventListener("click",closeWizard);
 
 document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>showSub("listen",b.dataset.sub)));
 document.querySelectorAll("#seg-log button").forEach(b=>b.addEventListener("click",()=>showSub("log",b.dataset.sub)));
-document.querySelectorAll("#seg-spots button").forEach(b=>b.addEventListener("click",()=>{
-  spotProg=b.dataset.sub;spotBand="all";
-  document.querySelectorAll("#seg-spots button").forEach(x=>x.classList.toggle("on",x===b));openSpots(true);}));
-document.querySelectorAll("#spotChips .chip").forEach(c=>c.addEventListener("click",()=>{
-  spotMode=c.dataset.sm;document.querySelectorAll("#spotChips .chip").forEach(x=>x.classList.toggle("on",x===c));renderSpots();}));
-document.getElementById("spotFilter").addEventListener("input",renderSpots);
-document.getElementById("spotRefresh").addEventListener("click",refreshSpots);
 document.querySelectorAll("#nowChips .chip").forEach(c=>c.addEventListener("click",()=>{
   nowChip=c.dataset.chip;document.querySelectorAll("#nowChips .chip").forEach(x=>x.classList.toggle("on",x===c));refreshNow();}));
 document.getElementById("nowFilter").addEventListener("input",refreshNow);
@@ -1662,28 +1356,11 @@ document.getElementById("freqTol").addEventListener("change",refreshFreq);
 document.addEventListener("click",ev=>{
   const t=ev.target.closest("[data-act]");if(!t)return;
   const a=t.dataset.act;
-  if(a==="fav"||a==="log"){
+  if(a==="fav"){
     const o={freq:+t.dataset.f,station:t.dataset.st,time:t.dataset.tm,lang:t.dataset.lg,target:t.dataset.tg,itu:t.dataset.it,days:""};
-    if(a==="fav")toggleFav(o);
-    else{
-      const notes=[o.itu,langName(o.lang),tgtName(o.target)].filter(Boolean).join(" · ");
-      openLog({title:"◆ Log "+(o.station||fmtFreq(o.freq)),freq:o.freq,station:o.station,
-        mode:t.dataset.md||(o.freq<26100&&o.freq>2300?"AM":""),notes:notes});
-    }
-  } else if(a==="spotlog"){ logFromSpot(t); }
-  else if(a==="editlog"){const i=+t.dataset.i,o=LOG[i];if(!o)return;
-    openLog({date:o.date,time:o.time,freq:o.freq,mode:o.mode,station:o.station,rst:o.rst_sent||o.sinpo||"",rst_rcvd:o.rst_rcvd||"",ref:o.ref,notes:o.notes},i);}
-  else if(a==="dellog"){LOG.splice(+t.dataset.i,1);saveJSON(K.log,LOG);renderLog();toast("Deleted");}
-  else if(a==="delmine"){delMine(+t.dataset.i);}
+    toggleFav(o);
+  } else if(a==="delmine"){delMine(+t.dataset.i);}
 });
-
-// log modal
-document.getElementById("newLog").addEventListener("click",()=>openLog());
-document.getElementById("expLog").addEventListener("click",exportLogCSV);
-document.getElementById("expAdif").addEventListener("click",exportLogADIF);
-document.getElementById("lgSave").addEventListener("click",saveLog);
-document.getElementById("lgCancel").addEventListener("click",closeLog);
-document.getElementById("logModal").addEventListener("click",ev=>{if(ev.target.id==="logModal")closeLog();});
 
 // my freq
 document.getElementById("addMine").addEventListener("click",addMine);
@@ -1707,10 +1384,6 @@ document.getElementById("printCard").addEventListener("click",doPrint);
 
 // ref / update
 document.getElementById("updBtn").addEventListener("click",()=>doUpdate());
-document.getElementById("saveCall").addEventListener("click",()=>{
-  const v=document.getElementById("callIn").value.toUpperCase().replace(/[^A-Z0-9\/\-\s\.]/g,"").trim();
-  PREFS.call=v;saveJSON(K.prefs,PREFS);renderIdent();toast(v?"Saved":"Cleared");});
-document.getElementById("callIn").addEventListener("input",()=>{document.getElementById("callIn").dataset.dirty="1";});
 document.getElementById("seasonSel").addEventListener("change",syncEibiLink);
 document.getElementById("autoUpd").addEventListener("change",e=>{PREFS.autoUpd=e.target.checked;saveJSON(K.prefs,PREFS);});
 document.getElementById("loadBtn").addEventListener("click",()=>document.getElementById("fileIn").click());
@@ -1722,8 +1395,8 @@ document.getElementById("clearBtn").addEventListener("click",()=>{
   EIBI=[];haveEibi=false;META=null;rebuildData();updateDbStat();showClear();renderLastUpd();umsg("Cleared. Reference data still available offline.","warn");});
 function selectedSeason(){const s=document.getElementById("seasonSel");return(s.value&&s.value!=="auto")?s.value:seasonCode();}
 function syncEibiLink(){const a=document.getElementById("eibiLink"),c=selectedSeason();a.href="http://www.eibispace.de/dx/sked-"+c+".csv";a.textContent="sked-"+c+".csv";}
-window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)refreshSpots();if(!document.getElementById("tab-prop").hidden)renderProp();if(PREFS.autoUpd&&(!haveEibi||(META&&Date.now()-META.ts>STALE_DAYS*dayMs)))doUpdate({silent:true});});
-window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)renderSpots();if(!document.getElementById("tab-prop").hidden)renderProp();});
+window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("tab-prop").hidden)renderProp();if(PREFS.autoUpd&&(!haveEibi||(META&&Date.now()-META.ts>STALE_DAYS*dayMs)))doUpdate({silent:true});});
+window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-prop").hidden)renderProp();});
 
 /* ============ scroll-minimize header ============ */
 (function(){let lastY=0;
@@ -1746,7 +1419,7 @@ syncEibiLink();setNetDot();renderRef();
 EIBI=[];rebuildData();
 try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);
   const cached=localStorage.getItem(K.raw);if(cached)loadText(cached);}catch(e){}
-renderLastUpd();updateDbStat();renderLog();calcAnt();renderGray();renderIdent();
+renderLastUpd();updateDbStat();calcAnt();renderGray();renderIdent();
 if(!document.fullscreenEnabled)document.getElementById("kioskBtn").hidden=true;
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
@@ -1756,7 +1429,6 @@ if(PREFS.setup===false)showWizard();
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-tools").hidden)renderGray();renderRail();},30000);
-setInterval(()=>{if(!document.getElementById("tab-spots").hidden&&navigator.onLine)refreshSpots();},60000);
 window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
   if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
 if("serviceWorker" in navigator){
