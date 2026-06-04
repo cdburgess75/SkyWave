@@ -111,7 +111,14 @@
   .chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 11px;}
   .chip{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
     font-size:10.5px;letter-spacing:.08em;padding:6px 11px;border-radius:20px;cursor:pointer;}
-  .chip.on{color:#1a1206;background:var(--amber);border-color:var(--amber);font-weight:700;}
+  .chip.on{color:#000;background:var(--amber);border-color:var(--amber);font-weight:700;}
+  /* band filter chips — each carries --bc for its LED color */
+  .bchip{background:var(--panel);border:1px solid var(--bc,var(--line));color:var(--bc,var(--ink-dim));
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:5px 10px;
+    border-radius:20px;cursor:pointer;transition:.15s;flex-shrink:0;}
+  .bchip.on{color:#000;font-weight:700;background:var(--bc,var(--amber));border-color:var(--bc,var(--amber));
+    box-shadow:0 0 10px var(--bc,var(--amber));}
+  [data-theme="light"] .bchip.on{box-shadow:none;}
 
   .ctrl{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 11px;}
   input[type=text],input[type=search],input[type=number],select,textarea{
@@ -150,10 +157,10 @@
   .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
   .tag.live{color:#06170c;background:var(--green);border-color:var(--green);font-weight:700;}
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
-  .tag.band{background:var(--blue);border-color:var(--blue);color:#000;font-weight:700;font-size:9px;
-    padding:3px 9px;border-radius:20px;letter-spacing:.1em;
-    box-shadow:0 0 8px rgba(125,213,245,.65),0 0 18px rgba(125,213,245,.3);}
-  [data-theme="light"] .tag.band{box-shadow:none;color:#fff;}
+  .tag.band{background:var(--bc,var(--blue));border-color:var(--bc,var(--blue));color:#000;font-weight:700;
+    font-size:9px;padding:3px 9px;border-radius:20px;letter-spacing:.1em;
+    box-shadow:0 0 8px var(--bc,var(--blue)),0 0 18px var(--bc,var(--blue));}
+  [data-theme="light"] .tag.band{box-shadow:none;}
   .acts{display:flex;gap:8px;margin-top:2px;}
   .act{font-size:13px;cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;}
   .act.fav.on{color:var(--amber);text-shadow:0 0 8px rgba(240,146,60,.5);}
@@ -237,6 +244,16 @@
   .wiz-nav{display:flex;gap:10px;align-items:center;margin-top:4px;}
   .wiz-skip{background:none;border:none;color:var(--ink-dim);font-size:10px;font-family:var(--mono);
     letter-spacing:.06em;cursor:pointer;text-decoration:underline;padding:4px 2px;margin-left:auto;}
+
+  /* scroll-minimized header */
+  .brand,.ident{transition:max-height .28s ease,opacity .2s,margin .25s ease;max-height:80px;overflow:hidden;}
+  header.min .brand{max-height:0;opacity:0;margin:0;}
+  header.min .ident{max-height:0;opacity:0;margin:0;}
+  header.min .clock.local,header.min .dbstat{display:none;}
+  header.min .clock .lbl{display:none;}
+  header.min .clocks{margin-top:2px;}
+  header{transition:padding .25s ease;}
+  header.min{padding-bottom:8px;}
 
   footer{margin-top:16px;font-size:9.5px;color:var(--ink-dim);line-height:1.7;text-align:center;}
   footer a{color:var(--amber-dim);}
@@ -491,6 +508,7 @@
       <span class="chip" data-sm="ssb">Phone</span>
       <span class="chip" data-sm="data">Data</span>
     </div>
+    <div class="chips" id="spotBandChips" style="margin-top:-5px"></div>
     <div class="ctrl">
       <input type="search" id="spotFilter" placeholder="filter call / ref / summit / state…" autocomplete="off">
       <button class="btn sm" id="spotRefresh" title="refresh" style="min-width:46px">⟳</button>
@@ -784,7 +802,13 @@ let FAVS=loadJSON(K.favs,[]), LOG=loadJSON(K.log,[]), MINE=loadJSON(K.mine,[]);
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
 let PREFS=loadJSON(K.prefs,{autoUpd:true,call:"",setup:false,theme:"",zoom:1,hr24:true});
 let SPOTS={pota:loadJSON(K.pota,{list:[],ts:0}),sota:loadJSON(K.sota,{list:[],ts:0})};
-let spotProg="pota",spotMode="all",spotStatus="";
+let spotProg="pota",spotMode="all",spotBand="all",spotStatus="";
+const BAND_COLOR={
+  "160 m":"#e8635a","80 m":"#f0923c","60 m":"#f0923c",
+  "40 m":"#f5e35a","30 m":"#7de87a","20 m":"#7de87a",
+  "17 m":"#7dd5f5","15 m":"#e8635a","12 m":"#f0923c",
+  "10 m":"#f5e35a","6 m":"#7dd5f5","2 m":"#7de87a"
+};
 let editIdx=-1;
 let favSet=new Set();
 function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
@@ -1375,11 +1399,28 @@ function spotRowHTML(s){
   const meta=[esc(s.ref),esc(s.name),esc(s.loc)].filter(Boolean).join(" · ");
   const cmt=s.comments?'<div class="meta" style="color:var(--ink-dim)">"'+esc(s.comments)+'"</div>':'';
   const da='data-act="spotlog" data-f="'+attr(Math.round(s.freq))+'" data-call="'+attr(s.call)+'" data-ref="'+attr(s.ref)+'" data-name="'+attr(s.name)+'" data-md="'+attr(s.mode)+'" data-prog="'+spotProg+'"';
+  const bc=band&&BAND_COLOR[band]?'style="--bc:'+BAND_COLOR[band]+'"':'';
   return '<div class="row spotrow'+(stale?' stale':'')+'" '+da+'>'+
     '<div class="freq">'+fmtFreq(s.freq)+'<span class="u">'+freqUnit(s.freq)+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(s.call||"?")+md+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+cmt+'</div>'+
-    '<div class="right">'+(band?'<span class="tag band">'+band+'</span>':'<span class="tag">--</span>')+'<span class="time">'+age+'</span>'+
+    '<div class="right">'+(band?'<span class="tag band" '+bc+'>'+band+'</span>':'<span class="tag">--</span>')+'<span class="time">'+age+'</span>'+
       '<span class="acts"><span class="act log">＋ log</span></span></div></div>';
+}
+function renderBandChips(){
+  const el=document.getElementById("spotBandChips");if(!el)return;
+  const pack=SPOTS[spotProg]||{list:[]};
+  const raw=(pack.list||[]).filter(s=>isFinite(s.freq)&&s.freq>0);
+  const bands=[...new Set(raw.map(s=>hamBandOf(s.freq)).filter(Boolean))];
+  bands.sort((a,b)=>parseFloat(a)-parseFloat(b));
+  if(!bands.length){el.innerHTML="";return;}
+  const items=[{key:"all",label:"All bands",color:null},...bands.map(b=>({key:b,label:b,color:BAND_COLOR[b]||null}))];
+  el.innerHTML=items.map(({key,label,color})=>{
+    const on=key===spotBand,st=color?'style="--bc:'+color+'"':'';
+    return'<span class="bchip'+(on?' on':'')+'" data-sb="'+key+'" '+st+'>'+label+'</span>';
+  }).join("");
+  el.querySelectorAll("[data-sb]").forEach(c=>c.addEventListener("click",()=>{
+    spotBand=c.dataset.sb;renderBandChips();renderSpots();
+  }));
 }
 function renderSpots(){
   const prog=spotProg,pack=SPOTS[prog]||{list:[],ts:0};
@@ -1387,9 +1428,11 @@ function renderSpots(){
   if(spotMode==="cw")list=list.filter(s=>s.mode==="CW");
   else if(spotMode==="ssb")list=list.filter(s=>/SSB|USB|LSB|PHONE/.test(s.mode));
   else if(spotMode==="data")list=list.filter(s=>/FT8|FT4|DATA|RTTY|JS8|DIG|PSK|JT/.test(s.mode));
+  if(spotBand!=="all")list=list.filter(s=>hamBandOf(s.freq)===spotBand);
   const f=document.getElementById("spotFilter").value.trim().toLowerCase();
   if(f)list=list.filter(s=>(s.call+" "+s.ref+" "+s.name+" "+s.loc+" "+s.mode).toLowerCase().includes(f));
   list.sort((a,b)=>a.freq-b.freq);
+  renderBandChips();
   const lab=document.getElementById("spotCount"),el=document.getElementById("spotRows");
   const fresh=pack.ts?ageStr(pack.ts):null;
   if(spotStatus==="loading")lab.innerHTML='Fetching live '+prog.toUpperCase()+' spots…';
@@ -1591,7 +1634,8 @@ document.getElementById("wizDone").addEventListener("click",closeWizard);
 document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>showSub("listen",b.dataset.sub)));
 document.querySelectorAll("#seg-log button").forEach(b=>b.addEventListener("click",()=>showSub("log",b.dataset.sub)));
 document.querySelectorAll("#seg-spots button").forEach(b=>b.addEventListener("click",()=>{
-  spotProg=b.dataset.sub;document.querySelectorAll("#seg-spots button").forEach(x=>x.classList.toggle("on",x===b));openSpots(true);}));
+  spotProg=b.dataset.sub;spotBand="all";
+  document.querySelectorAll("#seg-spots button").forEach(x=>x.classList.toggle("on",x===b));openSpots(true);}));
 document.querySelectorAll("#spotChips .chip").forEach(c=>c.addEventListener("click",()=>{
   spotMode=c.dataset.sm;document.querySelectorAll("#spotChips .chip").forEach(x=>x.classList.toggle("on",x===c));renderSpots();}));
 document.getElementById("spotFilter").addEventListener("input",renderSpots);
@@ -1671,6 +1715,16 @@ function selectedSeason(){const s=document.getElementById("seasonSel");return(s.
 function syncEibiLink(){const a=document.getElementById("eibiLink"),c=selectedSeason();a.href="http://www.eibispace.de/dx/sked-"+c+".csv";a.textContent="sked-"+c+".csv";}
 window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)refreshSpots();if(!document.getElementById("tab-prop").hidden)renderProp();if(PREFS.autoUpd&&(!haveEibi||(META&&Date.now()-META.ts>STALE_DAYS*dayMs)))doUpdate({silent:true});});
 window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)renderSpots();if(!document.getElementById("tab-prop").hidden)renderProp();});
+
+/* ============ scroll-minimize header ============ */
+(function(){let lastY=0;
+  window.addEventListener("scroll",()=>{
+    const y=window.scrollY,hdr=document.querySelector("header");if(!hdr)return;
+    if(y>lastY&&y>70)hdr.classList.add("min");
+    else if(y<lastY-20)hdr.classList.remove("min");
+    lastY=y;
+  },{passive:true});
+})();
 
 /* ============ boot ============ */
 rebuildFavSet();
