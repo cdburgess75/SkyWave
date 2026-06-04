@@ -445,11 +445,12 @@
       <label>Freq kHz<input type="number" id="lgFreq" inputmode="decimal"></label>
       <label>Mode<input type="text" id="lgMode" placeholder="SSB / CW / FT8"></label>
       <label>Station / call<input type="text" id="lgStation"></label>
-      <label>RST / SINPO<input type="text" id="lgSinpo" placeholder="59"></label>
+      <label>RST Sent<input type="text" id="lgRstS" placeholder="59"></label>
+      <label>RST Rcvd<input type="text" id="lgRstR" placeholder="59"></label>
       <label class="wide">Reference (park / summit)<input type="text" id="lgRef" placeholder="US-1234"></label>
       <label class="wide">Notes<textarea id="lgNotes" placeholder="rig, antenna, conditions…"></textarea></label>
     </div>
-    <div class="hint" style="margin:-2px 0 12px">RST for QSOs (e.g. 59 phone / 599 CW), or SINPO for SWL. Pre-filled from a spot — just confirm and save.</div>
+    <div class="hint" style="margin:-2px 0 12px">RST: 59 phone / 599 CW. SWL: use Sent for SINPO. Pre-filled from a spot — confirm and save.</div>
     <div class="btnrow">
       <button class="btn" id="lgSave">Save</button>
       <button class="btn ghost" id="lgCancel">Cancel</button>
@@ -747,14 +748,17 @@ function openLog(pre,idx){pre=pre||{};const d=new Date();
   document.getElementById("lgFreq").value=pre.freq||"";
   document.getElementById("lgMode").value=pre.mode||"";
   document.getElementById("lgStation").value=pre.station||"";
-  document.getElementById("lgSinpo").value=pre.rst||"";
+  document.getElementById("lgRstS").value=pre.rst||"";
+  document.getElementById("lgRstR").value=pre.rst_rcvd||"";
   document.getElementById("lgRef").value=pre.ref||"";
   document.getElementById("lgNotes").value=pre.notes||"";
   document.getElementById("logModal").hidden=false;}
 function saveLog(){
   const o={date:document.getElementById("lgDate").value.trim(),time:document.getElementById("lgTime").value.trim(),
     freq:document.getElementById("lgFreq").value.trim(),mode:document.getElementById("lgMode").value.trim(),
-    station:document.getElementById("lgStation").value.trim(),sinpo:document.getElementById("lgSinpo").value.trim(),
+    station:document.getElementById("lgStation").value.trim(),
+    rst_sent:document.getElementById("lgRstS").value.trim(),
+    rst_rcvd:document.getElementById("lgRstR").value.trim(),
     ref:document.getElementById("lgRef").value.trim(),notes:document.getElementById("lgNotes").value.trim(),created:Date.now()};
   if(!o.freq&&!o.station){toast("Add a frequency or station");return;}
   if(editIdx>=0){o.created=LOG[editIdx].created;LOG[editIdx]=o;}else{LOG.push(o);}
@@ -774,7 +778,9 @@ function renderLog(){
   if(!list.length){el.innerHTML='<div class="empty">No log entries yet.<br>Tap <b>log</b> on a listing, or <b>+ New entry</b>.</div>';return;}
   el.innerHTML=list.map(({o,i})=>{const realIdx=i;
     const badge=o.mode?'<span class="badge">'+esc(o.mode)+'</span>':'';
-    const meta=[esc(o.date)+' '+esc(o.time)+'Z',o.ref?esc(o.ref):'',o.sinpo?'RST '+esc(o.sinpo):'',o.notes?esc(o.notes):''].filter(Boolean).join(' · ');
+    const rstS=o.rst_sent||o.sinpo||"";const rstR=o.rst_rcvd||"";
+    const rstStr=rstS&&rstR?rstS+'/'+rstR:rstS?rstS:'';
+    const meta=[esc(o.date)+' '+esc(o.time)+'Z',o.ref?esc(o.ref):'',rstStr?'RST '+esc(rstStr):'',o.notes?esc(o.notes):''].filter(Boolean).join(' · ');
     return '<div class="row"><div class="freq">'+(o.freq?fmtFreq(+o.freq):"—")+'<span class="u">'+(o.freq?freqUnit(+o.freq):'kHz')+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(o.station||"(no station)")+badge+'</div>'+
     '<div class="meta">'+meta+'</div></div>'+
@@ -782,8 +788,8 @@ function renderLog(){
 }
 function exportLogCSV(){
   if(!LOG.length){toast("Log is empty");return;}
-  const rows=[["date_utc","time_utc","freq_khz","mode","station","reference","rst_sinpo","notes"]];
-  LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>rows.push([o.date,o.time,o.freq,o.mode||"",o.station,o.ref||"",o.sinpo,o.notes]));
+  const rows=[["date_utc","time_utc","freq_khz","mode","station","reference","rst_sent","rst_rcvd","notes"]];
+  LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>rows.push([o.date,o.time,o.freq,o.mode||"",o.station,o.ref||"",o.rst_sent||o.sinpo||"",o.rst_rcvd||"",o.notes]));
   const csv=rows.map(r=>r.map(c=>'"'+String(c||"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
   downloadBlob("skywave-log.csv",csv,"text/csv");
 }
@@ -807,7 +813,8 @@ function exportLogADIF(){
       tag("CALL",o.station),
       tag("FREQ",freqMHz),
       tag("MODE",mode),
-      tag("RST_SENT",o.sinpo),
+      tag("RST_SENT",o.rst_sent||o.sinpo||""),
+      tag("RST_RCVD",o.rst_rcvd||""),
       PREFS.call?tag("MY_CALL",PREFS.call):"",
       PREFS.call?tag("MY_GRIDSQUARE",toGrid(GEO.lat,GEO.lng)):"",
       isPota?tag("POTA_REF",ref):"",
@@ -1138,7 +1145,7 @@ document.addEventListener("click",ev=>{
     }
   } else if(a==="spotlog"){ logFromSpot(t); }
   else if(a==="editlog"){const i=+t.dataset.i,o=LOG[i];if(!o)return;
-    openLog({date:o.date,time:o.time,freq:o.freq,mode:o.mode,station:o.station,rst:o.sinpo,ref:o.ref,notes:o.notes},i);}
+    openLog({date:o.date,time:o.time,freq:o.freq,mode:o.mode,station:o.station,rst:o.rst_sent||o.sinpo||"",rst_rcvd:o.rst_rcvd||"",ref:o.ref,notes:o.notes},i);}
   else if(a==="dellog"){LOG.splice(+t.dataset.i,1);saveJSON(K.log,LOG);renderLog();toast("Deleted");}
   else if(a==="delmine"){delMine(+t.dataset.i);}
 });
