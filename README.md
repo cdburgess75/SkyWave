@@ -4,33 +4,58 @@ A communications-receiver-styled offline-first web app for shortwave listening a
 
 **Amber phosphor on black · Monospace · No build step · No dependencies**
 
+---
+
+## → [Try it live: cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)
+
+*Works on any device — install to your home screen from Safari (iOS) or Chrome (Android/desktop) for a full offline experience.*
+
+---
+
 ## What it is
 
-Five tabs:
+Six tabs across a bottom nav (mobile) or left sidebar (desktop ≥ 860 px):
+
 - **Listen** — broadcast schedule (On Air / Search / By Freq)
-- **Log** — Logbook / Favorites / My Frequencies
-- **Tools** — Antenna calculator / Grayline & band planner / Export & print
+- **Log** — logbook with ADIF & CSV export, Favorites, My Frequencies
 - **Spots** — live POTA & SOTA activations
+- **Tools** — antenna calculator, grayline & band planner, export & print
 - **Ref** — EiBi schedule update + band tables + code key
+- **Prop** — propagation charts + live planetary K-index
 
 ## How to use
 
-1. Open `index.html` in **Safari** (not an in-app browser preview)
-2. **Share → Add to Home Screen** to install as a full-screen app
-3. Everything offline works immediately
+1. Open the live link above in **Safari** or **Chrome** (not an in-app browser preview)
+2. **Share → Add to Home Screen** (iOS) or **Install app** (Chrome) for a full-screen PWA
+3. Everything offline works immediately — the app caches itself on first visit
 4. Live Spots and EiBi schedule updates require a connection
 
-> **Why Safari?** In-app webviews (e.g. Messages, Claude app) sandbox outbound `fetch`. Live data only works in real Safari or a hosted HTTPS deployment. The app will tell you if it detects this situation.
+> **Why a real browser?** In-app webviews (e.g. Messages, social apps) sandbox outbound `fetch`. Live data only works in real Safari/Chrome or the hosted HTTPS deployment. The app will tell you if it detects this situation.
 
-## Hosting (recommended)
+## Features
 
-Drop `index.html` on any static HTTPS host (GitHub Pages, Cloudflare Pages, Netlify). HTTPS is required for the future PWA / service-worker path.
+| Feature | Notes |
+|---------|-------|
+| Shortwave broadcast schedule | EiBi database, auto-updated, stored offline |
+| On-air now filter | Filters by language, band, or favorites in real time |
+| Logbook | UTC date/time, freq, mode, RST sent/rcvd, ref, notes |
+| ADIF export | ADIF 3.1.4 with `MY_CALL`, `MY_GRIDSQUARE`, POTA/SOTA refs |
+| CSV export | Spreadsheet-friendly, all log fields |
+| Callsign + grid | Stored in prefs; shown in header; feeds ADIF automatically |
+| Maidenhead grid | Computed from your GPS or manually entered lat/lng |
+| POTA spots | Live activator spots from pota.app |
+| SOTA spots | Live summit spots from sota.org.uk |
+| Antenna calculator | Half-wave dipole, quarter-wave vertical, full-wave loop |
+| Grayline planner | Sunrise/sunset + band-by-band propagation advice |
+| PWA / offline | Service worker + manifest; installs as standalone app |
+| Responsive | Bottom nav on mobile; left sidebar on desktop ≥ 860 px |
 
 ## Data sources
 
 - **EiBi shortwave schedule** — © Eike Bierwirth, free to copy & distribute. [eibispace.de](http://www.eibispace.de)
 - **POTA spots** — [pota.app](https://pota.app) public API
 - **SOTA spots** — [sota.org.uk](https://www.sota.org.uk) public API
+- **NOAA K-index** — [SWPC JSON API](https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json) (CORS-open)
 
 Please respect each source's terms: don't poll faster than ~60 s, identify politely.
 
@@ -49,7 +74,7 @@ See `HANDOFF.md` for full architecture, data-source contracts, coding convention
 
 ## Version
 
-Current: **v0.6** — spot → prefilled log, Mode + Reference log fields, CSV export with those columns.
+Current: **v2026.06.04** — CalVer. Bottom nav (mobile) + sidebar (desktop), callsign/grid header, ADIF export, live K-index, PWA.
 
 ## License
 
