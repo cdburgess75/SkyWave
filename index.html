@@ -149,6 +149,13 @@
 
   footer{margin-top:16px;font-size:9.5px;color:var(--ink-dim);line-height:1.7;text-align:center;}
   footer a{color:var(--amber-dim);}
+  .proptiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+  .proptile{display:block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;text-decoration:none;color:var(--ink);}
+  .proptile:active{border-color:var(--amber-dim);}
+  .proptile-name{font-size:13px;font-weight:700;color:var(--amber);letter-spacing:.06em;margin-bottom:3px;}
+  .proptile-desc{font-size:10px;color:var(--ink-dim);line-height:1.4;}
+  .propimg{width:100%;border-radius:6px;display:block;background:var(--panel2);}
+  .propimgwrap{display:block;text-decoration:none;}
 
   #printArea{display:none;}
   @media print{
@@ -177,6 +184,7 @@
       <button data-tab="tools">Tools</button>
       <button data-tab="spots">Spots</button>
       <button data-tab="ref">Ref</button>
+      <button data-tab="prop">Prop</button>
     </nav>
   </header>
 
@@ -368,6 +376,60 @@
       Schedule data: EiBi Shortwave Schedules by Eike Bierwirth — <a href="http://www.eibispace.de/">eibispace.de</a> · free to copy &amp; distribute.<br>
       Times UTC. On-air status &amp; grayline computed from your device clock &amp; coordinates. Built for offline field use.
     </footer>
+  </section>
+
+  <!-- ============ PROP ============ -->
+  <section id="tab-prop" hidden>
+    <div id="propStatus" class="hint" style="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);text-align:center;"></div>
+
+    <div class="card">
+      <h3>◆ Solar conditions <small>HamQSL · N0NBH / K4HG</small></h3>
+      <a class="propimgwrap" href="https://www.hamqsl.com/solar.html" target="_blank" rel="noopener">
+        <img class="propimg" src="https://www.hamqsl.com/solar101pic.php" alt="Solar conditions widget"
+             onerror="this.style.opacity='.3'">
+      </a>
+      <div class="hint" style="margin-top:8px">Solar flux (SFI), A &amp; K index, HF band conditions. Updates every ~5 min. Tap to open full page.</div>
+    </div>
+
+    <div class="card">
+      <h3>◆ Planetary K-index <small>NOAA SWPC</small></h3>
+      <a class="propimgwrap" href="https://www.swpc.noaa.gov/products/planetary-k-index" target="_blank" rel="noopener">
+        <img class="propimg" src="https://services.swpc.noaa.gov/images/planetary-k-index.gif" alt="Planetary K-index 3-day plot"
+             onerror="this.style.opacity='.3'">
+      </a>
+      <div class="hint" style="margin-top:8px">3-day planetary K-index. K ≤ 2 quiet / excellent; K 3–4 unsettled; K ≥ 5 HF degraded, aurora possible.</div>
+    </div>
+
+    <div class="card">
+      <h3>◆ Live tools &amp; maps</h3>
+      <div class="proptiles">
+        <a class="proptile" href="https://prop.kc2g.com/" target="_blank" rel="noopener">
+          <div class="proptile-name">Proppy</div>
+          <div class="proptile-desc">HF point-to-point predictions — W6ELA</div>
+        </a>
+        <a class="proptile" href="https://www.voacap.com/hf/" target="_blank" rel="noopener">
+          <div class="proptile-name">VOACAP</div>
+          <div class="proptile-desc">Long-path coverage predictions</div>
+        </a>
+        <a class="proptile" href="https://grayline.info/" target="_blank" rel="noopener">
+          <div class="proptile-name">Grayline</div>
+          <div class="proptile-desc">Live solar terminator world map</div>
+        </a>
+        <a class="proptile" href="https://websdr.org/" target="_blank" rel="noopener">
+          <div class="proptile-name">WebSDR</div>
+          <div class="proptile-desc">Online shortwave receivers worldwide</div>
+        </a>
+        <a class="proptile" href="https://www.swpc.noaa.gov/products/aurora-30-minute-forecast" target="_blank" rel="noopener">
+          <div class="proptile-name">Aurora</div>
+          <div class="proptile-desc">30-min forecast — NOAA SWPC</div>
+        </a>
+        <a class="proptile" href="https://dxheat.com/dxc/" target="_blank" rel="noopener">
+          <div class="proptile-name">DX Cluster</div>
+          <div class="proptile-desc">Live DX spots — DXHeat</div>
+        </a>
+      </div>
+      <div class="hint" style="margin-top:10px">All links open in your browser. For offline band advice, see the <b style="color:var(--ink)">Tools</b> tab — grayline and band planner work without a connection.</div>
+    </div>
   </section>
 
   <div id="printArea"></div>
@@ -1016,11 +1078,22 @@ function updateDbStat(){const el=document.getElementById("dbstat");
 function showClear(){document.getElementById("clearBtn").hidden=!haveEibi;}
 
 /* ============ navigation ============ */
+function renderProp(){
+  const el=document.getElementById("propStatus");if(!el)return;
+  if(navigator.onLine){
+    el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--green-dim);background:rgba(57,255,122,.06);color:var(--green);font-size:10.5px;letter-spacing:.06em;text-align:center;";
+    el.textContent="● Online — live data";
+  } else {
+    el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);font-size:10.5px;letter-spacing:.04em;text-align:center;";
+    el.innerHTML="⚠ Offline — images and links need a connection. Offline band advice is on the <b style='color:var(--ink)'>Tools</b> tab.";
+  }
+}
 function showTab(name){
   document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
-  ["listen","log","tools","spots","ref"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
+  ["listen","log","tools","spots","ref","prop"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
   if(name==="tools")renderGray();
   if(name==="spots")openSpots();
+  if(name==="prop")renderProp();
 }
 function showSub(group,sub){
   document.querySelectorAll("#seg-"+group+" button").forEach(b=>b.classList.toggle("on",b.dataset.sub===sub));
@@ -1111,8 +1184,8 @@ document.getElementById("clearBtn").addEventListener("click",()=>{
   EIBI=[];haveEibi=false;META=null;rebuildData();updateDbStat();showClear();renderLastUpd();umsg("Cleared. Reference data still available offline.","warn");});
 function selectedSeason(){const s=document.getElementById("seasonSel");return(s.value&&s.value!=="auto")?s.value:seasonCode();}
 function syncEibiLink(){const a=document.getElementById("eibiLink"),c=selectedSeason();a.href="http://www.eibispace.de/dx/sked-"+c+".csv";a.textContent="sked-"+c+".csv";}
-window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)refreshSpots();if(PREFS.autoUpd&&(!haveEibi||(META&&Date.now()-META.ts>STALE_DAYS*dayMs)))doUpdate({silent:true});});
-window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)renderSpots();});
+window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)refreshSpots();if(!document.getElementById("tab-prop").hidden)renderProp();if(PREFS.autoUpd&&(!haveEibi||(META&&Date.now()-META.ts>STALE_DAYS*dayMs)))doUpdate({silent:true});});
+window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)renderSpots();if(!document.getElementById("tab-prop").hidden)renderProp();});
 
 /* ============ boot ============ */
 rebuildFavSet();
