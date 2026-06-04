@@ -1680,6 +1680,7 @@ EIBI=[];rebuildData();
 try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);
   const cached=localStorage.getItem(K.raw);if(cached)loadText(cached);}catch(e){}
 renderLastUpd();updateDbStat();renderLog();calcAnt();renderGray();renderIdent();
+if(!document.fullscreenEnabled)document.getElementById("kioskBtn").hidden=true;
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 renderRail();
