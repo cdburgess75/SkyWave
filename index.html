@@ -234,6 +234,7 @@
       <div class="btnrow">
         <button class="btn sm" id="newLog">+ New entry</button>
         <button class="btn ghost sm" id="expLog">Export CSV</button>
+        <button class="btn ghost sm" id="expAdif">Export ADIF</button>
       </div>
       <div class="count" id="logCount"></div>
       <div class="rows" id="logRows"></div>
@@ -442,7 +443,7 @@ function keyOf(e){return e.freq+"|"+(e.station||"")+"|"+(e.time||"");}
 function makeMine(o){const e=entry(o.freq,o.time,o.days,"",o.station,o.lang,o.target,"","mine");e.mode=o.mode||"";e.notes=o.notes||"";return e;}
 function buildBase(){const a=[];TIME.forEach(r=>a.push(entry(r[0],"0000-2400","",r[1],r[2],r[3],r[4],"time/freq standard","ref")));
   MINE.forEach(o=>a.push(makeMine(o)));return a;}
-function rebuildData(){DATA=buildBase().concat(EIBI);rebuildFilters();refreshAll();}
+function rebuildData(){DATA=buildBase().concat(EIBI);DATA.forEach(e=>{e._blob=(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();});rebuildFilters();refreshAll();}
 
 /* ============ EiBi parsing ============ */
 function parseEibi(text){
@@ -628,7 +629,7 @@ function refreshFreq(){
   list.sort((a,b)=>(onAir(b)-onAir(a))||Math.abs(a.freq-k)-Math.abs(b.freq-k));
   renderRows("freqRows",list,"freqCount","near "+fmtFreq(k)+" kHz (±"+tol+")");
 }
-function blob(e){return(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();}
+function blob(e){return e._blob||(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();}
 function refreshAll(){refreshNow();refreshSearch();refreshFreq();renderStars();renderMine();}
 
 /* ============ filters ============ */
@@ -685,10 +686,10 @@ function logFromSpot(t){
 }
 function renderLog(){
   const el=document.getElementById("logRows");
-  const list=LOG.slice().sort((a,b)=>b.created-a.created);
+  const list=LOG.map((o,i)=>({o,i})).sort((a,b)=>b.o.created-a.o.created);
   document.getElementById("logCount").innerHTML=list.length?'<b>'+list.length+'</b> entries':"";
   if(!list.length){el.innerHTML='<div class="empty">No log entries yet.<br>Tap <b>log</b> on a listing, or <b>+ New entry</b>.</div>';return;}
-  el.innerHTML=list.map((o,idx)=>{const realIdx=LOG.indexOf(o);
+  el.innerHTML=list.map(({o,i})=>{const realIdx=i;
     const badge=o.mode?'<span class="badge">'+esc(o.mode)+'</span>':'';
     const meta=[esc(o.date)+' '+esc(o.time)+'Z',o.ref?esc(o.ref):'',o.sinpo?'RST '+esc(o.sinpo):'',o.notes?esc(o.notes):''].filter(Boolean).join(' · ');
     return '<div class="row"><div class="freq">'+(o.freq?fmtFreq(+o.freq):"—")+'<span class="u">'+(o.freq?freqUnit(+o.freq):'kHz')+'</span></div>'+
@@ -702,6 +703,36 @@ function exportLogCSV(){
   LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>rows.push([o.date,o.time,o.freq,o.mode||"",o.station,o.ref||"",o.sinpo,o.notes]));
   const csv=rows.map(r=>r.map(c=>'"'+String(c||"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
   downloadBlob("skywave-log.csv",csv,"text/csv");
+}
+function exportLogADIF(){
+  if(!LOG.length){toast("Log is empty");return;}
+  function tag(name,val){const s=String(val||"").trim();return s?"<"+name+":"+s.length+">"+s:"";}
+  const lines=["<ADIF_VER:5>3.1.4","<PROGRAMID:7>SKYWAVE","<EOH>",""];
+  LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>{
+    const date=(o.date||"").replace(/-/g,"");
+    const time=String(o.time||"").replace(/\D/g,"").padStart(4,"0").slice(0,4);
+    const freqMHz=o.freq?(+o.freq/1000).toFixed(6):"";
+    // Normalize mode: USB/LSB stay as-is; DATA/DIG/DIGI → MFSK as a safe ADIF fallback
+    const mode=(o.mode||"").toUpperCase().replace(/^DIG(I)?$/,"MFSK").replace(/^DATA$/,"MFSK");
+    // Detect POTA (e.g. US-1234) vs SOTA (e.g. W5/LO-001) from the Reference field
+    const ref=(o.ref||"").trim();
+    const isSota=ref.includes("/");
+    const isPota=!isSota&&/^[A-Z]{1,6}-\d+$/i.test(ref);
+    const qso=[
+      tag("QSO_DATE",date),
+      tag("TIME_ON",time),
+      tag("CALL",o.station),
+      tag("FREQ",freqMHz),
+      tag("MODE",mode),
+      tag("RST_SENT",o.sinpo),
+      isPota?tag("POTA_REF",ref):"",
+      isSota?tag("SOTA_REF",ref):"",
+      tag("COMMENT",o.notes),
+      "<EOR>"
+    ].filter(Boolean).join("");
+    if(qso!=="<EOR>")lines.push(qso);
+  });
+  downloadBlob("skywave-log.adi",lines.join("\r\n"),"text/plain");
 }
 
 /* ============ my frequencies ============ */
@@ -987,7 +1018,7 @@ document.addEventListener("click",ev=>{
     const o={freq:+t.dataset.f,station:t.dataset.st,time:t.dataset.tm,lang:t.dataset.lg,target:t.dataset.tg,itu:t.dataset.it,days:""};
     if(a==="fav")toggleFav(o);
     else{
-      const notes=[o.itu,langName(o.lg||t.dataset.lg),tgtName(o.target)].filter(Boolean).join(" · ");
+      const notes=[o.itu,langName(o.lang),tgtName(o.target)].filter(Boolean).join(" · ");
       openLog({title:"◆ Log "+(o.station||fmtFreq(o.freq)),freq:o.freq,station:o.station,
         mode:t.dataset.md||(o.freq<26100&&o.freq>2300?"AM":""),notes:notes});
     }
@@ -999,6 +1030,7 @@ document.addEventListener("click",ev=>{
 // log modal
 document.getElementById("newLog").addEventListener("click",()=>openLog());
 document.getElementById("expLog").addEventListener("click",exportLogCSV);
+document.getElementById("expAdif").addEventListener("click",exportLogADIF);
 document.getElementById("lgSave").addEventListener("click",saveLog);
 document.getElementById("lgCancel").addEventListener("click",()=>document.getElementById("logModal").hidden=true);
 document.getElementById("logModal").addEventListener("click",ev=>{if(ev.target.id==="logModal")document.getElementById("logModal").hidden=true;});
