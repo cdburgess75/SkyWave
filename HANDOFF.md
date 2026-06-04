@@ -2,7 +2,7 @@
 
 **Project:** SKYWAVE · Shortwave Band Guide (offline-first PWA-style single-file web app)
 **Artifact:** `index.html`
-**Version at handoff:** v0.6
+**Version:** v2026.06.04 (CalVer: `YYYY.MM.DD`, `.002` suffix for same-day releases)
 **Date:** June 2026
 **Primary user / owner:** Dave — licensed amateur operator (IC-7300), SWL/DX, Loranger LA. Army Signal Corps background. Thinks in UTC.
 **Purpose of this doc:** Hand the project to Claude Code (and a Git repo) with enough detail that a fresh agent can extend it safely without re-reverse-engineering anything.
@@ -11,12 +11,13 @@
 
 ## 0. TL;DR for the next agent (read this first)
 
-- It is **one self-contained HTML file**. No build step, no framework, no external JS/CSS. ~72 KB.
+- It is **one self-contained HTML file**. No build step, no framework, no external JS/CSS. ~85 KB.
 - **Vanilla JS in `"use strict"`**, all inside a single `<script>` at the bottom of the file.
-- **Offline-first is the prime directive.** Everything except live network features (EiBi auto-update, POTA/SOTA spots) must work with the radio off and the phone in airplane mode.
+- **`const VERSION="2026.06.04"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.002` for a same-day release.
+- **Offline-first is the prime directive.** Everything except live network features (EiBi auto-update, POTA/SOTA spots, Propagation tab content) must work with the radio off and the phone in airplane mode.
 - **State persists in `localStorage`** under `skywave_*` keys (see §6). All access is wrapped in `try/catch`.
 - **Dynamic rows use event delegation** from `document` on `[data-act]` attributes; row payloads ride in `data-*` attributes (escaped via `attr()`).
-- **To test:** Node + jsdom smoke harness (see §9). There is no in-repo test suite yet — adding one is roadmap item R4.
+- **To test:** `node test/smoke.mjs` — Node + jsdom smoke harness (see §9). All three checks must pass.
 - **Do not** add third-party libraries, break the single-file model, or introduce `localStorage` usage that isn't `try/catch`-guarded, unless you are deliberately executing the PWA refactor (R2).
 - **Known sharp edge:** live features fail inside in-app browsers (e.g. the Claude app preview) because those webviews block `fetch`. The app now detects/explains this. Real Safari (or any hosted HTTPS deploy) is required for live data.
 
@@ -26,15 +27,18 @@
 
 A communications-receiver-styled (amber phosphor on black, monospace) reference + logging tool for shortwave listening and ham field operation. Think "TV Guide for shortwave" plus an operating logbook plus field tools.
 
-Five top-level tabs:
+Six top-level tabs:
 
 1. **Listen** — the broadcast schedule (On Air / Search / By Freq)
 2. **Log** — operating layer (Logbook / Favorites / My Freq)
 3. **Tools** — Antenna calculator / Grayline & band planner / Export & print
 4. **Spots** — live POTA & SOTA activations
-5. **Ref** — schedule update/load + band tables + code key
+5. **Ref** — schedule update/load + station settings + band tables + code key
+6. **Prop** — online-only propagation resources (solar widget, K-index, curated link tiles)
 
 Two-level navigation: top tab bar, plus a segmented sub-control on tabs that hold genuinely distinct lists (Listen, Log) and a program toggle on Spots (POTA/SOTA).
+
+The **header** shows the brand name, UTC/local clocks, dbstat (entry count + version), and an ident row (`#hdrCall` / `#hdrGrid`) that displays the operator callsign and computed Maidenhead grid square whenever both are configured.
 
 ---
 
@@ -66,12 +70,13 @@ Drop the file on any static HTTPS host (GitHub Pages, Cloudflare Pages, Netlify,
   <style>  ... all CSS (CSS custom props in :root) ...
 <body>
   <div class="wrap">
-    <header> brand + UTC/local clocks + dbstat + nav.tabs
+    <header> brand + ident row (#hdrCall / #hdrGrid) + UTC/local clocks + dbstat + nav.tabs
     <section id="tab-listen"> seg + sub-now / sub-search / sub-freq
     <section id="tab-log">    seg + sub-logbook / sub-stars / sub-mine
     <section id="tab-tools">  antenna card / grayline card / export card
     <section id="tab-spots">  seg(POTA/SOTA) + chips + filter + rows
-    <section id="tab-ref">    loadbox(update) + band tables + code key
+    <section id="tab-ref">    stationCard (callsign + grid hint) + loadbox(update) + band tables + code key
+    <section id="tab-prop">   propStatus banner + solar widget card + K-index card + link tiles
     <div id="printArea">      (hidden; filled on demand for print)
   <div class="modal" id="logModal"> log entry sheet
   <div class="toast" id="toast">
@@ -114,10 +119,11 @@ Intentional for portability. The cost is that testing/diffing is whole-file. Ref
 
 ### 4.2 Log
 
-- **Logbook** (`renderLog`, `openLog`, `saveLog`): entries stored in `LOG[]`. Modal fields: Date(UTC), Time(UTC), Freq, **Mode**, Station/call, **RST/SINPO**, **Reference**, Notes. `+ New entry` and `Export CSV`.
+- **Logbook** (`renderLog`, `openLog`, `saveLog`, `closeLog`): entries stored in `LOG[]`. Modal fields: Date(UTC), Time(UTC), Freq, Mode, Station/call, **RST Sent**, **RST Rcvd**, Reference, Notes. `editIdx` state variable tracks edit vs new mode. Pencil icon (`data-act="editlog"`) opens modal pre-filled; Save label becomes Update; edit saves in-place preserving `created` timestamp.
 - **Favorites** (`toggleFav`, `renderStars`): star any listing; `FAVS[]` stores enough to re-render and recompute on-air. Favorites that are on the air are highlighted.
 - **My Freq** (`addMine`, `renderMine`, `delMine`): user custom frequencies merged into `DATA` (src `"mine"`, amber left-bar). `+ Add LA regional example set` seeds 3.856/7.256/14.156 (editable/deletable).
-- **CSV export** (`exportLogCSV`): columns `date_utc, time_utc, freq_khz, mode, station, reference, rst_sinpo, notes`.
+- **CSV export** (`exportLogCSV`): columns `date_utc, time_utc, freq_khz, mode, station, reference, rst_sent, rst_rcvd, notes`.
+- **ADIF export** (`exportLogADIF`): ADIF 3.1.4 `.adi` download. Fields: `QSO_DATE, TIME_ON, CALL, FREQ(MHz), MODE, RST_SENT, RST_RCVD, MY_CALL, MY_GRIDSQUARE, POTA_REF` or `SOTA_REF`, `COMMENT`. `POTA_REF` detection: ref matches `/^[A-Z]{1,6}-\d+$/i` (no slash). `SOTA_REF` detection: ref contains `/`. Old entries with `sinpo` field read via `o.rst_sent || o.sinpo` fallback.
 
 ### 4.3 Tools
 
@@ -139,8 +145,19 @@ Intentional for portability. The cost is that testing/diffing is whole-file. Ref
 
 ### 4.5 Ref
 
+- **Station settings card** (`#stationCard`): callsign input (`#callIn`) + Save button; persists to `PREFS.call`. `#gridHint` div shows computed 6-char Maidenhead grid with optional place label. Updated whenever GEO changes.
 - **EiBi update** (`doUpdate`, `fetchSchedule`, `seasonCode`, `seasonList`): one-tap update, season auto-detect, manual season override, manual file load fallback, auto-update-on-launch toggle, "last updated / stale" indicator, network dot.
 - **Reference tables**: SW broadcast meter bands, US amateur HF bands, time/frequency standards, language & target-area code key.
+
+### 4.6 Propagation (online-only)
+
+`renderProp()` is called when the Prop tab is shown. When online it shows a green banner; when offline it shows an amber warning with a pointer to the offline band advice on the Tools tab. No state is stored; no data is fetched by the app itself — all content is image tiles and external links.
+
+- **Solar widget** (`#solarImg`): `<img>` from `hamqsl.com/solar.gif` (designed for embedding; no X-Frame-Options issue).
+- **K-index** (`#kIdx`): `<img>` from NOAA SWPC `planetary_k_index.gif`.
+- **Link tiles**: Proppy (online MUF tool), VOACAP online, interactive grayline map, WebSDR directory, aurora activity, DX cluster. All open in a new tab.
+
+**Important:** this tab is flagged "needs connection." Do not add cached/offline fallbacks here — keep the offline story clean and explicit.
 
 ---
 
@@ -180,7 +197,7 @@ All keys defined in the `K` object. All reads/writes via `loadJSON`/`saveJSON` (
 | `skywave_eibi_raw_v1`  | string (raw CSV)                                                  | cached only if <4.5 MB |
 | `skywave_eibi_meta_v1` | `{code, ts, count}`                                               | freshness/season display |
 | `skywave_favs_v1`      | `[{freq, station, time, lang?, target?, itu?}]`                   | favorites              |
-| `skywave_log_v1`       | `[{date, time, freq, mode, station, sinpo, ref, notes, created}]` | logbook                |
+| `skywave_log_v1`       | `[{date, time, freq, mode, station, rst_sent, rst_rcvd, ref, notes, created}]` | logbook — old entries may have `sinpo` instead; read via `o.rst_sent\|\|o.sinpo` |
 | `skywave_mine_v1`      | `[{freq, mode, station, time, days, lang, target, notes}]`        | user frequencies       |
 | `skywave_geo_v1`       | `{lat, lng, label}`                                               | grayline location      |
 | `skywave_prefs_v1`     | `{autoUpd, call}`                                                 | preferences (`call` = operator callsign, blank default) |
@@ -201,9 +218,15 @@ All keys defined in the `K` object. All reads/writes via `loadJSON`/`saveJSON` (
 - If wraps midnight (`start > end`): evening portion checked against today's weekday; post-midnight against yesterday's weekday (EiBi day codes refer to the *start* day).
 - Day-of-week via `dayAllowed(daysStr)` → returns a `Set` of EiBi weekday numbers (1=Mon … 7=Sun) or `null` (= all days). **Permissive**: irregular/complex codes (`1.Sa`, `Last7`, `irr`, `alt`, …) return `null` so the entry is *shown* rather than wrongly hidden.
 
-### Season detection — `seasonCode(date)`
+### Season detection — `seasonCode(date)` + `lastSun(y, mo)`
 
-See §5.1. `seasonList()` returns the current code plus neighbours for the manual override dropdown.
+`lastSun(y, mo)` returns the UTC date number of the last Sunday of a given month (0-indexed). Used to compute the true ITU summer/winter schedule boundaries: last Sunday of March (start of `a` season) and last Sunday of October (start of `b` season). Earlier versions used hardcoded `day>=29` / `day<26` — the `lastSun` helper replaced those.
+
+`seasonList()` returns the current code plus neighbours for the manual override dropdown.
+
+### Callsign & Maidenhead grid — `toGrid(lat, lng)` + `renderIdent()`
+
+`toGrid` computes a 6-character Maidenhead locator (e.g. `EM40ab`) from decimal lat/lng. Fully offline, no deps. Called from `renderIdent()`, which writes to `#hdrCall` and `#hdrGrid` in the header and updates `#gridHint` in the Ref station card. Called at boot, after `saveGeo()`, after geolocation fix, and after callsign save.
 
 ### Solar / grayline — `sunTimes(date, lat, lng)`
 
@@ -230,44 +253,28 @@ Loop candidate URLs × `relays()`; first response that parses and passes a sanit
 
 ## 9. Testing (current approach + how to formalize)
 
-There is **no committed test suite yet** (Compromise C11). During development we used Node + jsdom smoke tests. Reproduce like this:
+The smoke harness lives at `test/smoke.mjs` and runs 3 checks:
+
+1. **Syntax** — `new Function(js)` on the extracted script block.
+2. **getElementById coverage** — every `getElementById("x")` call in the script must have a matching `id="x"` in the HTML.
+3. **jsdom boot** — the app initialises without throwing; key elements are present.
+
+Run it:
 
 ```bash
-npm i -D jsdom
+npm i -D jsdom   # one-time setup
+node test/smoke.mjs
 ```
+
+**jsdom localStorage note:** newer jsdom exposes `localStorage` as a getter-only property. The harness uses `Object.defineProperty` to inject a stub rather than direct assignment:
 
 ```js
-// test/smoke.mjs  — run: node test/smoke.mjs
-import fs from "node:fs";
-import { JSDOM, VirtualConsole } from "jsdom";
-
-const html = fs.readFileSync("index.html", "utf8");
-const js = html.split("<script>")[1].split("</script>")[0];
-
-// 1) syntax
-new Function(js); // throws on syntax error
-
-// 2) every getElementById has a matching id=""
-const ids = [...js.matchAll(/getElementById\(["']([^"']+)["']\)/g)].map(m => m[1]);
-const present = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]));
-const missing = [...new Set(ids)].filter(id => !present.has(id));
-if (missing.length) throw new Error("Missing IDs: " + missing);
-
-// 3) boot + flows in jsdom (stub localStorage, mock fetch, assert on DOM)
-const vc = new VirtualConsole();
-const dom = new JSDOM(html, {
-  runScripts: "dangerously", pretendToBeVisual: true, virtualConsole: vc,
-  beforeParse(w) {
-    w.localStorage = (() => { let s = {}; return {
-      getItem: k => k in s ? s[k] : null, setItem: (k,v)=>{s[k]=String(v)},
-      removeItem: k => { delete s[k] }, clear: () => { s = {} } }; })();
-    Object.defineProperty(w.navigator, "onLine", { value: true, configurable: true });
-    w.fetch = (url) => Promise.resolve({ ok: true, text: () => Promise.resolve("[]") });
-    w.print = () => {}; w.URL.createObjectURL = () => "x"; w.URL.revokeObjectURL = () => {};
-  }
+Object.defineProperty(w, "localStorage", {
+  value: store, configurable: true
 });
-// then: dom.window.document...click()/dispatchEvent and assert innerHTML
 ```
+
+Direct assignment (`w.localStorage = ...`) throws `TypeError: Cannot set property localStorage … which has only a getter` in newer jsdom.
 
 **Pure functions worth unit-testing first** (refactor them to be importable in R4): `seasonCode`, `dayAllowed`, `onAir`, `parseTime`, `sunTimes`, `normPota`, `normSota`, `parseEibi`, the antenna math.
 
@@ -294,31 +301,35 @@ const dom = new JSDOM(html, {
 
 ## 11. Changelog
 
+See `CHANGELOG.md` for the full version history. Summary:
+
 - **v0.1** — Initial offline guide: manual EiBi CSV load; On Air / Search / By Freq / Bands; built-in time-standard stations + band reference.
-- **v0.2** — Online EiBi auto-update: season auto-detect, relay fallback, offline cache, last-updated/stale indicator, auto-update-on-launch toggle.
-- **v0.3** — Major expansion: **Listen / Log / Tools / Ref** with sub-navigation. Day-of-week accuracy, mode badges, quick chips; **Logbook + Favorites + My Freq**; **antenna calculator**; **grayline/band planner**; **export/print**.
-- **v0.4** — **Spots tab**: live POTA & SOTA via relay fallback, caching, mode/text filters, auto-refresh, stale fading.
-- **v0.5** — In-app-browser awareness: clear "open in Safari" guidance on fetch failure; status-aware empty states.
-- **v0.6 (current)** — **Spot → prefilled log** (whole-row tap → one-confirm save). Log schema gains **Mode** + **Reference**; CSV export gains those columns; unified logging entry points; consolidation pass.
+- **v0.2** — Online EiBi auto-update: season auto-detect, relay fallback, offline cache, stale indicator, auto-update toggle.
+- **v0.3** — Major expansion: Listen / Log / Tools / Ref with sub-navigation; Logbook + Favorites + My Freq; antenna calculator; grayline/band planner; export/print.
+- **v0.4** — Spots tab: live POTA & SOTA, relay fallback, caching, mode/text filters, auto-refresh, stale fading.
+- **v0.5** — In-app-browser awareness; status-aware empty states.
+- **v0.6** — Spot → prefilled log; log schema gains Mode + Reference; unified logging entry points.
+- **v2026.06.04 (current)** — ADIF export (R1); log entry edit (R1b); RST sent/received split (R1c); callsign + Maidenhead grid (header + ADIF); Propagation tab; CalVer `VERSION` constant in ADIF and dbstat; `seasonCode()` fix via `lastSun()` helper.
 
 ---
 
 ## 12. Revision roadmap
 
-**Milestone: Logging polish (v0.7)**
-- **R1 — ADIF export.** Add an ADIF (`.adi`) export alongside CSV so hunts import straight into POTA/SOTA/LoTW/QRZ. Map: `QSO_DATE, TIME_ON, FREQ(MHz), MODE, CALL, RST_SENT, SIG_INFO`/`MY_SIG`/`POTA_REF`/`SOTA_REF`, `COMMENT`. *Highest value-per-effort.*
-- **R1b — Logbook edit** (currently delete-only) and **RST sent/received split**.
+**Milestone: Logging polish — ✅ DONE (v2026.06.04)**
+- ✅ **R1 — ADIF export.** ADIF 3.1.4 `.adi` download; POTA_REF / SOTA_REF auto-detect; MY_CALL / MY_GRIDSQUARE from station settings.
+- ✅ **R1b — Logbook edit.** In-place edit via pencil icon; `editIdx` state; Save → Update.
+- ✅ **R1c — RST sent/received split.** Two separate fields; backward-compat fallback on old `sinpo` entries.
 
-**Milestone: Durable offline / installable (v0.8)**
-- **R2 — PWA.** Add `manifest.webmanifest` + service worker. Requires HTTPS hosting.
-- **R3 — IndexedDB for the schedule.** Move EiBi raw/parsed data out of `localStorage`.
+**Milestone: Durable offline / installable (next)**
+- **R2 — PWA.** Add `manifest.webmanifest` + service worker. Requires HTTPS hosting. Solves iOS ITP storage eviction (C13).
+- **R3 — IndexedDB for the schedule.** Move EiBi raw/parsed data out of `localStorage` (C4).
 
-**Milestone: Maintainability (v0.9)**
-- **R4 — Modularize + build + tests.** ES modules + esbuild/vite still emitting one file; Vitest unit tests for pure functions.
-- **R5 — Schema versioning/migration.**
+**Milestone: Maintainability**
+- **R4 — Modularize + build + tests.** ES modules + esbuild/vite still emitting one file; Vitest unit tests for the pure functions listed in §9.
+- **R5 — Schema versioning/migration.** Formal migration path when a key bump is needed (C6).
 
-**Milestone: Reliability & features (v1.0)**
-- **R6 — Self-hosted CORS relay** (Cloudflare Worker).
-- **R7 — Spot extras:** distance/bearing, audible alert, band-mode quick filters.
-- **R8 — Accessibility pass.**
+**Milestone: Reliability & features**
+- **R6 — Self-hosted CORS relay** (Cloudflare Worker). Eliminates dependency on public relays (C1).
+- **R7 — Spot extras:** distance/bearing from GEO, audible alert, band-mode quick filters.
+- **R8 — Accessibility pass** (C12).
 - **R9 — Embedded font** (optional).
