@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Skywave">
+<meta name="theme-color" content="#0c0b09">
+<title>SKYWAVE · Shortwave Band Guide</title>
+<style>
+  :root{
+    --bg:#0c0b09;--panel:#16140f;--panel2:#1d1a13;--line:#2c281d;
+    --amber:#ffb000;--amber-dim:#a8742a;--green:#39ff7a;--green-dim:#1d7a3c;
+    --ink:#e9dcc0;--ink-dim:#8c7f63;--red:#ff5d3b;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--mono);}
+  body{min-height:100vh;
+    background-image:radial-gradient(120% 80% at 50% -10%,#1a1812 0%,#0c0b09 60%),
+      repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 3px);
+    padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 14px 96px;}
+
+  header{position:sticky;top:0;z-index:30;margin:0 -14px 12px;padding:14px 16px 10px;
+    padding-top:max(14px,env(safe-area-inset-top));
+    background:linear-gradient(180deg,#14120c,#100e0a);border-bottom:1px solid var(--line);
+    box-shadow:0 6px 18px rgba(0,0,0,.5);}
+  .brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .brand h1{font-size:17px;letter-spacing:.42em;margin:0;color:var(--amber);font-weight:700;text-shadow:0 0 12px rgba(255,176,0,.35);}
+  .brand .sub{font-size:9.5px;letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;}
+  .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;}
+  .clock{display:flex;flex-direction:column;gap:1px;}
+  .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
+  .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--amber);text-shadow:0 0 10px rgba(255,176,0,.45);}
+  .clock.local .val{font-size:16px;color:var(--ink);text-shadow:none;}
+  .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);max-width:42%;}
+  .dbstat b{color:var(--green);font-weight:600;}
+
+  nav.tabs{display:flex;gap:6px;margin-top:12px;}
+  nav.tabs button{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;padding:9px 4px;border-radius:7px;cursor:pointer;text-transform:uppercase;transition:.15s;}
+  nav.tabs button.on{background:var(--panel2);color:var(--amber);border-color:var(--amber-dim);
+    box-shadow:inset 0 0 0 1px rgba(255,176,0,.15),0 0 10px rgba(255,176,0,.08);}
+
+  .seg{display:flex;gap:5px;margin:2px 0 12px;}
+  .seg button{flex:1;background:transparent;border:1px solid var(--line);color:var(--ink-dim);
+    font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:8px 4px;border-radius:6px;cursor:pointer;text-transform:uppercase;}
+  .seg button.on{color:var(--green);border-color:var(--green-dim);background:rgba(57,255,122,.06);}
+
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 11px;}
+  .chip{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
+    font-size:10.5px;letter-spacing:.08em;padding:6px 11px;border-radius:20px;cursor:pointer;}
+  .chip.on{color:#1a1206;background:var(--amber);border-color:var(--amber);font-weight:700;}
+
+  .ctrl{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 11px;}
+  input[type=text],input[type=search],input[type=number],select,textarea{
+    background:var(--panel);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);
+    font-size:14px;padding:10px 12px;border-radius:8px;outline:none;flex:1;min-width:0;}
+  input:focus,select:focus,textarea:focus{border-color:var(--amber-dim);box-shadow:0 0 0 2px rgba(255,176,0,.12);}
+  select{flex:0 0 auto;font-size:12px;}
+  textarea{width:100%;resize:vertical;min-height:54px;}
+  .hint{font-size:10.5px;color:var(--ink-dim);line-height:1.6;letter-spacing:.03em;}
+  .count{font-size:10px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase;margin:2px 2px 8px;}
+  .count b{color:var(--amber);}
+
+  .btn{display:inline-block;background:var(--amber);color:#1a1206;border:none;font-family:var(--mono);
+    font-weight:700;font-size:12px;letter-spacing:.1em;padding:11px 15px;border-radius:8px;cursor:pointer;text-transform:uppercase;}
+  .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line);font-weight:500;}
+  .btn.sm{padding:8px 12px;font-size:10.5px;}
+  .btn:active{transform:translateY(1px);}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+
+  .rows{display:flex;flex-direction:column;gap:6px;}
+  .row{display:grid;grid-template-columns:84px 1fr auto;gap:10px;align-items:center;
+    background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 11px;}
+  .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green);}
+  .row.mine{box-shadow:inset 3px 0 0 var(--amber);}
+  .row.stale{opacity:.45;}
+  .spotrow{cursor:pointer;}
+  .spotrow:active{border-color:var(--amber-dim);background:var(--panel2);}
+  .freq{font-size:18px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums;line-height:1.05;}
+  .freq .u{display:block;font-size:8px;letter-spacing:.18em;color:var(--ink-dim);font-weight:500;margin-top:2px;}
+  .mid .st{font-size:13.5px;color:var(--ink);line-height:1.25;}
+  .mid .meta{font-size:10px;color:var(--ink-dim);margin-top:3px;letter-spacing:.03em;}
+  .mid .meta .lang{color:var(--green);}
+  .badge{display:inline-block;font-size:7.5px;letter-spacing:.1em;padding:1px 4px;border-radius:3px;border:1px solid var(--amber-dim);color:var(--amber);margin-left:5px;vertical-align:middle;}
+  .right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+  .time{font-size:11px;color:var(--ink-dim);font-variant-numeric:tabular-nums;}
+  .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
+  .tag.live{color:#06170c;background:var(--green);border-color:var(--green);font-weight:700;}
+  .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
+  .acts{display:flex;gap:8px;margin-top:2px;}
+  .act{font-size:13px;cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;}
+  .act.fav.on{color:var(--amber);text-shadow:0 0 8px rgba(255,176,0,.5);}
+  .act.log{font-size:9px;letter-spacing:.1em;border:1px solid var(--line);border-radius:4px;padding:2px 5px;text-transform:uppercase;}
+
+  .empty{text-align:center;color:var(--ink-dim);font-size:12px;padding:34px 10px;line-height:1.7;letter-spacing:.04em;}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 14px;margin-bottom:11px;}
+  .card h3{margin:0 0 10px;font-size:11px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;}
+  .card h3 small{color:var(--ink-dim);letter-spacing:.06em;text-transform:none;font-size:9.5px;float:right;font-weight:400;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;}
+  th{color:var(--ink-dim);font-weight:500;font-size:9px;letter-spacing:.16em;text-transform:uppercase;}
+  td.f{color:var(--amber);font-weight:600;}
+  .legend{font-size:10.5px;color:var(--ink-dim);line-height:1.9;}
+  .legend b{color:var(--ink);font-weight:600;}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;}
+  .kv .k{color:var(--ink-dim);}
+  .kv .v{color:var(--amber);font-variant-numeric:tabular-nums;text-align:right;}
+  .calcout{font-size:13px;line-height:1.85;}
+  .calcout .v{color:var(--amber);font-weight:600;}
+  .advise{font-size:12px;line-height:1.8;}
+  .advise .good{color:var(--green);font-weight:600;}
+  .advise .dim{color:var(--ink-dim);}
+  .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+  .formgrid label{display:flex;flex-direction:column;gap:3px;font-size:9px;letter-spacing:.12em;color:var(--ink-dim);text-transform:uppercase;}
+  .formgrid label.wide{grid-column:1/-1;}
+  .formgrid input,.formgrid select{flex:none;width:100%;}
+
+  .loadbox{background:var(--panel);border:1px dashed var(--amber-dim);border-radius:10px;padding:14px;margin-bottom:12px;}
+  .loadbox h3{margin:0 0 6px;font-size:11px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;}
+  .loadbox ol{margin:8px 0 10px;padding-left:18px;font-size:11.5px;color:var(--ink-dim);line-height:1.7;}
+  .loadbox a{color:var(--green);text-decoration:none;border-bottom:1px dotted var(--green-dim);word-break:break-all;}
+  .updrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .updrow select{background:var(--panel2);}
+  .netdot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-left:4px;box-shadow:0 0 8px currentColor;}
+  .netdot.on{background:var(--green);color:var(--green);}.netdot.off{background:var(--red);color:var(--red);}
+  .loadbox details{border-top:1px solid var(--line);padding-top:10px;margin-top:6px;}
+  .loadbox summary{font-size:11px;letter-spacing:.08em;color:var(--ink-dim);cursor:pointer;}
+  .loadbox summary:hover{color:var(--amber);}
+  .upd-spin{animation:spin 1s linear infinite;display:inline-block;}@keyframes spin{to{transform:rotate(360deg);}}
+
+  /* modal */
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.66);display:flex;align-items:flex-end;justify-content:center;}
+  .modal[hidden]{display:none;}
+  .sheet{width:100%;max-width:760px;background:var(--panel2);border-top:1px solid var(--amber-dim);
+    border-radius:16px 16px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.6);}
+  .sheet h3{margin:0 0 12px;font-size:12px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;}
+
+  .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--green);color:#06170c;
+    font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:.25s;pointer-events:none;text-transform:uppercase;}
+  .toast.show{opacity:1;}
+  .ident{display:flex;gap:14px;align-items:baseline;margin-top:4px;min-height:14px;}
+  .ident-call{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--amber);}
+  .ident-grid{font-size:11px;letter-spacing:.16em;color:var(--green);}
+
+  footer{margin-top:16px;font-size:9.5px;color:var(--ink-dim);line-height:1.7;text-align:center;}
+  footer a{color:var(--amber-dim);}
+  .proptiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+  .proptile{display:block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;text-decoration:none;color:var(--ink);}
+  .proptile:active{border-color:var(--amber-dim);}
+  .proptile-name{font-size:13px;font-weight:700;color:var(--amber);letter-spacing:.06em;margin-bottom:3px;}
+  .proptile-desc{font-size:10px;color:var(--ink-dim);line-height:1.4;}
+  .propimg{width:100%;border-radius:6px;display:block;background:var(--panel2);}
+  .propimgwrap{display:block;text-decoration:none;}
+
+  #printArea{display:none;}
+  @media print{
+    body{background:#fff;color:#000;}
+    .wrap>*:not(#printArea){display:none !important;}
+    #printArea{display:block;color:#000;font-size:12px;}
+    #printArea h2{font-size:16px;margin:0 0 4px;}
+    #printArea table{width:100%;border-collapse:collapse;margin:8px 0;}
+    #printArea th,#printArea td{border:1px solid #999;padding:3px 6px;text-align:left;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><h1>SKYWAVE</h1><span class="sub">Shortwave Band Guide</span></div>
+    <div class="ident"><span id="hdrCall" class="ident-call"></span><span id="hdrGrid" class="ident-grid"></span></div>
+    <div class="clocks">
+      <div class="clock"><span class="lbl">UTC · Zulu</span><span class="val" id="utc">--:--:--</span></div>
+      <div class="clock local"><span class="lbl" id="locLbl">Local</span><span class="val" id="loc">--:--</span></div>
+      <div class="dbstat" id="dbstat"></div>
+    </div>
+    <nav class="tabs">
+      <button data-tab="listen" class="on">Listen</button>
+      <button data-tab="log">Log</button>
+      <button data-tab="tools">Tools</button>
+      <button data-tab="spots">Spots</button>
+      <button data-tab="ref">Ref</button>
+      <button data-tab="prop">Prop</button>
+    </nav>
+  </header>
+
+  <!-- ============ LISTEN ============ -->
+  <section id="tab-listen">
+    <div class="seg" id="seg-listen">
+      <button data-sub="now" class="on">On Air</button>
+      <button data-sub="search">Search</button>
+      <button data-sub="freq">By Freq</button>
+    </div>
+
+    <div id="sub-now">
+      <div class="chips" id="nowChips">
+        <span class="chip on" data-chip="all">All</span>
+        <span class="chip" data-chip="fav">★ Favorites</span>
+        <span class="chip" data-chip="E">English</span>
+        <span class="chip" data-chip="S">Spanish</span>
+        <span class="chip" data-chip="F">French</span>
+      </div>
+      <div class="ctrl">
+        <input type="search" id="nowFilter" placeholder="filter on-air (station / target / country)…" autocomplete="off">
+        <select id="nowBand"><option value="">All bands</option></select>
+      </div>
+      <div class="count" id="nowCount"></div>
+      <div class="rows" id="nowRows"></div>
+    </div>
+
+    <div id="sub-search" hidden>
+      <div class="ctrl"><input type="search" id="q" placeholder="search station, language, country, target…" autocomplete="off"></div>
+      <div class="ctrl">
+        <select id="fBand"><option value="">All bands</option></select>
+        <select id="fLang"><option value="">All languages</option></select>
+        <select id="fTarget"><option value="">All targets</option></select>
+      </div>
+      <div class="count" id="searchCount"></div>
+      <div class="rows" id="searchRows"></div>
+    </div>
+
+    <div id="sub-freq" hidden>
+      <div class="ctrl">
+        <input type="text" id="freqIn" inputmode="decimal" placeholder="frequency — e.g. 9420 or 9.420" autocomplete="off">
+        <select id="freqTol"><option value="2">± 2 kHz</option><option value="5" selected>± 5 kHz</option><option value="10">± 10 kHz</option></select>
+      </div>
+      <div class="hint">Heard a signal and want to know who it is? Type the dial frequency — matches within tolerance, on-air first.</div>
+      <div class="count" id="freqCount"></div>
+      <div class="rows" id="freqRows"></div>
+    </div>
+  </section>
+
+  <!-- ============ LOG ============ -->
+  <section id="tab-log" hidden>
+    <div class="seg" id="seg-log">
+      <button data-sub="logbook" class="on">Logbook</button>
+      <button data-sub="stars">Favorites</button>
+      <button data-sub="mine">My Freq</button>
+    </div>
+
+    <div id="sub-logbook">
+      <div class="btnrow">
+        <button class="btn sm" id="newLog">+ New entry</button>
+        <button class="btn ghost sm" id="expLog">Export CSV</button>
+        <button class="btn ghost sm" id="expAdif">Export ADIF</button>
+      </div>
+      <div class="count" id="logCount"></div>
+      <div class="rows" id="logRows"></div>
+    </div>
+
+    <div id="sub-stars" hidden>
+      <div class="hint" style="margin-bottom:10px">Tap ★ on any listing to keep it here. Favorites that are on the air right now are highlighted.</div>
+      <div class="rows" id="starRows"></div>
+    </div>
+
+    <div id="sub-mine" hidden>
+      <div class="card">
+        <h3>◆ Add your own frequency</h3>
+        <div class="formgrid">
+          <label>Frequency kHz<input type="number" id="mFreq" inputmode="decimal" placeholder="7256"></label>
+          <label>Mode<select id="mMode"><option value=""></option><option>LSB</option><option>USB</option><option>AM</option><option>CW</option><option>FM</option><option>DRM</option><option>DATA</option></select></label>
+          <label class="wide">Label / station<input type="text" id="mStation" placeholder="LA Regional Net 40m"></label>
+          <label>Time UTC<input type="text" id="mTime" value="0000-2400" placeholder="0000-2400"></label>
+          <label>Days<input type="text" id="mDays" placeholder="(blank = daily)"></label>
+          <label>Language<input type="text" id="mLang" placeholder="E"></label>
+          <label>Target<input type="text" id="mTarget" placeholder="USA"></label>
+          <label class="wide">Notes<input type="text" id="mNotes" placeholder="NVIS · ~100 mi regional"></label>
+        </div>
+        <div class="btnrow">
+          <button class="btn sm" id="addMine">Add frequency</button>
+          <button class="btn ghost sm" id="exMine">+ Add LA regional example set</button>
+        </div>
+        <div class="hint" id="mineMsg"></div>
+      </div>
+      <div class="count" id="mineCount"></div>
+      <div class="rows" id="mineRows"></div>
+    </div>
+  </section>
+
+  <!-- ============ TOOLS ============ -->
+  <section id="tab-tools" hidden>
+    <div class="card">
+      <h3>◆ Antenna calculator</h3>
+      <div class="ctrl"><input type="text" id="antFreq" inputmode="decimal" placeholder="frequency — 7.256 MHz or 7256 kHz" autocomplete="off"></div>
+      <div class="calcout" id="antOut"><span class="dim hint">Enter a frequency to compute lengths.</span></div>
+      <div class="hint" style="margin-top:10px;border-top:1px solid var(--line);padding-top:9px">
+        <b style="color:var(--ink)">Doublet (ladder-line, multiband):</b> cut as long as the lot allows — 135 ft covers 80–10 m, 88 ft for 40–10 m, 44 ft for 40 m up. Feed with window line into a <b style="color:var(--ink)">4:1 Guanella</b> + tuner.<br>
+        <b style="color:var(--ink)">Coax-fed resonant dipole:</b> <b style="color:var(--ink)">1:1</b> current balun at the feedpoint. Off-center-fed / folded → 4:1. RG-8X/LMR feedline velocity factor ≈ 0.82–0.86 if you're cutting a phasing/matching section.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>◆ Grayline &amp; band planner <small id="grayLoc"></small></h3>
+      <div class="formgrid">
+        <label>Latitude<input type="number" id="geoLat" step="0.01" inputmode="decimal"></label>
+        <label>Longitude<input type="number" id="geoLng" step="0.01" inputmode="decimal"></label>
+      </div>
+      <div class="btnrow"><button class="btn ghost sm" id="useLoc">Use my location</button></div>
+      <div class="kv" id="sunKv"></div>
+      <div class="advise" id="bandAdvise" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px"></div>
+      <div class="hint" style="margin-top:8px">Computed on-device from your coordinates — no network needed. Grayline (sunrise/sunset terminator) gives an enhanced DX window on the lower bands.</div>
+    </div>
+
+    <div class="card">
+      <h3>◆ Export &amp; print</h3>
+      <div class="btnrow">
+        <button class="btn ghost sm" id="copyNow">Copy on-air list</button>
+        <button class="btn ghost sm" id="dlCard">Download band card</button>
+        <button class="btn ghost sm" id="printCard">Print reference card</button>
+      </div>
+      <div class="hint">Copy the current On-Air list as plain text (good for a net log or report), save an offline band card, or print a clean reference sheet for the go-kit.</div>
+    </div>
+  </section>
+
+  <!-- ============ SPOTS ============ -->
+  <section id="tab-spots" hidden>
+    <div class="seg" id="seg-spots">
+      <button data-sub="pota" class="on">POTA · Parks</button>
+      <button data-sub="sota">SOTA · Summits</button>
+    </div>
+    <div class="chips" id="spotChips">
+      <span class="chip on" data-sm="all">All modes</span>
+      <span class="chip" data-sm="cw">CW</span>
+      <span class="chip" data-sm="ssb">Phone</span>
+      <span class="chip" data-sm="data">Data</span>
+    </div>
+    <div class="ctrl">
+      <input type="search" id="spotFilter" placeholder="filter call / ref / summit / state…" autocomplete="off">
+      <button class="btn sm" id="spotRefresh" title="refresh" style="min-width:46px">⟳</button>
+    </div>
+    <div class="count" id="spotCount"></div>
+    <div class="rows" id="spotRows"></div>
+  </section>
+
+  <!-- ============ REF ============ -->
+  <section id="tab-ref" hidden>
+    <div class="card" id="stationCard">
+      <h3>◆ My station</h3>
+      <div class="formgrid">
+        <label class="wide">Callsign<input type="text" id="callIn" placeholder="W5XYZ" autocomplete="off" spellcheck="false" style="text-transform:uppercase;letter-spacing:.08em"></label>
+      </div>
+      <div class="btnrow"><button class="btn sm" id="saveCall">Save callsign</button></div>
+      <div class="hint" id="gridHint"></div>
+    </div>
+    <div class="loadbox">
+      <h3>◆ Full EiBi schedule <span id="netDot" class="netdot off"></span></h3>
+      <div class="hint" id="lastUpd" style="margin-bottom:10px"></div>
+      <div class="updrow">
+        <button class="btn" id="updBtn">⟳&nbsp;Update&nbsp;now</button>
+        <select id="seasonSel"></select>
+        <button class="btn ghost" id="clearBtn" hidden>Clear</button>
+      </div>
+      <div class="hint" id="updMsg" style="margin-top:10px"></div>
+      <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--ink-dim);cursor:pointer">
+        <input type="checkbox" id="autoUpd" checked style="accent-color:var(--amber);width:16px;height:16px">
+        Auto-update on launch when online (else use stored copy)
+      </label>
+      <details>
+        <summary>Manual load (when auto-update can't reach the server)</summary>
+        <ol><li>Download <a id="eibiLink" href="http://www.eibispace.de/dx/sked-a26.csv">sked-a26.csv</a> on this device.</li>
+        <li>Tap <b>Load file</b> and pick it — parsing is fully on-device.</li></ol>
+        <input type="file" id="fileIn" accept=".csv,.txt" hidden>
+        <button class="btn ghost" id="loadBtn">Load file</button>
+        <div class="hint" id="loadMsg" style="margin-top:8px"></div>
+      </details>
+    </div>
+    <div class="card" id="refMeter"></div>
+    <div class="card" id="refTime"></div>
+    <div class="card" id="refHam"></div>
+    <div class="card"><h3>◆ Code key</h3><div class="legend" id="legend"></div></div>
+    <footer>
+      Schedule data: EiBi Shortwave Schedules by Eike Bierwirth — <a href="http://www.eibispace.de/">eibispace.de</a> · free to copy &amp; distribute.<br>
+      Times UTC. On-air status &amp; grayline computed from your device clock &amp; coordinates. Built for offline field use.
+    </footer>
+  </section>
+
+  <!-- ============ PROP ============ -->
+  <section id="tab-prop" hidden>
+    <div id="propStatus" class="hint" style="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);text-align:center;"></div>
+
+    <div class="card">
+      <h3>◆ Solar conditions <small>HamQSL · N0NBH / K4HG</small></h3>
+      <a class="propimgwrap" href="https://www.hamqsl.com/solar.html" target="_blank" rel="noopener">
+        <img class="propimg" src="https://www.hamqsl.com/solar101pic.php" alt="Solar conditions widget"
+             onerror="this.style.opacity='.3'">
+      </a>
+      <div class="hint" style="margin-top:8px">Solar flux (SFI), A &amp; K index, HF band conditions. Updates every ~5 min. Tap to open full page.</div>
+    </div>
+
+    <div class="card">
+      <h3>◆ Planetary K-index <small>NOAA SWPC</small></h3>
+      <a class="propimgwrap" href="https://www.swpc.noaa.gov/products/planetary-k-index" target="_blank" rel="noopener">
+        <img class="propimg" src="https://services.swpc.noaa.gov/images/planetary-k-index.gif" alt="Planetary K-index 3-day plot"
+             onerror="this.style.opacity='.3'">
+      </a>
+      <div class="hint" style="margin-top:8px">3-day planetary K-index. K ≤ 2 quiet / excellent; K 3–4 unsettled; K ≥ 5 HF degraded, aurora possible.</div>
+    </div>
+
+    <div class="card">
+      <h3>◆ Live tools &amp; maps</h3>
+      <div class="proptiles">
+        <a class="proptile" href="https://prop.kc2g.com/" target="_blank" rel="noopener">
+          <div class="proptile-name">Proppy</div>
+          <div class="proptile-desc">HF point-to-point predictions — W6ELA</div>
+        </a>
+        <a class="proptile" href="https://www.voacap.com/hf/" target="_blank" rel="noopener">
+          <div class="proptile-name">VOACAP</div>
+          <div class="proptile-desc">Long-path coverage predictions</div>
+        </a>
+        <a class="proptile" href="https://grayline.info/" target="_blank" rel="noopener">
+          <div class="proptile-name">Grayline</div>
+          <div class="proptile-desc">Live solar terminator world map</div>
+        </a>
+        <a class="proptile" href="https://websdr.org/" target="_blank" rel="noopener">
+          <div class="proptile-name">WebSDR</div>
+          <div class="proptile-desc">Online shortwave receivers worldwide</div>
+        </a>
+        <a class="proptile" href="https://www.swpc.noaa.gov/products/aurora-30-minute-forecast" target="_blank" rel="noopener">
+          <div class="proptile-name">Aurora</div>
+          <div class="proptile-desc">30-min forecast — NOAA SWPC</div>
+        </a>
+        <a class="proptile" href="https://dxheat.com/dxc/" target="_blank" rel="noopener">
+          <div class="proptile-name">DX Cluster</div>
+          <div class="proptile-desc">Live DX spots — DXHeat</div>
+        </a>
+      </div>
+      <div class="hint" style="margin-top:10px">All links open in your browser. For offline band advice, see the <b style="color:var(--ink)">Tools</b> tab — grayline and band planner work without a connection.</div>
+    </div>
+  </section>
+
+  <div id="printArea"></div>
+</div>
+
+<!-- log modal -->
+<div class="modal" id="logModal" hidden>
+  <div class="sheet">
+    <h3 id="logTitle">◆ Log entry</h3>
+    <div class="formgrid">
+      <label>Date (UTC)<input type="text" id="lgDate"></label>
+      <label>Time UTC<input type="text" id="lgTime" placeholder="1530"></label>
+      <label>Freq kHz<input type="number" id="lgFreq" inputmode="decimal"></label>
+      <label>Mode<input type="text" id="lgMode" placeholder="SSB / CW / FT8"></label>
+      <label>Station / call<input type="text" id="lgStation"></label>
+      <label>RST Sent<input type="text" id="lgRstS" placeholder="59"></label>
+      <label>RST Rcvd<input type="text" id="lgRstR" placeholder="59"></label>
+      <label class="wide">Reference (park / summit)<input type="text" id="lgRef" placeholder="US-1234"></label>
+      <label class="wide">Notes<textarea id="lgNotes" placeholder="rig, antenna, conditions…"></textarea></label>
+    </div>
+    <div class="hint" style="margin:-2px 0 12px">RST: 59 phone / 599 CW. SWL: use Sent for SINPO. Pre-filled from a spot — confirm and save.</div>
+    <div class="btnrow">
+      <button class="btn" id="lgSave">Save</button>
+      <button class="btn ghost" id="lgCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+const VERSION="2026.06.04";
+
+/* ============ reference data ============ */
+const METER=[["120 m","2300","2495"],["90 m","3200","3400"],["75 m","3900","4000"],
+ ["60 m","4750","5060"],["49 m","5800","6200"],["41 m","7200","7600"],["31 m","9400","9900"],
+ ["25 m","11600","12100"],["22 m","13570","13870"],["19 m","15100","15800"],["16 m","17480","17900"],
+ ["15 m","18900","19020"],["13 m","21450","21850"],["11 m","25670","26100"]];
+const HAM=[["160 m","1800","2000","CW / SSB / digital"],["80 m","3500","4000","CW & data low; phone 3600+"],
+ ["60 m","5330.5","5403.5","5 USB channels"],["40 m","7000","7300","phone 7125+"],
+ ["30 m","10100","10150","CW & data only"],["20 m","14000","14350","phone 14150+"],
+ ["17 m","18068","18168","phone 18110+"],["15 m","21000","21450","phone 21200+"],
+ ["12 m","24890","24990","phone 24930+"],["10 m","28000","29700","phone 28300+"]];
+const TIME=[[2500,"USA","WWV Fort Collins CO","E","World"],[5000,"USA","WWV Fort Collins CO","E","World"],
+ [10000,"USA","WWV Fort Collins CO","E","World"],[15000,"USA","WWV Fort Collins CO","E","World"],
+ [20000,"USA","WWV Fort Collins CO","E","World"],[2500,"USA","WWVH Kauai HI","E","Pac"],
+ [5000,"USA","WWVH Kauai HI","E","Pac"],[10000,"USA","WWVH Kauai HI","E","Pac"],[15000,"USA","WWVH Kauai HI","E","Pac"],
+ [3330,"CAN","CHU Ottawa","E,F","NAm"],[7850,"CAN","CHU Ottawa","E,F","NAm"],[14670,"CAN","CHU Ottawa","E,F","NAm"],
+ [4996,"RUS","RWM Moscow","-CW","Eu"],[9996,"RUS","RWM Moscow","-CW","Eu"],[14996,"RUS","RWM Moscow","-CW","Eu"],
+ [5000,"CHN","BPM Pucheng","-TS","FE"],[10000,"CHN","BPM Pucheng","-TS","FE"],[15000,"CHN","BPM Pucheng","-TS","FE"],
+ [5000,"VEN","YVTO Caracas","S","SAm"],[5000,"TWN","BSF Taoyuan","-TS","FE"],[15000,"TWN","BSF Taoyuan","-TS","FE"]];
+const LANG={E:"English",S:"Spanish",F:"French",G:"German",A:"Arabic",C:"Chinese",M:"Mandarin",R:"Russian",
+ P:"Portuguese",K:"Korean",J:"Japanese",V:"Vietnamese",I:"Italian",Tu:"Turkish",Pe:"Persian",Hi:"Hindi",
+ Ur:"Urdu",In:"Indonesian",Th:"Thai",Sw:"Swahili",Ha:"Hausa",Be:"Bengali",Ta:"Tamil",Du:"Dutch",
+ Po:"Polish",Cz:"Czech",Gr:"Greek",He:"Hebrew",Ku:"Kurdish",Am:"Amharic",Ne:"Nepali",Bu:"Burmese",
+ "-TS":"time signal","-CW":"CW / Morse"};
+const TGT={Eu:"Europe",WEu:"W Europe",EEu:"E Europe",CEu:"C Europe",SEu:"S Europe",NAm:"N America",
+ CAm:"C America",SAm:"S America",LAm:"Latin America",Car:"Caribbean",Af:"Africa",NAf:"N Africa",
+ WAf:"W Africa",EAf:"E Africa",SAf:"S Africa",CAf:"C Africa",ME:"Mid East",SAs:"S Asia",SEA:"SE Asia",
+ CAs:"C Asia",FE:"Far East",Pac:"Pacific",Aus:"Australia",USA:"USA",World:"Worldwide",NAO:"N Atlantic"};
+
+/* ============ state & persistence ============ */
+let DATA=[], EIBI=[], haveEibi=false, META=null;
+const K={raw:"skywave_eibi_raw_v1",meta:"skywave_eibi_meta_v1",favs:"skywave_favs_v1",
+ log:"skywave_log_v1",mine:"skywave_mine_v1",geo:"skywave_geo_v1",prefs:"skywave_prefs_v1",
+ pota:"skywave_pota_v1",sota:"skywave_sota_v1"};
+const STALE_DAYS=21;
+function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}}
+let FAVS=loadJSON(K.favs,[]), LOG=loadJSON(K.log,[]), MINE=loadJSON(K.mine,[]);
+let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
+let PREFS=loadJSON(K.prefs,{autoUpd:true,call:""});
+let SPOTS={pota:loadJSON(K.pota,{list:[],ts:0}),sota:loadJSON(K.sota,{list:[],ts:0})};
+let spotProg="pota",spotMode="all",spotStatus="";
+let editIdx=-1;
+let favSet=new Set();
+function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
+
+/* ============ entry model ============ */
+function entry(freq,time,days,itu,station,lang,target,tx,src){
+  const [s,e]=parseTime(time);
+  return {freq:+freq,time:time||"0000-2400",start:s,end:e,days:days||"",itu:itu||"",
+    station:station||"",lang:lang||"",target:target||"",tx:tx||"",mode:"",notes:"",src:src||"eibi"};
+}
+function parseTime(t){const m=/(\d{3,4})\s*-\s*(\d{3,4})/.exec(t||"");if(!m)return[0,2400];return[parseInt(m[1],10),parseInt(m[2],10)];}
+function keyOf(e){return e.freq+"|"+(e.station||"")+"|"+(e.time||"");}
+function makeMine(o){const e=entry(o.freq,o.time,o.days,"",o.station,o.lang,o.target,"","mine");e.mode=o.mode||"";e.notes=o.notes||"";return e;}
+function buildBase(){const a=[];TIME.forEach(r=>a.push(entry(r[0],"0000-2400","",r[1],r[2],r[3],r[4],"time/freq standard","ref")));
+  MINE.forEach(o=>a.push(makeMine(o)));return a;}
+function rebuildData(){DATA=buildBase().concat(EIBI);DATA.forEach(e=>{e._blob=(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();});rebuildFilters();refreshAll();}
+
+/* ============ EiBi parsing ============ */
+function parseEibi(text){
+  const out=[];
+  for(const ln of text.split(/\r?\n/)){
+    if(!ln) continue;
+    if(ln.indexOf(";")>=0){
+      const f=ln.split(";");if(f.length<7)continue;
+      const fr=parseFloat(f[0]);if(!isFinite(fr))continue;
+      out.push(entry(fr,f[1],f[2],f[3],f[4],f[5],f[6],f[7]||"","eibi"));
+    } else {
+      const m=/^\s*([\d.]+)\s+(\d{4}-\d{4})\s+(.*)$/.exec(ln);if(!m)continue;
+      const fr=parseFloat(m[1]);if(!isFinite(fr))continue;
+      const rest=m[3].trim().split(/\s+/);let i=0,days="";
+      if(/[\d,]/.test(rest[0])&&!/^[A-Z]{1,3}$/.test(rest[0])&&/^[A-Za-z0-9,.\-]{1,6}$/.test(rest[0])){days=rest[i++];}
+      const itu=rest[i++]||"";const station=rest.slice(i).join(" ");
+      out.push(entry(fr,m[2],days,itu,station,"","",""," ","eibi"));
+    }
+  }
+  return out;
+}
+function loadText(text,info){
+  const eibi=parseEibi(text);
+  if(eibi.length<20){msg("Couldn't read that file — expecting the EiBi sked-XXX.csv (semicolon) file.",true);return false;}
+  EIBI=eibi;haveEibi=true;
+  META={code:(info&&info.code)||(META&&META.code)||seasonCode(),ts:Date.now(),count:eibi.length};
+  try{if(text.length<4500000){localStorage.setItem(K.raw,text);localStorage.setItem(K.meta,JSON.stringify(META));}}catch(e){}
+  rebuildData();updateDbStat();showClear();renderLastUpd();
+  msg("Loaded "+eibi.length.toLocaleString()+" entries. Stored on-device for offline use.",false);
+  return true;
+}
+function msg(t,err){const el=document.getElementById("loadMsg");el.textContent=t;el.style.color=err?"var(--red)":"var(--green)";}
+function umsg(t,kind){const el=document.getElementById("updMsg");el.textContent=t;el.style.color=kind==="err"?"var(--red)":kind==="warn"?"var(--amber-dim)":"var(--green)";}
+
+/* ============ season + online update ============ */
+function lastSun(y,mo){const d=new Date(Date.UTC(y,mo+1,0));return d.getUTCDate()-d.getUTCDay();}
+function seasonCode(d){d=d||new Date();const y=d.getUTCFullYear(),mo=d.getUTCMonth(),day=d.getUTCDate();
+  const springSun=lastSun(y,2),fallSun=lastSun(y,9);
+  const inA=(mo>2||(mo===2&&day>=springSun))&&(mo<9||(mo===9&&day<fallSun));
+  if(inA)return"a"+String(y).slice(2);
+  if(mo<2||(mo===2&&day<springSun))return"b"+String(y-1).slice(2);
+  return"b"+String(y).slice(2);}
+function seasonList(){const set=new Set([seasonCode()]);const d=new Date();
+  set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),0,15))));
+  set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),5,15))));
+  set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),11,15))));return[...set];}
+function relays(raw){return[raw,"https://api.allorigins.win/raw?url="+encodeURIComponent(raw),
+  "https://corsproxy.io/?url="+encodeURIComponent(raw),"https://thingproxy.freeboard.io/fetch/"+raw];}
+async function fetchSchedule(code){
+  const targets=["https://www.eibispace.de/dx/sked-"+code+".csv","http://www.eibispace.de/dx/sked-"+code+".csv"];
+  for(const t of targets)for(const url of relays(t)){
+    try{const res=await fetch(url,{cache:"no-store",redirect:"follow"});if(!res||!res.ok)continue;
+      const text=await res.text();if((text.match(/;/g)||[]).length>200)return text;}catch(e){}
+  }
+  return null;
+}
+let updating=false;
+async function doUpdate(opts){opts=opts||{};if(updating)return;
+  const sel=document.getElementById("seasonSel");
+  const code=(sel.value&&sel.value!=="auto")?sel.value:seasonCode();
+  if(!navigator.onLine){umsg(haveEibi?"Offline — keeping your stored "+(META?META.code.toUpperCase():"")+" copy.":"Offline — connect to fetch the schedule. Reference data still works.","warn");return;}
+  updating=true;setSpin(true);if(!opts.silent)umsg("Fetching "+code.toUpperCase()+" from eibispace.de…","");
+  const text=await fetchSchedule(code);updating=false;setSpin(false);
+  if(text){loadText(text,{code});umsg("Updated to "+code.toUpperCase()+" — "+META.count.toLocaleString()+" entries, saved offline.","");}
+  else if(!opts.silent)umsg("Couldn't reach the schedule server. If you're in an in-app preview, open this in Safari (Share → Open in Safari) and retry. "+(haveEibi?"Your stored copy is still active. ":"")+"Or use Manual load below.","err");
+}
+function setSpin(on){const b=document.getElementById("updBtn");b.innerHTML=on?'<span class="upd-spin">⟳</span>&nbsp;Updating…':'⟳&nbsp;Update&nbsp;now';b.disabled=on;}
+function renderLastUpd(){const el=document.getElementById("lastUpd");
+  if(!META){el.textContent="No schedule loaded yet — reference data only.";return;}
+  const days=Math.floor((Date.now()-META.ts)/86400000);
+  const when=new Date(META.ts).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
+  const age=days<=0?"today":days===1?"yesterday":days+" days ago";
+  const stale=days>STALE_DAYS?"  ·  ⚠ may be out of date":"";
+  el.innerHTML="Season <b style='color:var(--amber)'>"+META.code.toUpperCase()+"</b> · "+META.count.toLocaleString()+" entries · updated "+when+" ("+age+")"+stale;}
+function setNetDot(){const d=document.getElementById("netDot");d.className="netdot "+(navigator.onLine?"on":"off");}
+
+/* ============ day-of-week + on-air ============ */
+function cap(x){return x.charAt(0).toUpperCase()+x.slice(1).toLowerCase();}
+function dayAllowed(daysStr){
+  const s=(daysStr||"").trim();
+  if(!s)return null;
+  if(/irr|alt|Last|tent|Holy|Ram|^x|\d\.|^su\b.*-|am$/i.test(s)&&!/^[A-Za-z]{2}(-[A-Za-z]{2})?$/.test(s)){
+    // complex/irregular -> permissive unless it's a clean range/list handled below
+  }
+  const map={Mo:1,Tu:2,We:3,Th:4,Fr:5,Sa:6,Su:7};const set=new Set();let unknown=false;
+  s.split(",").forEach(part=>{part=part.trim();let m;
+    if(m=/^([A-Za-z]{2})-([A-Za-z]{2})$/.exec(part)){const a=map[cap(m[1])],b=map[cap(m[2])];
+      if(a&&b){if(a<=b)for(let i=a;i<=b;i++)set.add(i);else{for(let i=a;i<=7;i++)set.add(i);for(let i=1;i<=b;i++)set.add(i);}}else unknown=true;}
+    else if(map[cap(part)])set.add(map[cap(part)]);
+    else if(/^\d-\d$/.test(part)){for(let i=+part[0];i<=+part[2];i++)set.add(i);}
+    else if(/^\d+$/.test(part)){for(const ch of part)set.add(+ch);}
+    else unknown=true;});
+  if(unknown||!set.size)return null;
+  return set;
+}
+function dowE(d){const x=d.getUTCDay();return x===0?7:x;}
+function onAir(e,date){
+  date=date||new Date();const now=date.getUTCHours()*100+date.getUTCMinutes();
+  const s=e.start,en=e.end,allowed=dayAllowed(e.days);
+  const ok=n=>allowed===null||allowed.has(n);
+  const tE=dowE(date),yE=tE===1?7:tE-1;
+  if(s===en||(s===0&&en===2400))return ok(tE);
+  if(s<en)return now>=s&&now<en&&ok(tE);
+  if(now>=s)return ok(tE);
+  if(now<en)return ok(yE);
+  return false;
+}
+function modeOf(e){
+  if(e.mode)return e.mode;
+  const t=((e.lang||"")+" "+(e.tx||"")+" "+(e.station||"")).toUpperCase();
+  if(/DRM/.test(t))return"DRM";
+  if((e.lang||"").startsWith("-CW")||/\bCW\b/.test(t))return"CW";
+  if((e.lang||"").startsWith("-TS"))return"TIME";
+  if(/\bUSB\b/.test(t))return"USB";
+  if(/\bLSB\b/.test(t))return"LSB";
+  if(/FAX|RTTY|HFDL|FSK/.test(t))return"DATA";
+  return"";
+}
+
+/* ============ band helpers / formatting ============ */
+function bandOf(k){for(const b of METER)if(k>=+b[1]&&k<=+b[2])return b[0];return null;}
+function fmtFreq(k){return k>=1000?(k/1000).toFixed(3):k.toFixed(k%1?2:0);}
+function freqUnit(k){return k>=1000?"MHz":"kHz";}
+function langName(c){return c?c.split(/[,\/]/).map(x=>LANG[x]||x).join(", "):"";}
+function tgtName(c){return TGT[c]||c||"";}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function attr(s){return String(s).replace(/"/g,"&quot;").replace(/&/g,"&amp;");}
+
+/* ============ row rendering ============ */
+function rowHTML(e){
+  const live=onAir(e),isRef=e.src==="ref",isMine=e.src==="mine";
+  const tag=isRef?'<span class="tag ref">REF</span>':live?'<span class="tag live">ON AIR</span>':'<span class="tag">'+esc(e.time.slice(0,4))+'</span>';
+  const md=modeOf(e),badge=md?'<span class="badge">'+md+'</span>':'';
+  const meta=[langName(e.lang)?'<span class="lang">'+esc(langName(e.lang))+'</span>':'',tgtName(e.target),e.itu,e.notes].filter(Boolean).join(" · ");
+  const k=keyOf(e),fav=favSet.has(k)?" on":"";
+  const da="data-f=\""+attr(e.freq)+"\" data-st=\""+attr(e.station)+"\" data-tm=\""+attr(e.time)+"\" data-lg=\""+attr(e.lang)+"\" data-tg=\""+attr(e.target)+"\" data-it=\""+attr(e.itu)+"\" data-md=\""+attr(md)+"\"";
+  return '<div class="row'+(live&&!isRef?' now':'')+(isMine?' mine':'')+'">'+
+    '<div class="freq">'+fmtFreq(e.freq)+'<span class="u">'+freqUnit(e.freq)+'</span></div>'+
+    '<div class="mid"><div class="st">'+esc(e.station||"(unknown)")+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
+    '<div class="right">'+tag+'<span class="time">'+esc(e.time)+(e.days?' '+esc(e.days):'')+'</span>'+
+      '<span class="acts"><span class="act fav'+fav+'" data-act="fav" '+da+'>★</span><span class="act log" data-act="log" '+da+'>log</span></span>'+
+    '</div></div>';
+}
+function renderRows(elId,list,countId,label){
+  const el=document.getElementById(elId);
+  if(!list.length){el.innerHTML='<div class="empty">No matches.<br>'+(haveEibi?'Try widening your filters.':'Load the EiBi schedule (Ref tab) for the full station list.')+'</div>';
+    if(countId)document.getElementById(countId).innerHTML="";return;}
+  el.innerHTML=list.map(rowHTML).join("");
+  if(countId)document.getElementById(countId).innerHTML='<b>'+list.length.toLocaleString()+'</b> '+label;
+}
+
+/* ============ Listen tab ============ */
+let nowChip="all";
+function refreshNow(){
+  const f=document.getElementById("nowFilter").value.trim().toLowerCase();
+  const band=document.getElementById("nowBand").value;
+  let list=DATA.filter(e=>onAir(e));
+  if(nowChip==="fav")list=list.filter(e=>favSet.has(keyOf(e)));
+  else if(nowChip!=="all")list=list.filter(e=>e.lang===nowChip);
+  if(band)list=list.filter(e=>bandOf(e.freq)===band);
+  if(f)list=list.filter(e=>blob(e).includes(f));
+  list.sort((a,b)=>a.freq-b.freq);
+  const n=new Date(),hh=String(n.getUTCHours()).padStart(2,"0"),mm=String(n.getUTCMinutes()).padStart(2,"0");
+  renderRows("nowRows",list,"nowCount","on air now · "+hh+":"+mm+" UTC");
+}
+function refreshSearch(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const band=document.getElementById("fBand").value,lang=document.getElementById("fLang").value,tgt=document.getElementById("fTarget").value;
+  let list=DATA;
+  if(band)list=list.filter(e=>bandOf(e.freq)===band);
+  if(lang)list=list.filter(e=>e.lang===lang);
+  if(tgt)list=list.filter(e=>e.target===tgt);
+  if(q)list=list.filter(e=>blob(e).includes(q));
+  if(!band&&!lang&&!tgt&&!q){document.getElementById("searchCount").innerHTML="";
+    document.getElementById("searchRows").innerHTML='<div class="empty">Type a station, language, country, or pick a filter.<br>'+DATA.length.toLocaleString()+' entries in the database.</div>';return;}
+  list=list.slice().sort((a,b)=>a.freq-b.freq).slice(0,1200);
+  renderRows("searchRows",list,"searchCount","matches"+(list.length>=1200?" (first 1200)":""));
+}
+function refreshFreq(){
+  let v=document.getElementById("freqIn").value.trim().replace(",",".");
+  if(!v){document.getElementById("freqRows").innerHTML="";document.getElementById("freqCount").innerHTML="";return;}
+  let k=parseFloat(v);if(!isFinite(k))return;if(k<30)k*=1000;
+  const tol=+document.getElementById("freqTol").value;
+  let list=DATA.filter(e=>Math.abs(e.freq-k)<=tol);
+  list.sort((a,b)=>(onAir(b)-onAir(a))||Math.abs(a.freq-k)-Math.abs(b.freq-k));
+  renderRows("freqRows",list,"freqCount","near "+fmtFreq(k)+" kHz (±"+tol+")");
+}
+function blob(e){return e._blob||(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();}
+function refreshAll(){refreshNow();refreshSearch();refreshFreq();renderStars();renderMine();}
+
+/* ============ filters ============ */
+function rebuildFilters(){
+  const bands=METER.map(b=>b[0]).filter(b=>DATA.some(e=>bandOf(e.freq)===b));
+  fill("nowBand",bands,"All bands");fill("fBand",bands,"All bands");
+  const langs=[...new Set(DATA.map(e=>e.lang).filter(Boolean))].sort((a,b)=>(LANG[a]||a).localeCompare(LANG[b]||b));
+  fill("fLang",langs,"All languages",c=>(LANG[c]||c)+" ("+c+")");
+  const tgts=[...new Set(DATA.map(e=>e.target).filter(Boolean))].sort((a,b)=>(TGT[a]||a).localeCompare(TGT[b]||b));
+  fill("fTarget",tgts,"All targets",c=>TGT[c]||c);
+}
+function fill(id,arr,allLabel,labeller){const sel=document.getElementById(id),cur=sel.value;
+  sel.innerHTML='<option value="">'+allLabel+'</option>'+arr.map(v=>'<option value="'+attr(v)+'">'+esc(labeller?labeller(v):v)+'</option>').join("");
+  if(arr.includes(cur))sel.value=cur;}
+
+/* ============ favorites ============ */
+function toggleFav(o){const k=o.freq+"|"+o.station+"|"+o.time;
+  const i=FAVS.findIndex(x=>(x.freq+"|"+x.station+"|"+x.time)===k);
+  if(i>=0){FAVS.splice(i,1);toast("Removed from favorites");}else{FAVS.push(o);toast("Added to favorites");}
+  saveJSON(K.favs,FAVS);rebuildFavSet();refreshAll();}
+function renderStars(){
+  const list=FAVS.map(o=>{const e=entry(o.freq,o.time,o.days||"",o.itu||"",o.station,o.lang||"",o.target||"","","fav");return e;});
+  list.sort((a,b)=>(onAir(b)-onAir(a))||a.freq-b.freq);
+  if(!list.length){document.getElementById("starRows").innerHTML='<div class="empty">No favorites yet.<br>Tap ★ on any listing to keep it here.</div>';return;}
+  renderRows("starRows",list,null,"");
+}
+
+/* ============ logbook ============ */
+function closeLog(){editIdx=-1;document.getElementById("lgSave").textContent="Save";document.getElementById("logModal").hidden=true;}
+function openLog(pre,idx){pre=pre||{};const d=new Date();
+  editIdx=(typeof idx==="number")?idx:-1;
+  document.getElementById("lgSave").textContent=editIdx>=0?"Update":"Save";
+  document.getElementById("logTitle").textContent=pre.title||(editIdx>=0?"◆ Edit entry":"◆ Log entry");
+  document.getElementById("lgDate").value=pre.date||d.toISOString().slice(0,10);
+  document.getElementById("lgTime").value=pre.time||(String(d.getUTCHours()).padStart(2,"0")+String(d.getUTCMinutes()).padStart(2,"0"));
+  document.getElementById("lgFreq").value=pre.freq||"";
+  document.getElementById("lgMode").value=pre.mode||"";
+  document.getElementById("lgStation").value=pre.station||"";
+  document.getElementById("lgRstS").value=pre.rst||"";
+  document.getElementById("lgRstR").value=pre.rst_rcvd||"";
+  document.getElementById("lgRef").value=pre.ref||"";
+  document.getElementById("lgNotes").value=pre.notes||"";
+  document.getElementById("logModal").hidden=false;}
+function saveLog(){
+  const o={date:document.getElementById("lgDate").value.trim(),time:document.getElementById("lgTime").value.trim(),
+    freq:document.getElementById("lgFreq").value.trim(),mode:document.getElementById("lgMode").value.trim(),
+    station:document.getElementById("lgStation").value.trim(),
+    rst_sent:document.getElementById("lgRstS").value.trim(),
+    rst_rcvd:document.getElementById("lgRstR").value.trim(),
+    ref:document.getElementById("lgRef").value.trim(),notes:document.getElementById("lgNotes").value.trim(),created:Date.now()};
+  if(!o.freq&&!o.station){toast("Add a frequency or station");return;}
+  if(editIdx>=0){o.created=LOG[editIdx].created;LOG[editIdx]=o;}else{LOG.push(o);}
+  saveJSON(K.log,LOG);closeLog();renderLog();toast(editIdx>=0?"Updated":"Logged");}
+function logFromSpot(t){
+  const prog=(t.dataset.prog||spotProg).toUpperCase(),mode=t.dataset.md||"",call=t.dataset.call||"",
+    ref=t.dataset.ref||"",name=t.dataset.name||"",f=t.dataset.f||"";
+  const rst=/CW|FT8|FT4|RTTY|JS8|PSK|DATA|DIG|JT/i.test(mode)?"599":"59";
+  const fMHz=f?(+f/1000).toFixed(3)+" MHz":"";
+  const notes=[prog+" "+ref+(name?" — "+name:""),fMHz,mode].filter(Boolean).join(" · ");
+  openLog({title:"◆ Log "+(call||ref),freq:f,mode:mode,station:call,ref:ref,rst:rst,notes:notes});
+}
+function renderLog(){
+  const el=document.getElementById("logRows");
+  const list=LOG.map((o,i)=>({o,i})).sort((a,b)=>b.o.created-a.o.created);
+  document.getElementById("logCount").innerHTML=list.length?'<b>'+list.length+'</b> entries':"";
+  if(!list.length){el.innerHTML='<div class="empty">No log entries yet.<br>Tap <b>log</b> on a listing, or <b>+ New entry</b>.</div>';return;}
+  el.innerHTML=list.map(({o,i})=>{const realIdx=i;
+    const badge=o.mode?'<span class="badge">'+esc(o.mode)+'</span>':'';
+    const rstS=o.rst_sent||o.sinpo||"";const rstR=o.rst_rcvd||"";
+    const rstStr=rstS&&rstR?rstS+'/'+rstR:rstS?rstS:'';
+    const meta=[esc(o.date)+' '+esc(o.time)+'Z',o.ref?esc(o.ref):'',rstStr?'RST '+esc(rstStr):'',o.notes?esc(o.notes):''].filter(Boolean).join(' · ');
+    return '<div class="row"><div class="freq">'+(o.freq?fmtFreq(+o.freq):"—")+'<span class="u">'+(o.freq?freqUnit(+o.freq):'kHz')+'</span></div>'+
+    '<div class="mid"><div class="st">'+esc(o.station||"(no station)")+badge+'</div>'+
+    '<div class="meta">'+meta+'</div></div>'+
+    '<div class="right"><span class="act log" data-act="editlog" data-i="'+realIdx+'">edit</span><span class="act log" data-act="dellog" data-i="'+realIdx+'">delete</span></div></div>';}).join("");
+}
+function exportLogCSV(){
+  if(!LOG.length){toast("Log is empty");return;}
+  const rows=[["date_utc","time_utc","freq_khz","mode","station","reference","rst_sent","rst_rcvd","notes"]];
+  LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>rows.push([o.date,o.time,o.freq,o.mode||"",o.station,o.ref||"",o.rst_sent||o.sinpo||"",o.rst_rcvd||"",o.notes]));
+  const csv=rows.map(r=>r.map(c=>'"'+String(c||"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  downloadBlob("skywave-log.csv",csv,"text/csv");
+}
+function exportLogADIF(){
+  if(!LOG.length){toast("Log is empty");return;}
+  function tag(name,val){const s=String(val||"").trim();return s?"<"+name+":"+s.length+">"+s:"";}
+  const lines=["<ADIF_VER:5>3.1.4","<PROGRAMID:7>SKYWAVE",tag("PROGRAMVERSION",VERSION),"<EOH>",""];
+  LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>{
+    const date=(o.date||"").replace(/-/g,"");
+    const time=String(o.time||"").replace(/\D/g,"").padStart(4,"0").slice(0,4);
+    const freqMHz=o.freq?(+o.freq/1000).toFixed(6):"";
+    // Normalize mode: USB/LSB stay as-is; DATA/DIG/DIGI → MFSK as a safe ADIF fallback
+    const mode=(o.mode||"").toUpperCase().replace(/^DIG(I)?$/,"MFSK").replace(/^DATA$/,"MFSK");
+    // Detect POTA (e.g. US-1234) vs SOTA (e.g. W5/LO-001) from the Reference field
+    const ref=(o.ref||"").trim();
+    const isSota=ref.includes("/");
+    const isPota=!isSota&&/^[A-Z]{1,6}-\d+$/i.test(ref);
+    const qso=[
+      tag("QSO_DATE",date),
+      tag("TIME_ON",time),
+      tag("CALL",o.station),
+      tag("FREQ",freqMHz),
+      tag("MODE",mode),
+      tag("RST_SENT",o.rst_sent||o.sinpo||""),
+      tag("RST_RCVD",o.rst_rcvd||""),
+      PREFS.call?tag("MY_CALL",PREFS.call):"",
+      PREFS.call?tag("MY_GRIDSQUARE",toGrid(GEO.lat,GEO.lng)):"",
+      isPota?tag("POTA_REF",ref):"",
+      isSota?tag("SOTA_REF",ref):"",
+      tag("COMMENT",o.notes),
+      "<EOR>"
+    ].filter(Boolean).join("");
+    if(qso!=="<EOR>")lines.push(qso);
+  });
+  downloadBlob("skywave-log.adi",lines.join("\r\n"),"text/plain");
+}
+
+/* ============ my frequencies ============ */
+function addMine(){
+  const o={freq:parseFloat(document.getElementById("mFreq").value),mode:document.getElementById("mMode").value,
+    station:document.getElementById("mStation").value.trim(),time:document.getElementById("mTime").value.trim()||"0000-2400",
+    days:document.getElementById("mDays").value.trim(),lang:document.getElementById("mLang").value.trim(),
+    target:document.getElementById("mTarget").value.trim(),notes:document.getElementById("mNotes").value.trim()};
+  if(!isFinite(o.freq)){document.getElementById("mineMsg").textContent="Enter a valid frequency in kHz.";document.getElementById("mineMsg").style.color="var(--red)";return;}
+  if(!o.station)o.station="Custom "+o.freq;
+  MINE.push(o);saveJSON(K.mine,MINE);rebuildData();renderMine();
+  ["mFreq","mStation","mDays","mLang","mTarget","mNotes"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("mTime").value="0000-2400";document.getElementById("mMode").value="";
+  document.getElementById("mineMsg").textContent="Added — now appears in On Air / Search too.";document.getElementById("mineMsg").style.color="var(--green)";
+  toast("Frequency added");
+}
+function addExamples(){
+  const ex=[{freq:3856,mode:"LSB",station:"LA Regional 80m",time:"0000-2400",days:"",lang:"E",target:"USA",notes:"NVIS night · ~100 mi"},
+    {freq:7256,mode:"LSB",station:"LA Regional 40m",time:"0000-2400",days:"",lang:"E",target:"USA",notes:"primary regional"},
+    {freq:14156,mode:"USB",station:"LA Regional 20m",time:"0000-2400",days:"",lang:"E",target:"USA",notes:"daytime / longer haul"}];
+  let added=0;ex.forEach(o=>{if(!MINE.some(m=>m.freq===o.freq&&m.station===o.station)){MINE.push(o);added++;}});
+  saveJSON(K.mine,MINE);rebuildData();renderMine();toast(added?added+" added":"already present");
+}
+function delMine(i){MINE.splice(i,1);saveJSON(K.mine,MINE);rebuildData();renderMine();toast("Removed");}
+function renderMine(){
+  const el=document.getElementById("mineRows");
+  document.getElementById("mineCount").innerHTML=MINE.length?'<b>'+MINE.length+'</b> custom frequencies':"";
+  if(!MINE.length){el.innerHTML='<div class="empty">No custom frequencies yet.<br>Add your nets, EmComm channels, or beacons above.</div>';return;}
+  el.innerHTML=MINE.map((o,i)=>{const md=o.mode?'<span class="badge">'+esc(o.mode)+'</span>':'';
+    return '<div class="row mine"><div class="freq">'+fmtFreq(+o.freq)+'<span class="u">'+freqUnit(+o.freq)+'</span></div>'+
+    '<div class="mid"><div class="st">'+esc(o.station)+md+'</div><div class="meta">'+esc(o.time)+(o.days?' '+esc(o.days):'')+(o.notes?' · '+esc(o.notes):'')+'</div></div>'+
+    '<div class="right"><span class="act log" data-act="delmine" data-i="'+i+'">delete</span></div></div>';}).join("");
+}
+
+/* ============ antenna calculator ============ */
+function calcAnt(){
+  let v=document.getElementById("antFreq").value.trim().replace(",",".");
+  const out=document.getElementById("antOut");
+  if(!v){out.innerHTML='<span class="dim hint">Enter a frequency to compute lengths.</span>';return;}
+  let n=parseFloat(v);if(!isFinite(n)){out.innerHTML='<span class="dim hint">Not a number.</span>';return;}
+  const fMHz=n>=1000?n/1000:n;const kHz=Math.round(fMHz*1000);
+  const f2=x=>x.toFixed(2),f1=x=>x.toFixed(1);
+  const dipFt=468/fMHz,dipM=142.5/fMHz,legFt=dipFt/2,vertFt=234/fMHz,loopFt=1005/fMHz,lamM=300/fMHz;
+  out.innerHTML=
+    '<div>Wavelength λ &nbsp;<span class="v">'+f2(lamM)+' m</span> &nbsp;('+f2(lamM*3.281)+' ft) · band '+(bandOf(kHz)||"—")+'</div>'+
+    '<div>½-wave dipole &nbsp;<span class="v">'+f1(dipFt)+' ft</span> &nbsp;('+f2(dipM)+' m) · each leg '+f1(legFt)+' ft</div>'+
+    '<div>¼-wave vertical &nbsp;<span class="v">'+f1(vertFt)+' ft</span> &nbsp;('+f2(vertFt*0.3048)+' m)</div>'+
+    '<div>Full-wave loop &nbsp;<span class="v">'+f1(loopFt)+' ft</span> &nbsp;('+f2(loopFt*0.3048)+' m)</div>';
+}
+
+/* ============ sun / grayline ============ */
+/* ============ Maidenhead grid square ============ */
+function toGrid(lat,lng){
+  const lo=lng+180,la=lat+90;
+  return String.fromCharCode(65+Math.floor(lo/20),65+Math.floor(la/10))+
+    String(Math.floor((lo%20)/2))+String(Math.floor(la%10))+
+    String.fromCharCode(97+Math.floor((lo%2)*12),97+Math.floor((la%1)*24));
+}
+function renderIdent(){
+  const c=(PREFS.call||"").toUpperCase().trim(),g=toGrid(GEO.lat,GEO.lng);
+  document.getElementById("hdrCall").textContent=c;
+  document.getElementById("hdrGrid").textContent=g;
+  const hint=document.getElementById("gridHint");
+  if(hint)hint.textContent="Grid: "+g+(GEO.label?"  ("+GEO.label+")":"");
+  if(document.getElementById("callIn")&&!document.getElementById("callIn").dataset.dirty)
+    document.getElementById("callIn").value=c;
+}
+
+/* ============ sun / grayline ============ */
+const RAD=Math.PI/180,dayMs=86400000,J1970=2440588,J2000=2451545,OBL=RAD*23.4397;
+function toDays(d){return d.valueOf()/dayMs-0.5+J1970-J2000;}
+function sma(d){return RAD*(357.5291+0.98560028*d);}
+function eclLng(M){const C=RAD*(1.9148*Math.sin(M)+0.02*Math.sin(2*M)+0.0003*Math.sin(3*M));return M+C+RAD*102.9372+Math.PI;}
+function decl(L){return Math.asin(Math.sin(OBL)*Math.sin(L));}
+function fromJ(j){return new Date((j+0.5-J1970)*dayMs);}
+function sunTimes(date,lat,lng){
+  const lw=RAD*-lng,phi=RAD*lat,d=toDays(date),n=Math.round(d-0.0009-lw/(2*Math.PI)),ds=0.0009+(0+lw)/(2*Math.PI)+n;
+  const M=sma(ds),L=eclLng(M),dec=decl(L),Jnoon=J2000+ds+0.0053*Math.sin(M)-0.0069*Math.sin(2*L);
+  const h0=-0.833*RAD,cosO=(Math.sin(h0)-Math.sin(phi)*Math.sin(dec))/(Math.cos(phi)*Math.cos(dec));
+  if(cosO>1)return{noon:fromJ(Jnoon),polar:"night"};
+  if(cosO<-1)return{noon:fromJ(Jnoon),polar:"day"};
+  const w=Math.acos(cosO),a=0.0009+(w+lw)/(2*Math.PI)+n,Jset=J2000+a+0.0053*Math.sin(M)-0.0069*Math.sin(2*L);
+  const Jrise=Jnoon-(Jset-Jnoon);
+  return{sunrise:fromJ(Jrise),sunset:fromJ(Jset),noon:fromJ(Jnoon)};
+}
+function fmtUTC(d){return String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0");}
+function fmtLocal(d){return d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});}
+function renderGray(){
+  document.getElementById("grayLoc").textContent=GEO.label||(GEO.lat.toFixed(2)+", "+GEO.lng.toFixed(2));
+  document.getElementById("geoLat").value=GEO.lat;document.getElementById("geoLng").value=GEO.lng;
+  const now=new Date(),st=sunTimes(now,GEO.lat,GEO.lng);
+  const kv=document.getElementById("sunKv");
+  if(st.polar){kv.innerHTML='<div class="k">Condition</div><div class="v">'+(st.polar==="day"?"24h daylight":"24h darkness")+'</div>';
+    document.getElementById("bandAdvise").innerHTML="";return;}
+  const nowMin=now.getUTCHours()*60+now.getUTCMinutes();
+  const srMin=st.sunrise.getUTCHours()*60+st.sunrise.getUTCMinutes();
+  const ssMin=st.sunset.getUTCHours()*60+st.sunset.getUTCMinutes();
+  const isDay=nowMin>=srMin&&nowMin<ssMin;
+  const nearGray=Math.min(Math.abs(nowMin-srMin),Math.abs(nowMin-ssMin))<=50;
+  const dayLen=(ssMin-srMin+1440)%1440;
+  kv.innerHTML=
+    '<div class="k">Sunrise</div><div class="v">'+fmtUTC(st.sunrise)+'Z · '+fmtLocal(st.sunrise)+'</div>'+
+    '<div class="k">Sunset</div><div class="v">'+fmtUTC(st.sunset)+'Z · '+fmtLocal(st.sunset)+'</div>'+
+    '<div class="k">Solar noon</div><div class="v">'+fmtUTC(st.noon)+'Z</div>'+
+    '<div class="k">Day length</div><div class="v">'+Math.floor(dayLen/60)+'h '+(dayLen%60)+'m</div>'+
+    '<div class="k">Now</div><div class="v">'+(nearGray?"◐ GRAYLINE":isDay?"☀ Daytime":"☾ Night")+'</div>';
+  renderAdvise(isDay,nearGray);
+}
+function renderAdvise(isDay,nearGray){
+  const g='good',d='dim';
+  const L=[
+    ["80 m",!isDay,"regional NVIS day; best after dark; long-haul at night"],
+    ["40 m",true,"all-rounder — NVIS ~100 mi by day, DX at night; strong at grayline"],
+    ["30 m",true,"reliable day & night; CW/digital"],
+    ["20 m",isDay||nearGray,"daytime DX workhorse; can hold past sunset; peaks at grayline"],
+    ["17/15 m",isDay,"daytime DX when solar flux is up"],
+    ["12/10 m",isDay,"midday only; needs good solar activity / sporadic-E"]
+  ];
+  let html=(nearGray?'<div class="good">◐ Grayline window — enhanced DX on 80/40/30/20 m right now.</div>':'')+
+    L.map(r=>'<div class="'+(r[1]?g:d)+'">'+(r[1]?'▸ ':'· ')+'<b>'+r[0]+'</b> — '+r[2]+'</div>').join("");
+  document.getElementById("bandAdvise").innerHTML=html;
+}
+
+/* ============ export / print ============ */
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");
+  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("show"),1600);}
+function downloadBlob(name,text,mime){
+  try{const b=new Blob([text],{type:mime||"text/plain"}),u=URL.createObjectURL(b),a=document.createElement("a");
+    a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Saved "+name);}
+  catch(e){toast("Download failed");}
+}
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast("Copied")).catch(()=>fallbackCopy(t));
+  else fallbackCopy(t);
+}
+function fallbackCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";
+  document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copied");}catch(e){toast("Copy not supported");}ta.remove();}
+function onAirText(){
+  const n=new Date(),list=DATA.filter(e=>onAir(e)).sort((a,b)=>a.freq-b.freq);
+  let s="SKYWAVE — On air "+fmtUTC(n)+"Z "+n.toISOString().slice(0,10)+"\n";
+  s+=list.map(e=>fmtFreq(e.freq).padStart(8)+" "+freqUnit(e.freq)+"  "+(e.station||"")+(e.lang?" ["+langName(e.lang)+"]":"")+(e.target?" -> "+tgtName(e.target):"")).join("\n");
+  return s;
+}
+function bandCardText(){
+  let s="SKYWAVE BAND CARD\n=================\n\nSW BROADCAST METER BANDS (kHz)\n";
+  s+=METER.map(b=>b[0].padEnd(7)+b[1]+" - "+b[2]).join("\n");
+  s+="\n\nAMATEUR HF BANDS (kHz)\n"+HAM.map(b=>b[0].padEnd(7)+b[1]+" - "+b[2]+"  "+b[3]).join("\n");
+  s+="\n\nTIME / FREQUENCY STANDARDS (kHz)\nWWV/WWVH  2500 5000 10000 15000 20000\nCHU       3330 7850 14670\nRWM       4996 9996 14996\nBPM       5000 10000 15000\n";
+  if(MINE.length){s+="\nMY FREQUENCIES\n"+MINE.map(o=>String(o.freq).padStart(7)+" "+(o.mode||"")+" "+o.station+(o.notes?" ("+o.notes+")":"")).join("\n");}
+  return s;
+}
+function doPrint(){
+  const n=new Date();
+  const tbl=(head,rows)=>'<table><tr>'+head.map(h=>'<th>'+h+'</th>').join("")+'</tr>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join("")+'</tr>').join("")+'</table>';
+  const onair=DATA.filter(e=>onAir(e)).sort((a,b)=>a.freq-b.freq).slice(0,40).map(e=>[fmtFreq(e.freq)+" "+freqUnit(e.freq),e.station||"",langName(e.lang),tgtName(e.target)]);
+  document.getElementById("printArea").innerHTML=
+    '<h2>SKYWAVE Reference Card</h2><div>'+n.toISOString().slice(0,16).replace("T"," ")+' UTC</div>'+
+    '<h3>SW Broadcast Bands</h3>'+tbl(["Band","From kHz","To kHz"],METER.map(b=>[b[0],b[1],b[2]]))+
+    '<h3>Amateur HF Bands</h3>'+tbl(["Band","From","To","Notes"],HAM.map(b=>[b[0],b[1],b[2],b[3]]))+
+    (onair.length?'<h3>On Air Now ('+fmtUTC(n)+'Z)</h3>'+tbl(["Freq","Station","Lang","Target"],onair):"");
+  window.print();
+}
+
+/* ============ POTA / SOTA live spots ============ */
+function hamBandOf(k){for(const b of HAM)if(k>=+b[1]&&k<=+b[2])return b[0];return bandOf(k)||"";}
+function ageStr(ms){const s=Math.max(0,Date.now()-ms)/1000;if(s<60)return"now";
+  const m=Math.floor(s/60);if(m<60)return m+"m";const h=Math.floor(m/60);return h+"h "+(m%60)+"m";}
+async function getSpots(prog){
+  const urls=prog==="pota"?["https://api.pota.app/spot/activator"]
+    :["https://api-db2.sota.org.uk/api/spots/40/all","https://api2.sota.org.uk/api/spots/40/all","https://api2.sota.org.uk/api/spots/40/"];
+  for(const base of urls)for(const url of relays(base)){
+    try{const res=await fetch(url,{cache:"no-store"});if(!res||!res.ok)continue;
+      const data=JSON.parse(await res.text());if(Array.isArray(data)&&data.length)return data;}catch(e){}
+  }
+  return null;
+}
+function normPota(d){return d.map(x=>({freq:parseFloat(x.frequency),call:x.activator||"",ref:x.reference||"",
+  name:x.name||x.parkName||"",mode:(x.mode||"").toUpperCase(),when:new Date((x.spotTime||"")+"Z"),
+  comments:x.comments||"",loc:x.locationDesc||""}));}
+function normSota(d){return d.map(x=>{let ref=x.summitCode||"";if(x.associationCode&&!ref.includes("/"))ref=x.associationCode+"/"+ref;
+  return{freq:parseFloat(x.frequency)*1000,call:x.activatorCallsign||x.activator||"",ref:ref,
+  name:x.summitDetails||x.summitName||"",mode:(x.mode||"").toUpperCase(),when:new Date(x.timeStamp),
+  comments:x.comments||"",loc:x.associationCode||""};});}
+async function refreshSpots(){
+  const prog=spotProg;setSpotSpin(true);
+  if(!navigator.onLine){spotStatus="offline";setSpotSpin(false);renderSpots();return;}
+  spotStatus="loading";renderSpots();
+  let data=null;try{data=await getSpots(prog);}catch(e){}
+  if(data){const list=(prog==="pota"?normPota:normSota)(data).filter(s=>isFinite(s.freq)&&s.freq>0);
+    SPOTS[prog]={list,ts:Date.now()};saveJSON(K[prog],SPOTS[prog]);spotStatus="";}
+  else spotStatus="failed";
+  setSpotSpin(false);renderSpots();
+}
+function openSpots(force){renderSpots();const pack=SPOTS[spotProg]||{ts:0};
+  if(navigator.onLine&&(force||Date.now()-pack.ts>60000))refreshSpots();}
+function setSpotSpin(on){const b=document.getElementById("spotRefresh");if(!b)return;
+  b.innerHTML=on?'<span class="upd-spin">⟳</span>':'⟳';b.disabled=on;}
+function spotRowHTML(s){
+  const ms=+new Date(s.when),age=ageStr(ms),stale=Date.now()-ms>45*60000;
+  const band=hamBandOf(s.freq),md=s.mode?'<span class="badge">'+esc(s.mode)+'</span>':'';
+  const meta=[esc(s.ref),esc(s.name),esc(s.loc)].filter(Boolean).join(" · ");
+  const cmt=s.comments?'<div class="meta" style="color:var(--ink-dim)">"'+esc(s.comments)+'"</div>':'';
+  const da='data-act="spotlog" data-f="'+attr(Math.round(s.freq))+'" data-call="'+attr(s.call)+'" data-ref="'+attr(s.ref)+'" data-name="'+attr(s.name)+'" data-md="'+attr(s.mode)+'" data-prog="'+spotProg+'"';
+  return '<div class="row spotrow'+(stale?' stale':'')+'" '+da+'>'+
+    '<div class="freq">'+fmtFreq(s.freq)+'<span class="u">'+freqUnit(s.freq)+'</span></div>'+
+    '<div class="mid"><div class="st">'+esc(s.call||"?")+md+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+cmt+'</div>'+
+    '<div class="right"><span class="tag">'+(band||"--")+'</span><span class="time">'+age+'</span>'+
+      '<span class="acts"><span class="act log">＋ log</span></span></div></div>';
+}
+function renderSpots(){
+  const prog=spotProg,pack=SPOTS[prog]||{list:[],ts:0};
+  let list=(pack.list||[]).slice();
+  if(spotMode==="cw")list=list.filter(s=>s.mode==="CW");
+  else if(spotMode==="ssb")list=list.filter(s=>/SSB|USB|LSB|PHONE|FM|AM/.test(s.mode));
+  else if(spotMode==="data")list=list.filter(s=>/FT8|FT4|DATA|RTTY|JS8|DIG|PSK|JT/.test(s.mode));
+  const f=document.getElementById("spotFilter").value.trim().toLowerCase();
+  if(f)list=list.filter(s=>(s.call+" "+s.ref+" "+s.name+" "+s.loc+" "+s.mode).toLowerCase().includes(f));
+  list.sort((a,b)=>(+new Date(b.when))-(+new Date(a.when)));
+  const lab=document.getElementById("spotCount"),el=document.getElementById("spotRows");
+  const fresh=pack.ts?ageStr(pack.ts):null;
+  if(spotStatus==="loading")lab.innerHTML='Fetching live '+prog.toUpperCase()+' spots…';
+  else if(pack.ts)lab.innerHTML='<b>'+list.length+'</b> '+prog.toUpperCase()+' spots · '+
+    (!navigator.onLine?'⚠ offline · cached '+fresh+' old':spotStatus==="failed"?'⚠ refresh failed · cached '+fresh+' old':'updated '+fresh+(fresh==="now"?"":" ago"));
+  else lab.innerHTML="";
+  if(!list.length){
+    let m;
+    if(spotStatus==="loading")m='Fetching live '+prog.toUpperCase()+' spots…';
+    else if(spotStatus==="failed"||(navigator.onLine&&!pack.ts))
+      m='Couldn\'t load live '+prog.toUpperCase()+' spots here.<br><br>Live spots need real Safari — if you opened this inside another app\'s preview, use <b>Share → Open in Safari</b>, then tap ⟳. (In-app browsers block network requests.)';
+    else if(!navigator.onLine)m='Offline — connect to load live '+prog.toUpperCase()+' spots.'+(pack.ts?'':'<br>They\'ll cache here once fetched online.');
+    else m='No '+prog.toUpperCase()+' spots match your filter.';
+    el.innerHTML='<div class="empty">'+m+'</div>';return;
+  }
+  el.innerHTML=list.map(spotRowHTML).join("");
+}
+
+/* ============ reference tab ============ */
+function renderRef(){
+  document.getElementById("refMeter").innerHTML='<h3>◆ Shortwave broadcast bands</h3>'+tableHTML(["Band","From kHz","To kHz"],METER);
+  document.getElementById("refHam").innerHTML='<h3>◆ Amateur HF bands (US)</h3>'+tableHTML(["Band","From","To","Notes"],HAM,true);
+  document.getElementById("refTime").innerHTML='<h3>◆ Time &amp; frequency standards</h3>'+
+    '<table><tr><th>Station</th><th>kHz</th></tr>'+
+    '<tr><td>WWV / WWVH</td><td class="f">2500 · 5000 · 10000 · 15000 · 20000</td></tr>'+
+    '<tr><td>CHU Canada</td><td class="f">3330 · 7850 · 14670</td></tr>'+
+    '<tr><td>RWM Moscow</td><td class="f">4996 · 9996 · 14996</td></tr>'+
+    '<tr><td>BPM China</td><td class="f">5000 · 10000 · 15000</td></tr></table>';
+  const lk=Object.entries(LANG).filter(([k])=>!k.startsWith("-")).slice(0,20).map(([k,v])=>'<b>'+k+'</b> '+v).join(" · ");
+  const tk=Object.entries(TGT).slice(0,18).map(([k,v])=>'<b>'+k+'</b> '+v).join(" · ");
+  document.getElementById("legend").innerHTML="<u>Languages</u><br>"+lk+"<br><br><u>Target areas</u><br>"+tk;
+}
+function tableHTML(head,rows,four){return'<table><tr>'+head.map(h=>'<th>'+h+'</th>').join("")+'</tr>'+
+  rows.map(r=>'<tr><td>'+r[0]+'</td><td class="f">'+r[1]+'</td><td class="f">'+r[2]+'</td>'+(four?'<td style="color:var(--ink-dim)">'+(r[3]||"")+'</td>':'')+'</tr>').join("")+'</table>';}
+
+/* ============ clocks / status ============ */
+function tick(){const d=new Date(),p=n=>String(n).padStart(2,"0");
+  document.getElementById("utc").textContent=p(d.getUTCHours())+":"+p(d.getUTCMinutes())+":"+p(d.getUTCSeconds());
+  document.getElementById("loc").textContent=p(d.getHours())+":"+p(d.getMinutes());
+  document.getElementById("locLbl").textContent="Local "+(Intl.DateTimeFormat().resolvedOptions().timeZone||"");}
+function updateDbStat(){const el=document.getElementById("dbstat");
+  if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries<br>EiBi '+(META?META.code.toUpperCase():"")+' · offline ready · v'+VERSION;
+  else el.innerHTML='Reference data loaded.<br>Update / load EiBi (Ref tab) · v'+VERSION+'.';}
+function showClear(){document.getElementById("clearBtn").hidden=!haveEibi;}
+
+/* ============ navigation ============ */
+function renderProp(){
+  const el=document.getElementById("propStatus");if(!el)return;
+  if(navigator.onLine){
+    el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--green-dim);background:rgba(57,255,122,.06);color:var(--green);font-size:10.5px;letter-spacing:.06em;text-align:center;";
+    el.textContent="● Online — live data";
+  } else {
+    el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);font-size:10.5px;letter-spacing:.04em;text-align:center;";
+    el.innerHTML="⚠ Offline — images and links need a connection. Offline band advice is on the <b style='color:var(--ink)'>Tools</b> tab.";
+  }
+}
+function showTab(name){
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
+  ["listen","log","tools","spots","ref","prop"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
+  if(name==="tools")renderGray();
+  if(name==="spots")openSpots();
+  if(name==="prop")renderProp();
+}
+function showSub(group,sub){
+  document.querySelectorAll("#seg-"+group+" button").forEach(b=>b.classList.toggle("on",b.dataset.sub===sub));
+  const map={listen:["now","search","freq"],log:["logbook","stars","mine"]};
+  map[group].forEach(s=>document.getElementById("sub-"+s).hidden=(s!==sub));
+}
+
+/* ============ wire up ============ */
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>showSub("listen",b.dataset.sub)));
+document.querySelectorAll("#seg-log button").forEach(b=>b.addEventListener("click",()=>showSub("log",b.dataset.sub)));
+document.querySelectorAll("#seg-spots button").forEach(b=>b.addEventListener("click",()=>{
+  spotProg=b.dataset.sub;document.querySelectorAll("#seg-spots button").forEach(x=>x.classList.toggle("on",x===b));openSpots(true);}));
+document.querySelectorAll("#spotChips .chip").forEach(c=>c.addEventListener("click",()=>{
+  spotMode=c.dataset.sm;document.querySelectorAll("#spotChips .chip").forEach(x=>x.classList.toggle("on",x===c));renderSpots();}));
+document.getElementById("spotFilter").addEventListener("input",renderSpots);
+document.getElementById("spotRefresh").addEventListener("click",refreshSpots);
+document.querySelectorAll("#nowChips .chip").forEach(c=>c.addEventListener("click",()=>{
+  nowChip=c.dataset.chip;document.querySelectorAll("#nowChips .chip").forEach(x=>x.classList.toggle("on",x===c));refreshNow();}));
+document.getElementById("nowFilter").addEventListener("input",refreshNow);
+document.getElementById("nowBand").addEventListener("change",refreshNow);
+document.getElementById("q").addEventListener("input",refreshSearch);
+["fBand","fLang","fTarget"].forEach(id=>document.getElementById(id).addEventListener("change",refreshSearch));
+document.getElementById("freqIn").addEventListener("input",refreshFreq);
+document.getElementById("freqTol").addEventListener("change",refreshFreq);
+
+// row action delegation
+document.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-act]");if(!t)return;
+  const a=t.dataset.act;
+  if(a==="fav"||a==="log"){
+    const o={freq:+t.dataset.f,station:t.dataset.st,time:t.dataset.tm,lang:t.dataset.lg,target:t.dataset.tg,itu:t.dataset.it,days:""};
+    if(a==="fav")toggleFav(o);
+    else{
+      const notes=[o.itu,langName(o.lang),tgtName(o.target)].filter(Boolean).join(" · ");
+      openLog({title:"◆ Log "+(o.station||fmtFreq(o.freq)),freq:o.freq,station:o.station,
+        mode:t.dataset.md||(o.freq<26100&&o.freq>2300?"AM":""),notes:notes});
+    }
+  } else if(a==="spotlog"){ logFromSpot(t); }
+  else if(a==="editlog"){const i=+t.dataset.i,o=LOG[i];if(!o)return;
+    openLog({date:o.date,time:o.time,freq:o.freq,mode:o.mode,station:o.station,rst:o.rst_sent||o.sinpo||"",rst_rcvd:o.rst_rcvd||"",ref:o.ref,notes:o.notes},i);}
+  else if(a==="dellog"){LOG.splice(+t.dataset.i,1);saveJSON(K.log,LOG);renderLog();toast("Deleted");}
+  else if(a==="delmine"){delMine(+t.dataset.i);}
+});
+
+// log modal
+document.getElementById("newLog").addEventListener("click",()=>openLog());
+document.getElementById("expLog").addEventListener("click",exportLogCSV);
+document.getElementById("expAdif").addEventListener("click",exportLogADIF);
+document.getElementById("lgSave").addEventListener("click",saveLog);
+document.getElementById("lgCancel").addEventListener("click",closeLog);
+document.getElementById("logModal").addEventListener("click",ev=>{if(ev.target.id==="logModal")closeLog();});
+
+// my freq
+document.getElementById("addMine").addEventListener("click",addMine);
+document.getElementById("exMine").addEventListener("click",addExamples);
+
+// tools
+document.getElementById("antFreq").addEventListener("input",calcAnt);
+document.getElementById("geoLat").addEventListener("change",saveGeo);
+document.getElementById("geoLng").addEventListener("change",saveGeo);
+document.getElementById("useLoc").addEventListener("click",()=>{
+  if(!navigator.geolocation){toast("No geolocation");return;}
+  toast("Locating…");
+  navigator.geolocation.getCurrentPosition(p=>{GEO={lat:+p.coords.latitude.toFixed(3),lng:+p.coords.longitude.toFixed(3),label:"My location"};
+    saveJSON(K.geo,GEO);renderGray();renderIdent();toast("Location set");},()=>toast("Location denied"));
+});
+function saveGeo(){const la=parseFloat(document.getElementById("geoLat").value),ln=parseFloat(document.getElementById("geoLng").value);
+  if(isFinite(la)&&isFinite(ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);renderGray();renderIdent();}}
+document.getElementById("copyNow").addEventListener("click",()=>copyText(onAirText()));
+document.getElementById("dlCard").addEventListener("click",()=>downloadBlob("skywave-band-card.txt",bandCardText()));
+document.getElementById("printCard").addEventListener("click",doPrint);
+
+// ref / update
+document.getElementById("updBtn").addEventListener("click",()=>doUpdate());
+document.getElementById("saveCall").addEventListener("click",()=>{
+  const v=document.getElementById("callIn").value.toUpperCase().replace(/[^A-Z0-9\/]/g,"").trim();
+  PREFS.call=v;saveJSON(K.prefs,PREFS);renderIdent();toast(v?"Callsign saved":"Callsign cleared");});
+document.getElementById("callIn").addEventListener("input",()=>{document.getElementById("callIn").dataset.dirty="1";});
+document.getElementById("seasonSel").addEventListener("change",syncEibiLink);
+document.getElementById("autoUpd").addEventListener("change",e=>{PREFS.autoUpd=e.target.checked;saveJSON(K.prefs,PREFS);});
+document.getElementById("loadBtn").addEventListener("click",()=>document.getElementById("fileIn").click());
+document.getElementById("fileIn").addEventListener("change",ev=>{const file=ev.target.files[0];if(!file)return;
+  msg("Reading "+file.name+"…",false);const r=new FileReader();r.onload=()=>loadText(r.result,{code:selectedSeason()});
+  r.onerror=()=>msg("Could not read the file.",true);r.readAsText(file);});
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  try{localStorage.removeItem(K.raw);localStorage.removeItem(K.meta);}catch(e){}
+  EIBI=[];haveEibi=false;META=null;rebuildData();updateDbStat();showClear();renderLastUpd();umsg("Cleared. Reference data still available offline.","warn");});
+function selectedSeason(){const s=document.getElementById("seasonSel");return(s.value&&s.value!=="auto")?s.value:seasonCode();}
+function syncEibiLink(){const a=document.getElementById("eibiLink"),c=selectedSeason();a.href="http://www.eibispace.de/dx/sked-"+c+".csv";a.textContent="sked-"+c+".csv";}
+window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)refreshSpots();if(!document.getElementById("tab-prop").hidden)renderProp();if(PREFS.autoUpd&&(!haveEibi||(META&&Date.now()-META.ts>STALE_DAYS*dayMs)))doUpdate({silent:true});});
+window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-spots").hidden)renderSpots();if(!document.getElementById("tab-prop").hidden)renderProp();});
+
+/* ============ boot ============ */
+rebuildFavSet();
+(function(){const sel=document.getElementById("seasonSel");
+  const o=['<option value="auto">Auto ('+seasonCode().toUpperCase()+')</option>'];
+  seasonList().forEach(c=>{if(c!==seasonCode())o.push('<option value="'+c+'">'+c.toUpperCase()+'</option>');});
+  sel.innerHTML=o.join("");})();
+document.getElementById("autoUpd").checked=PREFS.autoUpd!==false;
+syncEibiLink();setNetDot();renderRef();
+EIBI=[];rebuildData();
+try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);
+  const cached=localStorage.getItem(K.raw);if(cached)loadText(cached);}catch(e){}
+renderLastUpd();updateDbStat();renderLog();calcAnt();renderGray();renderIdent();
+tick();setInterval(tick,1000);
+setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
+  if(!document.getElementById("tab-tools").hidden)renderGray();},30000);
+setInterval(()=>{if(!document.getElementById("tab-spots").hidden&&navigator.onLine)refreshSpots();},60000);
+window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
+  if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
+</script>
+</body>
+</html>
