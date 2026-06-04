@@ -12,41 +12,25 @@
 <title>SKYWAVE · Shortwave Band Guide</title>
 <style>
   :root{
-    --bg:#0c0b09;--nav-bg:#14120c;--panel:#16140f;--panel2:#1d1a13;--line:#2c281d;
-    --amber:#ffb000;--amber-dim:#a8742a;--green:#39ff7a;--green-dim:#1d7a3c;
-    --ink:#e9dcc0;--ink-dim:#8c7f63;--red:#ff5d3b;
+    /* Anthropic / Claude Code dark */
+    --bg:#1a1a1a;--nav-bg:#111111;--panel:#252525;--panel2:#2d2d2d;--line:#3d3d3d;
+    --amber:#d97557;--amber-dim:#8b4a32;--green:#4ade80;--green-dim:#166534;
+    --ink:#f0f0f0;--ink-dim:#888888;--red:#f87171;
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
-    --header-bg:linear-gradient(180deg,#14120c,#100e0a);
+    --header-bg:linear-gradient(180deg,#111111,#161616);
   }
-  /* green phosphor (VT100) */
-  [data-theme="green"]{
-    --bg:#010e03;--nav-bg:#010e03;--panel:#051208;--panel2:#081a0b;--line:#163320;
-    --amber:#39ff7a;--amber-dim:#1d7a3c;--green:#39ff7a;--green-dim:#1d7a3c;
-    --ink:#b4f0c0;--ink-dim:#4a7a55;--red:#ff6b50;
-    --header-bg:linear-gradient(180deg,#010e03,#020f04);
-  }
-  [data-theme="green"] body{background-image:repeating-linear-gradient(0deg,rgba(57,255,122,.018) 0 1px,transparent 1px 3px);}
-  /* light mode */
+  /* Anthropic / Claude Code light */
   [data-theme="light"]{
-    --bg:#f5f0e8;--nav-bg:#e8e0ce;--panel:#fff;--panel2:#f0ebe0;--line:#d5cfc0;
-    --amber:#8b5e00;--amber-dim:#c8a040;--green:#006830;--green-dim:#8bc08a;
-    --ink:#1a1206;--ink-dim:#5c5040;--red:#c0200a;
-    --header-bg:linear-gradient(180deg,#e8e0ce,#f0ebe0);
+    --bg:#f8f7f5;--nav-bg:#eeebe5;--panel:#ffffff;--panel2:#f3f0ea;--line:#e0dbd4;
+    --amber:#b85a30;--amber-dim:#e09070;--green:#166534;--green-dim:#bbf7d0;
+    --ink:#1a1a1a;--ink-dim:#706860;--red:#dc2626;
+    --header-bg:linear-gradient(180deg,#eeebe5,#f3f0ea);
   }
   [data-theme="light"] body{background-image:none;}
-  /* high contrast */
-  [data-theme="hc"]{
-    --bg:#000;--nav-bg:#111;--panel:#111;--panel2:#1c1c1c;--line:#555;
-    --amber:#ffff00;--amber-dim:#aaaa00;--green:#00ff00;--green-dim:#00aa00;
-    --ink:#fff;--ink-dim:#bbb;--red:#ff5555;
-    --header-bg:#000;
-  }
-  [data-theme="hc"] body{background-image:none;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--mono);}
   body{min-height:100vh;
-    background-image:radial-gradient(120% 80% at 50% -10%,#1a1812 0%,#0c0b09 60%),
-      repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0 1px,transparent 1px 3px);
+    background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.014) 0 1px,transparent 1px 4px);
     padding-bottom:env(safe-area-inset-bottom);}
   .wrap{max-width:760px;margin:0 auto;padding:0 14px 96px;}
 
@@ -54,13 +38,19 @@
     padding-top:max(14px,env(safe-area-inset-top));
     background:var(--header-bg);border-bottom:1px solid var(--line);
     box-shadow:0 6px 18px rgba(0,0,0,.5);}
-  .brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
-  .brand h1{font-size:17px;letter-spacing:.42em;margin:0;color:var(--amber);font-weight:700;text-shadow:0 0 12px rgba(255,176,0,.35);}
+  .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .brand h1{font-size:17px;letter-spacing:.42em;margin:0;color:var(--amber);font-weight:700;}
   .brand .sub{font-size:9.5px;letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;}
+  .hdr-controls{display:flex;gap:5px;align-items:center;margin-left:auto;flex-shrink:0;}
+  .tgl-btn{background:none;border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
+    font-size:9px;letter-spacing:.08em;padding:4px 9px;border-radius:5px;cursor:pointer;
+    transition:.15s;white-space:nowrap;}
+  .tgl-btn:hover{color:var(--ink);}
+  .tgl-btn.on{color:var(--amber);border-color:var(--amber-dim);}
   .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;}
   .clock{display:flex;flex-direction:column;gap:1px;}
   .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
-  .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--amber);text-shadow:0 0 10px rgba(255,176,0,.45);}
+  .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--amber);}
   .clock.local .val{font-size:16px;color:var(--ink);text-shadow:none;}
   .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);max-width:42%;}
   .dbstat b{color:var(--green);font-weight:600;}
@@ -73,7 +63,7 @@
     letter-spacing:.1em;padding:10px 4px 8px;cursor:pointer;text-transform:uppercase;transition:.15s;min-width:0;}
   .bnav-btn .bicon{font-size:16px;line-height:1;}
   .bnav-btn.on{color:var(--amber);}
-  .bnav-btn.on .bicon{text-shadow:0 0 10px rgba(255,176,0,.5);}
+  .bnav-btn.on .bicon{opacity:.9;}
   .morescrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);
     opacity:0;pointer-events:none;transition:opacity .2s;}
   .morescrim.open{opacity:1;pointer-events:auto;}
@@ -103,7 +93,7 @@
   input[type=text],input[type=search],input[type=number],select,textarea{
     background:var(--panel);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);
     font-size:14px;padding:10px 12px;border-radius:8px;outline:none;flex:1;min-width:0;}
-  input:focus,select:focus,textarea:focus{border-color:var(--amber-dim);box-shadow:0 0 0 2px rgba(255,176,0,.12);}
+  input:focus,select:focus,textarea:focus{border-color:var(--amber-dim);box-shadow:0 0 0 2px rgba(217,117,87,.18);}
   select{flex:0 0 auto;font-size:12px;}
   textarea{width:100%;resize:vertical;min-height:54px;}
   .hint{font-size:10.5px;color:var(--ink-dim);line-height:1.6;letter-spacing:.03em;}
@@ -138,7 +128,7 @@
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
   .acts{display:flex;gap:8px;margin-top:2px;}
   .act{font-size:13px;cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;}
-  .act.fav.on{color:var(--amber);text-shadow:0 0 8px rgba(255,176,0,.5);}
+  .act.fav.on{color:var(--amber);text-shadow:0 0 8px rgba(217,117,87,.5);}
   .act.log{font-size:9px;letter-spacing:.1em;border:1px solid var(--line);border-radius:4px;padding:2px 5px;text-transform:uppercase;}
 
   .empty{text-align:center;color:var(--ink-dim);font-size:12px;padding:34px 10px;line-height:1.7;letter-spacing:.04em;}
@@ -252,8 +242,8 @@
       font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;
       cursor:pointer;border-radius:8px;margin:0 7px;width:calc(100% - 14px);transition:.15s;}
     .snav-btn .bicon{font-size:15px;line-height:1;}
-    .snav-btn.on{color:var(--amber);background:rgba(255,176,0,.08);}
-    .snav-btn.on .bicon{text-shadow:0 0 10px rgba(255,176,0,.5);}
+    .snav-btn.on{color:var(--amber);background:rgba(217,117,87,.1);}
+    .snav-btn.on .bicon{text-shadow:0 0 10px rgba(217,117,87,.5);}
     .wrap{max-width:760px;margin:0;flex:1;min-width:0;padding-bottom:20px;}
     .bottomnav{display:none;}
   }
@@ -266,9 +256,6 @@
   .kiosk-btn.on{color:var(--amber);border-color:var(--amber);}
 
   /* display settings card */
-  .theme-swatch{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);cursor:pointer;
-    transition:.15s;flex-shrink:0;outline:none;}
-  .theme-swatch.on{border-color:var(--amber);box-shadow:0 0 0 2px rgba(255,176,0,.35);}
   .scale-btns{display:flex;gap:5px;margin-bottom:10px;}
   .scale-btn{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--ink-dim);
     font-family:var(--mono);border-radius:6px;cursor:pointer;padding:6px 0;transition:.15s;line-height:1;}
@@ -320,7 +307,14 @@
 </nav>
 <div class="wrap">
   <header>
-    <div class="brand"><h1>SKYWAVE</h1><span class="sub">Shortwave Band Guide</span><button class="kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode">⛶ Kiosk</button></div>
+    <div class="brand">
+      <h1>SKYWAVE</h1><span class="sub">Shortwave Band Guide</span>
+      <div class="hdr-controls">
+        <button class="tgl-btn on" data-theme-btn="" title="Dark theme">◑ Dark</button>
+        <button class="tgl-btn" data-theme-btn="light" title="Light theme">◐ Light</button>
+        <button class="kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode">⛶ Kiosk</button>
+      </div>
+    </div>
     <div class="ident"><span id="hdrCall" class="ident-call"></span><span id="hdrGrid" class="ident-grid"></span></div>
     <div class="clocks">
       <div class="clock"><span class="lbl">UTC · Zulu</span><span class="val" id="utc">--:--:--</span></div>
@@ -481,14 +475,6 @@
   <section id="tab-ref" hidden>
     <div class="card" id="displayCard">
       <h3>◆ Display</h3>
-      <div class="hint" style="margin-bottom:6px">Theme</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
-        <button class="theme-swatch on" data-theme-btn="" style="background:#0c0b09" title="Dark amber (default)" aria-label="Dark amber"></button>
-        <button class="theme-swatch" data-theme-btn="green" style="background:#010e03;border-color:#39ff7a" title="Green phosphor" aria-label="Green phosphor"></button>
-        <button class="theme-swatch" data-theme-btn="light" style="background:#f5f0e8;border-color:#8b5e00" title="Light" aria-label="Light"></button>
-        <button class="theme-swatch" data-theme-btn="hc" style="background:#000;border-color:#ffff00" title="High contrast" aria-label="High contrast"></button>
-        <span class="hint" id="themeLabel" style="flex:1;margin:0"></span>
-      </div>
       <div class="hint" style="margin-bottom:6px">Font size</div>
       <div class="scale-btns">
         <button class="scale-btn on" data-zoom-btn="1" style="font-size:11px">A</button>
@@ -1160,12 +1146,10 @@ function renderIdent(){
 /* ============ theme / zoom / kiosk / right-rail ============ */
 let _wakeLock=null,_lastKp=null;
 
-const THEME_NAMES={"":"Dark amber","green":"Green phosphor","light":"Light","hc":"High contrast"};
 function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
   document.querySelectorAll("[data-theme-btn]").forEach(b=>b.classList.toggle("on",b.dataset.themeBtn===(t||"")));
-  const lbl=document.getElementById("themeLabel");if(lbl)lbl.textContent=THEME_NAMES[t||""]||"";
 }
 function applyZoom(z){
   PREFS.zoom=z;saveJSON(K.prefs,PREFS);
