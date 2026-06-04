@@ -143,6 +143,9 @@
   .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--green);color:#06170c;
     font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:.25s;pointer-events:none;text-transform:uppercase;}
   .toast.show{opacity:1;}
+  .ident{display:flex;gap:14px;align-items:baseline;margin-top:4px;min-height:14px;}
+  .ident-call{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--amber);}
+  .ident-grid{font-size:11px;letter-spacing:.16em;color:var(--green);}
 
   footer{margin-top:16px;font-size:9.5px;color:var(--ink-dim);line-height:1.7;text-align:center;}
   footer a{color:var(--amber-dim);}
@@ -162,6 +165,7 @@
 <div class="wrap">
   <header>
     <div class="brand"><h1>SKYWAVE</h1><span class="sub">Shortwave Band Guide</span></div>
+    <div class="ident"><span id="hdrCall" class="ident-call"></span><span id="hdrGrid" class="ident-grid"></span></div>
     <div class="clocks">
       <div class="clock"><span class="lbl">UTC · Zulu</span><span class="val" id="utc">--:--:--</span></div>
       <div class="clock local"><span class="lbl" id="locLbl">Local</span><span class="val" id="loc">--:--</span></div>
@@ -326,6 +330,14 @@
 
   <!-- ============ REF ============ -->
   <section id="tab-ref" hidden>
+    <div class="card" id="stationCard">
+      <h3>◆ My station</h3>
+      <div class="formgrid">
+        <label class="wide">Callsign<input type="text" id="callIn" placeholder="W5XYZ" autocomplete="off" spellcheck="false" style="text-transform:uppercase;letter-spacing:.08em"></label>
+      </div>
+      <div class="btnrow"><button class="btn sm" id="saveCall">Save callsign</button></div>
+      <div class="hint" id="gridHint"></div>
+    </div>
     <div class="loadbox">
       <h3>◆ Full EiBi schedule <span id="netDot" class="netdot off"></span></h3>
       <div class="hint" id="lastUpd" style="margin-bottom:10px"></div>
@@ -426,7 +438,7 @@ function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v
 function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}}
 let FAVS=loadJSON(K.favs,[]), LOG=loadJSON(K.log,[]), MINE=loadJSON(K.mine,[]);
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
-let PREFS=loadJSON(K.prefs,{autoUpd:true});
+let PREFS=loadJSON(K.prefs,{autoUpd:true,call:""});
 let SPOTS={pota:loadJSON(K.pota,{list:[],ts:0}),sota:loadJSON(K.sota,{list:[],ts:0})};
 let spotProg="pota",spotMode="all",spotStatus="";
 let favSet=new Set();
@@ -725,6 +737,8 @@ function exportLogADIF(){
       tag("FREQ",freqMHz),
       tag("MODE",mode),
       tag("RST_SENT",o.sinpo),
+      PREFS.call?tag("MY_CALL",PREFS.call):"",
+      PREFS.call?tag("MY_GRIDSQUARE",toGrid(GEO.lat,GEO.lng)):"",
       isPota?tag("POTA_REF",ref):"",
       isSota?tag("SOTA_REF",ref):"",
       tag("COMMENT",o.notes),
@@ -781,6 +795,24 @@ function calcAnt(){
     '<div>½-wave dipole &nbsp;<span class="v">'+f1(dipFt)+' ft</span> &nbsp;('+f2(dipM)+' m) · each leg '+f1(legFt)+' ft</div>'+
     '<div>¼-wave vertical &nbsp;<span class="v">'+f1(vertFt)+' ft</span> &nbsp;('+f2(vertFt*0.3048)+' m)</div>'+
     '<div>Full-wave loop &nbsp;<span class="v">'+f1(loopFt)+' ft</span> &nbsp;('+f2(loopFt*0.3048)+' m)</div>';
+}
+
+/* ============ sun / grayline ============ */
+/* ============ Maidenhead grid square ============ */
+function toGrid(lat,lng){
+  const lo=lng+180,la=lat+90;
+  return String.fromCharCode(65+Math.floor(lo/20),65+Math.floor(la/10))+
+    String(Math.floor((lo%20)/2))+String(Math.floor(la%10))+
+    String.fromCharCode(97+Math.floor((lo%2)*12),97+Math.floor((la%1)*24));
+}
+function renderIdent(){
+  const c=(PREFS.call||"").toUpperCase().trim(),g=toGrid(GEO.lat,GEO.lng);
+  document.getElementById("hdrCall").textContent=c;
+  document.getElementById("hdrGrid").textContent=g;
+  const hint=document.getElementById("gridHint");
+  if(hint)hint.textContent="Grid: "+g+(GEO.label?"  ("+GEO.label+")":"");
+  if(document.getElementById("callIn")&&!document.getElementById("callIn").dataset.dirty)
+    document.getElementById("callIn").value=c;
 }
 
 /* ============ sun / grayline ============ */
@@ -1047,16 +1079,20 @@ document.getElementById("useLoc").addEventListener("click",()=>{
   if(!navigator.geolocation){toast("No geolocation");return;}
   toast("Locating…");
   navigator.geolocation.getCurrentPosition(p=>{GEO={lat:+p.coords.latitude.toFixed(3),lng:+p.coords.longitude.toFixed(3),label:"My location"};
-    saveJSON(K.geo,GEO);renderGray();toast("Location set");},()=>toast("Location denied"));
+    saveJSON(K.geo,GEO);renderGray();renderIdent();toast("Location set");},()=>toast("Location denied"));
 });
 function saveGeo(){const la=parseFloat(document.getElementById("geoLat").value),ln=parseFloat(document.getElementById("geoLng").value);
-  if(isFinite(la)&&isFinite(ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);renderGray();}}
+  if(isFinite(la)&&isFinite(ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);renderGray();renderIdent();}}
 document.getElementById("copyNow").addEventListener("click",()=>copyText(onAirText()));
 document.getElementById("dlCard").addEventListener("click",()=>downloadBlob("skywave-band-card.txt",bandCardText()));
 document.getElementById("printCard").addEventListener("click",doPrint);
 
 // ref / update
 document.getElementById("updBtn").addEventListener("click",()=>doUpdate());
+document.getElementById("saveCall").addEventListener("click",()=>{
+  const v=document.getElementById("callIn").value.toUpperCase().replace(/[^A-Z0-9\/]/g,"").trim();
+  PREFS.call=v;saveJSON(K.prefs,PREFS);renderIdent();toast(v?"Callsign saved":"Callsign cleared");});
+document.getElementById("callIn").addEventListener("input",()=>{document.getElementById("callIn").dataset.dirty="1";});
 document.getElementById("seasonSel").addEventListener("change",syncEibiLink);
 document.getElementById("autoUpd").addEventListener("change",e=>{PREFS.autoUpd=e.target.checked;saveJSON(K.prefs,PREFS);});
 document.getElementById("loadBtn").addEventListener("click",()=>document.getElementById("fileIn").click());
@@ -1082,7 +1118,7 @@ syncEibiLink();setNetDot();renderRef();
 EIBI=[];rebuildData();
 try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);
   const cached=localStorage.getItem(K.raw);if(cached)loadText(cached);}catch(e){}
-renderLastUpd();updateDbStat();renderLog();calcAnt();renderGray();
+renderLastUpd();updateDbStat();renderLog();calcAnt();renderGray();renderIdent();
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-tools").hidden)renderGray();},30000);
