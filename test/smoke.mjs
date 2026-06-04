@@ -40,16 +40,19 @@ const dom = new JSDOM(html, {
   pretendToBeVisual: true,
   virtualConsole: vc,
   beforeParse(w) {
-    // Stub localStorage
-    w.localStorage = (() => {
+    // Stub localStorage (jsdom exposes it as a getter-only on Window)
+    const store = (() => {
       let s = {};
       return {
         getItem:    k      => k in s ? s[k] : null,
         setItem:    (k, v) => { s[k] = String(v); },
         removeItem: k      => { delete s[k]; },
         clear:      ()     => { s = {}; },
+        get length() { return Object.keys(s).length; },
+        key:        i      => Object.keys(s)[i] ?? null,
       };
     })();
+    Object.defineProperty(w, "localStorage", { value: store, configurable: true });
 
     // Report as online
     Object.defineProperty(w.navigator, "onLine", { value: true, configurable: true });
