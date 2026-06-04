@@ -1385,7 +1385,7 @@ function renderSpots(){
   else if(spotMode==="data")list=list.filter(s=>/FT8|FT4|DATA|RTTY|JS8|DIG|PSK|JT/.test(s.mode));
   const f=document.getElementById("spotFilter").value.trim().toLowerCase();
   if(f)list=list.filter(s=>(s.call+" "+s.ref+" "+s.name+" "+s.loc+" "+s.mode).toLowerCase().includes(f));
-  list.sort((a,b)=>(+new Date(b.when))-(+new Date(a.when)));
+  list.sort((a,b)=>a.freq-b.freq);
   const lab=document.getElementById("spotCount"),el=document.getElementById("spotRows");
   const fresh=pack.ts?ageStr(pack.ts):null;
   if(spotStatus==="loading")lab.innerHTML='Fetching live '+prog.toUpperCase()+' spots…';
