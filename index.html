@@ -40,9 +40,9 @@
   .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);max-width:42%;}
   .dbstat b{color:var(--green);font-weight:600;}
 
-  .bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;align-items:stretch;
-    background:#14120c;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);
-    box-shadow:0 -4px 14px rgba(0,0,0,.45);}
+  .bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:stretch;
+    width:100%;max-width:760px;background:#14120c;border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 14px rgba(0,0,0,.45);}
   .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
     background:none;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:7.5px;
     letter-spacing:.1em;padding:10px 4px 8px;cursor:pointer;text-transform:uppercase;transition:.15s;min-width:0;}
@@ -152,6 +152,8 @@
   .loadbox summary{font-size:11px;letter-spacing:.08em;color:var(--ink-dim);cursor:pointer;}
   .loadbox summary:hover{color:var(--amber);}
   .upd-spin{animation:spin 1s linear infinite;display:inline-block;}@keyframes spin{to{transform:rotate(360deg);}}
+  .prop-online{margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--green-dim);background:rgba(57,255,122,.06);color:var(--green);font-size:10.5px;letter-spacing:.06em;text-align:center;}
+  .prop-offline{margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);font-size:10.5px;letter-spacing:.04em;text-align:center;}
 
   /* modal */
   .modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.66);display:flex;align-items:flex-end;justify-content:center;}
@@ -491,7 +493,7 @@
   <button class="bnav-btn" data-tab="log"><span class="bicon">✦</span>Log</button>
   <button class="bnav-btn" data-tab="spots"><span class="bicon">◎</span>Spots</button>
   <button class="bnav-btn" data-tab="tools"><span class="bicon">⚙</span>Tools</button>
-  <button class="bnav-btn" id="moreBtn"><span class="bicon">⋯</span>More</button>
+  <button class="bnav-btn" id="moreBtn" aria-expanded="false" aria-haspopup="true"><span class="bicon">⋯</span>More</button>
 </nav>
 
 <script>
@@ -604,10 +606,12 @@ function seasonList(){const set=new Set([seasonCode()]);const d=new Date();
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),11,15))));return[...set];}
 function relays(raw){return[raw,"https://api.allorigins.win/raw?url="+encodeURIComponent(raw),
   "https://corsproxy.io/?url="+encodeURIComponent(raw),"https://thingproxy.freeboard.io/fetch/"+raw];}
+function fetchWithTimeout(url,opts,ms){const ac=new AbortController();const id=setTimeout(()=>ac.abort(),ms||7000);
+  return fetch(url,{...opts,signal:ac.signal}).finally(()=>clearTimeout(id));}
 async function fetchSchedule(code){
   const targets=["https://www.eibispace.de/dx/sked-"+code+".csv","http://www.eibispace.de/dx/sked-"+code+".csv"];
   for(const t of targets)for(const url of relays(t)){
-    try{const res=await fetch(url,{cache:"no-store",redirect:"follow"});if(!res||!res.ok)continue;
+    try{const res=await fetchWithTimeout(url,{cache:"no-store",redirect:"follow"});if(!res||!res.ok)continue;
       const text=await res.text();if((text.match(/;/g)||[]).length>200)return text;}catch(e){}
   }
   return null;
@@ -637,9 +641,6 @@ function cap(x){return x.charAt(0).toUpperCase()+x.slice(1).toLowerCase();}
 function dayAllowed(daysStr){
   const s=(daysStr||"").trim();
   if(!s)return null;
-  if(/irr|alt|Last|tent|Holy|Ram|^x|\d\.|^su\b.*-|am$/i.test(s)&&!/^[A-Za-z]{2}(-[A-Za-z]{2})?$/.test(s)){
-    // complex/irregular -> permissive unless it's a clean range/list handled below
-  }
   const map={Mo:1,Tu:2,We:3,Th:4,Fr:5,Sa:6,Su:7};const set=new Set();let unknown=false;
   s.split(",").forEach(part=>{part=part.trim();let m;
     if(m=/^([A-Za-z]{2})-([A-Za-z]{2})$/.exec(part)){const a=map[cap(m[1])],b=map[cap(m[2])];
@@ -912,7 +913,7 @@ function calcAnt(){
 /* ============ sun / grayline ============ */
 /* ============ Maidenhead grid square ============ */
 function toGrid(lat,lng){
-  const lo=lng+180,la=lat+90;
+  const lo=Math.min(lng+180,359.9999),la=Math.min(lat+90,179.9999);
   return String.fromCharCode(65+Math.floor(lo/20),65+Math.floor(la/10))+
     String(Math.floor((lo%20)/2))+String(Math.floor(la%10))+
     String.fromCharCode(97+Math.floor((lo%2)*12),97+Math.floor((la%1)*24));
@@ -1030,7 +1031,7 @@ async function getSpots(prog){
   const urls=prog==="pota"?["https://api.pota.app/spot/activator"]
     :["https://api-db2.sota.org.uk/api/spots/40/all","https://api2.sota.org.uk/api/spots/40/all","https://api2.sota.org.uk/api/spots/40/"];
   for(const base of urls)for(const url of relays(base)){
-    try{const res=await fetch(url,{cache:"no-store"});if(!res||!res.ok)continue;
+    try{const res=await fetchWithTimeout(url,{cache:"no-store"});if(!res||!res.ok)continue;
       const data=JSON.parse(await res.text());if(Array.isArray(data)&&data.length)return data;}catch(e){}
   }
   return null;
@@ -1072,7 +1073,7 @@ function renderSpots(){
   const prog=spotProg,pack=SPOTS[prog]||{list:[],ts:0};
   let list=(pack.list||[]).slice();
   if(spotMode==="cw")list=list.filter(s=>s.mode==="CW");
-  else if(spotMode==="ssb")list=list.filter(s=>/SSB|USB|LSB|PHONE|FM|AM/.test(s.mode));
+  else if(spotMode==="ssb")list=list.filter(s=>/SSB|USB|LSB|PHONE/.test(s.mode));
   else if(spotMode==="data")list=list.filter(s=>/FT8|FT4|DATA|RTTY|JS8|DIG|PSK|JT/.test(s.mode));
   const f=document.getElementById("spotFilter").value.trim().toLowerCase();
   if(f)list=list.filter(s=>(s.call+" "+s.ref+" "+s.name+" "+s.loc+" "+s.mode).toLowerCase().includes(f));
@@ -1152,11 +1153,10 @@ function fetchKIndex(){
 function renderProp(){
   const el=document.getElementById("propStatus");if(!el)return;
   if(navigator.onLine){
-    el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--green-dim);background:rgba(57,255,122,.06);color:var(--green);font-size:10.5px;letter-spacing:.06em;text-align:center;";
-    el.textContent="● Online — live data";
+    el.className="prop-online";el.textContent="● Online — live data";
     fetchKIndex();
   } else {
-    el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);font-size:10.5px;letter-spacing:.04em;text-align:center;";
+    el.className="prop-offline";
     el.innerHTML="⚠ Offline — images and links need a connection. Offline band advice is on the <b style='color:var(--ink)'>Tools</b> tab.";
     const kEl=document.getElementById("kIdxDisplay");
     if(kEl)kEl.innerHTML='<div class="hint" style="padding:10px 0">Offline — K-index unavailable</div>';
@@ -1165,12 +1165,16 @@ function renderProp(){
 function closeMore(){
   document.getElementById("moreSheet").classList.remove("open");
   document.getElementById("moreScrim").classList.remove("open");
+  document.getElementById("moreBtn").setAttribute("aria-expanded","false");
+  document.body.style.overflow="";
 }
 function openMore(){
   const active=["listen","log","tools","spots","ref","prop"].find(t=>!document.getElementById("tab-"+t).hidden)||"listen";
   document.querySelectorAll(".morerow[data-tab]").forEach(r=>r.classList.toggle("on",r.dataset.tab===active));
   document.getElementById("moreSheet").classList.add("open");
   document.getElementById("moreScrim").classList.add("open");
+  document.getElementById("moreBtn").setAttribute("aria-expanded","true");
+  document.body.style.overflow="hidden";
 }
 function showTab(name){
   const moreTabs=["ref","prop"];
