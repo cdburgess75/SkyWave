@@ -113,12 +113,13 @@
     font-size:10.5px;letter-spacing:.08em;padding:6px 11px;border-radius:20px;cursor:pointer;}
   .chip.on{color:#000;background:var(--amber);border-color:var(--amber);font-weight:700;}
   /* band filter chips — each carries --bc for its LED color */
-  .bchip{background:var(--panel);border:1px solid var(--bc,var(--line));color:var(--bc,var(--ink-dim));
+  .bchip{background:transparent;border:1px solid var(--bc,var(--line));color:var(--bc,var(--ink-dim));
     font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:5px 10px;
     border-radius:20px;cursor:pointer;transition:.15s;flex-shrink:0;}
-  .bchip.on{color:#000;font-weight:700;background:var(--bc,var(--amber));border-color:var(--bc,var(--amber));
-    box-shadow:0 0 10px var(--bc,var(--amber));}
-  [data-theme="light"] .bchip.on{box-shadow:none;}
+  .bchip.on{border-width:1.5px;font-weight:700;
+    text-shadow:0 0 8px var(--bc,var(--amber));box-shadow:0 0 10px var(--bc,var(--amber));}
+  [data-theme="light"] .bchip{background:var(--panel);}
+  [data-theme="light"] .bchip.on{background:var(--bc,var(--amber));color:#000;text-shadow:none;box-shadow:none;}
 
   .ctrl{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 11px;}
   input[type=text],input[type=search],input[type=number],select,textarea{
@@ -157,10 +158,10 @@
   .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
   .tag.live{color:#06170c;background:var(--green);border-color:var(--green);font-weight:700;}
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
-  .tag.band{background:var(--bc,var(--blue));border-color:var(--bc,var(--blue));color:#000;font-weight:700;
-    font-size:9px;padding:3px 9px;border-radius:20px;letter-spacing:.1em;
-    box-shadow:0 0 8px var(--bc,var(--blue)),0 0 18px var(--bc,var(--blue));}
-  [data-theme="light"] .tag.band{box-shadow:none;}
+  .tag.band{background:transparent;border:1.5px solid var(--bc,var(--blue));color:var(--bc,var(--blue));
+    font-weight:700;font-size:9px;padding:3px 9px;border-radius:20px;letter-spacing:.1em;
+    text-shadow:0 0 8px var(--bc,var(--blue));box-shadow:0 0 8px var(--bc,var(--blue));}
+  [data-theme="light"] .tag.band{background:var(--bc,var(--blue));color:#000;text-shadow:none;box-shadow:none;border-width:1px;}
   .acts{display:flex;gap:8px;margin-top:2px;}
   .act{font-size:13px;cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;}
   .act.fav.on{color:var(--amber);text-shadow:0 0 8px rgba(240,146,60,.5);}
@@ -804,10 +805,18 @@ let PREFS=loadJSON(K.prefs,{autoUpd:true,call:"",setup:false,theme:"",zoom:1,hr2
 let SPOTS={pota:loadJSON(K.pota,{list:[],ts:0}),sota:loadJSON(K.sota,{list:[],ts:0})};
 let spotProg="pota",spotMode="all",spotBand="all",spotStatus="";
 const BAND_COLOR={
-  "160 m":"#e8635a","80 m":"#f0923c","60 m":"#f0923c",
-  "40 m":"#f5e35a","30 m":"#7de87a","20 m":"#7de87a",
-  "17 m":"#7dd5f5","15 m":"#e8635a","12 m":"#f0923c",
-  "10 m":"#f5e35a","6 m":"#7dd5f5","2 m":"#7de87a"
+  "160 m":"#ff2244",  // LED red
+  "80 m":"#ff5500",   // LED orange-red
+  "60 m":"#ffaa00",   // LED amber
+  "40 m":"#ffe600",   // LED yellow
+  "30 m":"#88ff00",   // LED chartreuse
+  "20 m":"#00ff88",   // LED green
+  "17 m":"#00ffdd",   // LED cyan
+  "15 m":"#00aaff",   // LED sky blue
+  "12 m":"#4466ff",   // LED blue-violet
+  "10 m":"#aa33ff",   // LED violet
+  "6 m":"#ff22cc",    // LED magenta
+  "2 m":"#ff0066"     // LED hot pink
 };
 let editIdx=-1;
 let favSet=new Set();
