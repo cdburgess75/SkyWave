@@ -1,0 +1,19 @@
+{
+  "name": "SKYWAVE",
+  "short_name": "Skywave",
+  "description": "Shortwave band guide and ham field logbook",
+  "start_url": "/SkyWave/",
+  "scope": "/SkyWave/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c0b09",
+  "theme_color": "#0c0b09",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

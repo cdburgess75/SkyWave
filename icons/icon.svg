@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="28" fill="#0c0b09"/>
+  <text x="96" y="72" font-family="ui-monospace,Menlo,monospace" font-size="44" font-weight="700" text-anchor="middle" fill="#ffb300" letter-spacing="3">SKY</text>
+  <text x="96" y="126" font-family="ui-monospace,Menlo,monospace" font-size="44" font-weight="700" text-anchor="middle" fill="#ffb300" letter-spacing="3">WAVE</text>
+  <line x1="32" y1="145" x2="160" y2="145" stroke="#ffb300" stroke-width="2" opacity=".35"/>
+  <text x="96" y="165" font-family="ui-monospace,Menlo,monospace" font-size="13" text-anchor="middle" fill="#ffb300" opacity=".55" letter-spacing="4">&#x25C6; HF &#x25C6;</text>
+</svg>

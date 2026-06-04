@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Skywave">
 <meta name="theme-color" content="#0c0b09">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon.svg">
 <title>SKYWAVE · Shortwave Band Guide</title>
 <style>
   :root{
@@ -156,6 +158,10 @@
   .proptile-desc{font-size:10px;color:var(--ink-dim);line-height:1.4;}
   .propimg{width:100%;border-radius:6px;display:block;background:var(--panel2);}
   .propimgwrap{display:block;text-decoration:none;}
+  .kbars{display:flex;gap:3px;align-items:flex-end;height:48px;}
+  .kbar{flex:1;border-radius:3px 3px 0 0;min-width:6px;}
+  .kval{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;}
+  .ktime{font-size:10px;color:var(--ink-dim);margin-top:3px;letter-spacing:.04em;}
 
   #printArea{display:none;}
   @media print{
@@ -393,11 +399,8 @@
 
     <div class="card">
       <h3>◆ Planetary K-index <small>NOAA SWPC</small></h3>
-      <a class="propimgwrap" href="https://www.swpc.noaa.gov/products/planetary-k-index" target="_blank" rel="noopener">
-        <img class="propimg" src="https://services.swpc.noaa.gov/images/planetary-k-index.gif" alt="Planetary K-index 3-day plot"
-             onerror="this.style.opacity='.3'">
-      </a>
-      <div class="hint" style="margin-top:8px">3-day planetary K-index. K ≤ 2 quiet / excellent; K 3–4 unsettled; K ≥ 5 HF degraded, aurora possible.</div>
+      <div id="kIdxDisplay" style="min-height:56px"></div>
+      <div class="hint" style="margin-top:4px">Kp ≤ 2 quiet · 3–4 unsettled · ≥ 5 storm (HF degraded, aurora possible). <a href="https://www.swpc.noaa.gov/products/planetary-k-index" target="_blank" rel="noopener" style="color:var(--amber)">Full chart ↗</a></div>
     </div>
 
     <div class="card">
@@ -1089,14 +1092,43 @@ function updateDbStat(){const el=document.getElementById("dbstat");
 function showClear(){document.getElementById("clearBtn").hidden=!haveEibi;}
 
 /* ============ navigation ============ */
+function fetchKIndex(){
+  const el=document.getElementById("kIdxDisplay");if(!el)return;
+  el.innerHTML='<div class="hint" style="padding:10px 0">Loading…</div>';
+  fetch("https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json")
+    .then(r=>r.json()).then(data=>{
+      const rows=data.slice(1).filter(r=>r[2]==="observed");
+      if(!rows.length){el.innerHTML='<div class="hint">No data available</div>';return;}
+      const last=rows[rows.length-1];
+      const kp=parseFloat(last[1]);
+      const ts=String(last[0]).slice(0,16);
+      const kColor=kp<=2?"var(--green)":kp<=4?"var(--amber)":"#ff5555";
+      const bars=rows.slice(-8).map(r=>{
+        const k=parseFloat(r[1]);
+        const h=Math.max(4,Math.round((k/9)*44));
+        const c=k<=2?"var(--green)":k<=4?"var(--amber)":"#ff5555";
+        return'<div class="kbar" style="height:'+h+'px;background:'+c+'" title="Kp '+k.toFixed(1)+'"></div>';
+      }).join("");
+      el.innerHTML=
+        '<div style="display:flex;align-items:flex-end;gap:14px">'+
+        '<div><div class="kval" style="color:'+kColor+'">'+kp.toFixed(1)+'</div>'+
+        '<div class="ktime">'+ts+'Z</div></div>'+
+        '<div class="kbars" style="flex:1">'+bars+'</div></div>';
+    }).catch(()=>{
+      el.innerHTML='<div class="hint">Could not load — check connection</div>';
+    });
+}
 function renderProp(){
   const el=document.getElementById("propStatus");if(!el)return;
   if(navigator.onLine){
     el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--green-dim);background:rgba(57,255,122,.06);color:var(--green);font-size:10.5px;letter-spacing:.06em;text-align:center;";
     el.textContent="● Online — live data";
+    fetchKIndex();
   } else {
     el.style.cssText="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);font-size:10.5px;letter-spacing:.04em;text-align:center;";
     el.innerHTML="⚠ Offline — images and links need a connection. Offline band advice is on the <b style='color:var(--ink)'>Tools</b> tab.";
+    const kEl=document.getElementById("kIdxDisplay");
+    if(kEl)kEl.innerHTML='<div class="hint" style="padding:10px 0">Offline — K-index unavailable</div>';
   }
 }
 function showTab(name){
@@ -1216,6 +1248,9 @@ setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.get
 setInterval(()=>{if(!document.getElementById("tab-spots").hidden&&navigator.onLine)refreshSpots();},60000);
 window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
   if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
 </script>
 </body>
 </html>
