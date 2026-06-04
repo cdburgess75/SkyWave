@@ -183,7 +183,7 @@ All keys defined in the `K` object. All reads/writes via `loadJSON`/`saveJSON` (
 | `skywave_log_v1`       | `[{date, time, freq, mode, station, sinpo, ref, notes, created}]` | logbook                |
 | `skywave_mine_v1`      | `[{freq, mode, station, time, days, lang, target, notes}]`        | user frequencies       |
 | `skywave_geo_v1`       | `{lat, lng, label}`                                               | grayline location      |
-| `skywave_prefs_v1`     | `{autoUpd}`                                                       | preferences            |
+| `skywave_prefs_v1`     | `{autoUpd, call}`                                                 | preferences (`call` = operator callsign, blank default) |
 | `skywave_pota_v1`      | `{list:[...], ts}`                                                | last POTA batch        |
 | `skywave_sota_v1`      | `{list:[...], ts}`                                                | last SOTA batch        |
 

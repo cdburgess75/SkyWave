@@ -462,6 +462,8 @@
 <script>
 "use strict";
 
+const VERSION="2026.06.04";
+
 /* ============ reference data ============ */
 const METER=[["120 m","2300","2495"],["90 m","3200","3400"],["75 m","3900","4000"],
  ["60 m","4750","5060"],["49 m","5800","6200"],["41 m","7200","7600"],["31 m","9400","9900"],
@@ -554,10 +556,12 @@ function msg(t,err){const el=document.getElementById("loadMsg");el.textContent=t
 function umsg(t,kind){const el=document.getElementById("updMsg");el.textContent=t;el.style.color=kind==="err"?"var(--red)":kind==="warn"?"var(--amber-dim)":"var(--green)";}
 
 /* ============ season + online update ============ */
-function seasonCode(d){d=d||new Date();const y=d.getUTCFullYear(),mo=d.getUTCMonth()+1,day=d.getUTCDate();
-  const inA=(mo>3||(mo===3&&day>=29))&&(mo<10||(mo===10&&day<26));
+function lastSun(y,mo){const d=new Date(Date.UTC(y,mo+1,0));return d.getUTCDate()-d.getUTCDay();}
+function seasonCode(d){d=d||new Date();const y=d.getUTCFullYear(),mo=d.getUTCMonth(),day=d.getUTCDate();
+  const springSun=lastSun(y,2),fallSun=lastSun(y,9);
+  const inA=(mo>2||(mo===2&&day>=springSun))&&(mo<9||(mo===9&&day<fallSun));
   if(inA)return"a"+String(y).slice(2);
-  if(mo<3||(mo===3&&day<29))return"b"+String(y-1).slice(2);
+  if(mo<2||(mo===2&&day<springSun))return"b"+String(y-1).slice(2);
   return"b"+String(y).slice(2);}
 function seasonList(){const set=new Set([seasonCode()]);const d=new Date();
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),0,15))));
@@ -786,7 +790,7 @@ function exportLogCSV(){
 function exportLogADIF(){
   if(!LOG.length){toast("Log is empty");return;}
   function tag(name,val){const s=String(val||"").trim();return s?"<"+name+":"+s.length+">"+s:"";}
-  const lines=["<ADIF_VER:5>3.1.4","<PROGRAMID:7>SKYWAVE","<EOH>",""];
+  const lines=["<ADIF_VER:5>3.1.4","<PROGRAMID:7>SKYWAVE",tag("PROGRAMVERSION",VERSION),"<EOH>",""];
   LOG.slice().sort((a,b)=>a.created-b.created).forEach(o=>{
     const date=(o.date||"").replace(/-/g,"");
     const time=String(o.time||"").replace(/\D/g,"").padStart(4,"0").slice(0,4);
@@ -1073,8 +1077,8 @@ function tick(){const d=new Date(),p=n=>String(n).padStart(2,"0");
   document.getElementById("loc").textContent=p(d.getHours())+":"+p(d.getMinutes());
   document.getElementById("locLbl").textContent="Local "+(Intl.DateTimeFormat().resolvedOptions().timeZone||"");}
 function updateDbStat(){const el=document.getElementById("dbstat");
-  if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries<br>EiBi '+(META?META.code.toUpperCase():"")+' · offline ready';
-  else el.innerHTML='Reference data loaded.<br>Update / load EiBi (Ref tab).';}
+  if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries<br>EiBi '+(META?META.code.toUpperCase():"")+' · offline ready · v'+VERSION;
+  else el.innerHTML='Reference data loaded.<br>Update / load EiBi (Ref tab) · v'+VERSION+'.';}
 function showClear(){document.getElementById("clearBtn").hidden=!haveEibi;}
 
 /* ============ navigation ============ */

@@ -2,6 +2,21 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.06.04] — 2026-06-04
+
+### Added
+- **CalVer versioning**: `VERSION` constant (`2026.06.04`); surfaced in ADIF `PROGRAMVERSION` header field and dbstat display
+- **seasonCode() fix**: last-Sunday-of-March / last-Sunday-of-October boundary via `lastSun()` helper (replaces hardcoded day≥29/day<26)
+- **Propagation tab**: online-only tab with solar widget, K-index image, and curated link tiles (Proppy, VOACAP, grayline, WebSDR, aurora, DX cluster); shows offline warning when disconnected
+- **Log entry edit**: pencil icon on each log row reopens the modal pre-filled; Save changes to Update in place
+- **Callsign + Maidenhead grid**: operator callsign stored in `PREFS.call`; 6-char locator computed offline via `toGrid(lat,lng)`; both displayed in header and exported as `MY_CALL` / `MY_GRIDSQUARE` in ADIF
+- **ADIF export** (R1): ADIF 3.1.4 `.adi` file download with POTA_REF / SOTA_REF auto-detection; `MY_CALL` / `MY_GRIDSQUARE` from station settings
+- **Station settings card**: callsign input + live grid hint in Ref tab
+
+### Changed
+- Blob search pre-computed in `rebuildData()` (not per-keypress)
+- `indexOf` bug in renderLog fixed (edit index now tracks stable position)
+
 ## [0.6.0] — 2026-06
 
 ### Added
