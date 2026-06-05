@@ -134,8 +134,6 @@
   .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green);}
   .row.mine{box-shadow:inset 3px 0 0 var(--amber);}
   .row.stale{opacity:.45;}
-  .spotrow{cursor:pointer;}
-  .spotrow:active{border-color:var(--amber-dim);background:var(--panel2);}
   .freq{font-size:18px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums;line-height:1.05;}
   .freq .u{display:block;font-size:8px;letter-spacing:.18em;color:var(--ink-dim);font-weight:500;margin-top:2px;}
   .mid .st{font-size:13.5px;color:var(--ink);line-height:1.25;}
@@ -201,7 +199,6 @@
     font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:.25s;pointer-events:none;text-transform:uppercase;}
   .toast.show{opacity:1;}
   .ident{display:flex;gap:14px;align-items:baseline;margin-top:4px;min-height:14px;}
-  .ident-call{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--amber);}
   .ident-grid{font-size:11px;letter-spacing:.16em;color:var(--blue);}
 
   /* setup wizard */
@@ -512,7 +509,8 @@
     <div class="card"><h3>◆ Code key</h3><div class="legend" id="legend"></div></div>
     <footer>
       Schedule data: EiBi Shortwave Schedules by Eike Bierwirth — <a href="http://www.eibispace.de/">eibispace.de</a> · free to copy &amp; distribute.<br>
-      Times UTC. On-air status &amp; grayline computed from your device clock &amp; coordinates. Built for offline field use.
+      Times UTC. On-air status &amp; grayline computed from your device clock &amp; coordinates. Built for offline field use.<br>
+      <a href="#" id="rerunWiz">Re-run location setup</a>
     </footer>
   </section>
 
@@ -711,7 +709,6 @@ function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}
 let FAVS=loadJSON(K.favs,[]), MINE=loadJSON(K.mine,[]);
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
 let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true});
-let editIdx=-1;
 let favSet=new Set();
 function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
 
@@ -752,7 +749,7 @@ function loadText(text,info){
   const eibi=parseEibi(text);
   if(eibi.length<20){msg("Couldn't read that file — expecting the EiBi sked-XXX.csv (semicolon) file.",true);return false;}
   EIBI=eibi;haveEibi=true;
-  META={code:(info&&info.code)||(META&&META.code)||seasonCode(),ts:Date.now(),count:eibi.length};
+  META={code:(info&&info.code)||(META&&META.code)||seasonCode(),ts:(info&&info.ts)||Date.now(),count:eibi.length};
   try{if(text.length<4500000){localStorage.setItem(K.raw,text);localStorage.setItem(K.meta,JSON.stringify(META));}}catch(e){}
   rebuildData();updateDbStat();showClear();renderLastUpd();
   msg("Loaded "+eibi.length.toLocaleString()+" entries. Stored on-device for offline use.",false);
@@ -930,8 +927,8 @@ function fill(id,arr,allLabel,labeller){const sel=document.getElementById(id),cu
   if(arr.includes(cur))sel.value=cur;}
 
 /* ============ favorites ============ */
-function toggleFav(o){const k=o.freq+"|"+o.station+"|"+o.time;
-  const i=FAVS.findIndex(x=>(x.freq+"|"+x.station+"|"+x.time)===k);
+function toggleFav(o){const k=keyOf(o);
+  const i=FAVS.findIndex(x=>keyOf(x)===k);
   if(i>=0){FAVS.splice(i,1);toast("Removed from favorites");}else{FAVS.push(o);toast("Added to favorites");}
   saveJSON(K.favs,FAVS);rebuildFavSet();refreshAll();}
 function renderStars(){
@@ -964,6 +961,7 @@ function addExamples(){
 }
 function delMine(i){MINE.splice(i,1);saveJSON(K.mine,MINE);rebuildData();renderMine();toast("Removed");}
 function renderMine(){
+  document.getElementById("mineMsg").textContent="";
   const el=document.getElementById("mineRows");
   document.getElementById("mineCount").innerHTML=MINE.length?'<b>'+MINE.length+'</b> custom frequencies':"";
   if(!MINE.length){el.innerHTML='<div class="empty">No custom frequencies yet.<br>Add your nets, EmComm channels, or beacons above.</div>';return;}
@@ -1003,7 +1001,7 @@ function renderIdent(){
 }
 
 /* ============ theme / zoom / kiosk / right-rail ============ */
-let _wakeLock=null,_lastKp=null;
+let _wakeLock=null,_lastKp=null,_kFetched=false;
 
 function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
@@ -1012,7 +1010,9 @@ function applyTheme(t){
 }
 function applyZoom(z){
   PREFS.zoom=z;saveJSON(K.prefs,PREFS);
-  document.body.style.zoom=z===1?"":(String(z));
+  if(z===1){document.body.style.zoom="";document.body.style.transform="";}
+  else if(CSS.supports("zoom","1")){document.body.style.zoom=String(z);document.body.style.transform="";}
+  else{document.body.style.zoom="";document.body.style.transform="scale("+z+")";document.body.style.transformOrigin="0 0";}
   document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.classList.toggle("on",b.dataset.zoomBtn===String(z)));
 }
 async function toggleKiosk(){
@@ -1043,8 +1043,11 @@ function renderRail(){
     const desc=_lastKp<=2?"Quiet":_lastKp<=4?"Unsettled":"Storm";
     railK.innerHTML='<div class="rail-kval" style="color:'+c+'">'+_lastKp.toFixed(1)+'</div>'+
       '<div style="font-size:9px;color:var(--ink-dim);margin-top:2px">'+desc+'</div>';
+  } else if(navigator.onLine&&!_kFetched&&typeof matchMedia==="function"&&matchMedia("(min-width:1280px)").matches){
+    _kFetched=true;fetchKIndex();
+    railK.innerHTML='<div class="hint" style="font-size:10px">Loading…</div>';
   } else {
-    railK.innerHTML='<div class="hint" style="font-size:10px">Go to Prop tab to load</div>';
+    railK.innerHTML='<div class="hint" style="font-size:10px">'+(navigator.onLine?"":"Offline — ")+'Go to Prop tab to load</div>';
   }
   // Grayline
   const now=new Date(),st=sunTimes(now,GEO.lat,GEO.lng);
@@ -1141,7 +1144,15 @@ function copyText(t){
 function fallbackCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";
   document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copied");}catch(e){toast("Copy not supported");}ta.remove();}
 function onAirText(){
-  const n=new Date(),list=DATA.filter(e=>onAir(e)).sort((a,b)=>a.freq-b.freq);
+  const n=new Date();
+  const f=document.getElementById("nowFilter").value.trim().toLowerCase();
+  const band=document.getElementById("nowBand").value;
+  let list=DATA.filter(e=>onAir(e));
+  if(nowChip==="fav")list=list.filter(e=>favSet.has(keyOf(e)));
+  else if(nowChip!=="all")list=list.filter(e=>e.lang===nowChip);
+  if(band)list=list.filter(e=>bandOf(e.freq)===band);
+  if(f)list=list.filter(e=>blob(e).includes(f));
+  list.sort((a,b)=>a.freq-b.freq);
   let s="SKYWAVE — On air "+fmtUTC(n)+"Z "+n.toISOString().slice(0,10)+"\n";
   s+=list.map(e=>fmtFreq(e.freq).padStart(8)+" "+freqUnit(e.freq)+"  "+(e.station||"")+(e.lang?" ["+langName(e.lang)+"]":"")+(e.target?" -> "+tgtName(e.target):"")).join("\n");
   return s;
@@ -1340,6 +1351,7 @@ document.getElementById("wizNext2").addEventListener("click",()=>{
   renderGray();renderIdent();wizStep(3);
 });
 document.getElementById("wizDone").addEventListener("click",closeWizard);
+document.getElementById("rerunWiz").addEventListener("click",e=>{e.preventDefault();showWizard();});
 
 document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>showSub("listen",b.dataset.sub)));
 document.querySelectorAll("#seg-log button").forEach(b=>b.addEventListener("click",()=>showSub("log",b.dataset.sub)));
@@ -1416,15 +1428,15 @@ rebuildFavSet();
   sel.innerHTML=o.join("");})();
 document.getElementById("autoUpd").checked=PREFS.autoUpd!==false;
 syncEibiLink();setNetDot();renderRef();
-EIBI=[];rebuildData();
+EIBI=[];
 try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);
-  const cached=localStorage.getItem(K.raw);if(cached)loadText(cached);}catch(e){}
+  const cached=localStorage.getItem(K.raw);if(cached)loadText(cached,META?{code:META.code,ts:META.ts}:null);else rebuildData();}catch(e){rebuildData();}
 renderLastUpd();updateDbStat();calcAnt();renderGray();renderIdent();
 if(!document.fullscreenEnabled)document.getElementById("kioskBtn").hidden=true;
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 renderRail();
-if(typeof window.matchMedia==="function"&&window.matchMedia("(min-width:1280px)").matches&&navigator.onLine)fetchKIndex();
+if(typeof window.matchMedia==="function"&&window.matchMedia("(min-width:1280px)").matches&&navigator.onLine){_kFetched=true;fetchKIndex();}
 if(PREFS.setup===false)showWizard();
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
@@ -1432,7 +1444,7 @@ setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.get
 window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
   if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  navigator.serviceWorker.register("sw.js").catch(e=>console.warn("SW:",e));
 }
 </script>
 </body>
