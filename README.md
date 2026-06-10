@@ -52,6 +52,8 @@ Five tabs across a bottom nav (mobile) or left sidebar (desktop ≥ 860 px):
 | Propagation charts | HamQSL band condition banners |
 | K-index | Live planetary K-index from NOAA SWPC |
 | PWA / offline | Service worker + manifest; installs as standalone app |
+| First-run setup wizard | 3-step location wizard on first launch; re-run from Ref tab |
+| Maidenhead grid square | Computed from your location; displayed in header |
 | Responsive | Bottom nav on mobile; left sidebar on desktop ≥ 860 px |
 
 ## Data sources
@@ -77,7 +79,7 @@ See `HANDOFF.md` for full architecture, data-source contracts, coding convention
 
 ## Version
 
-Current: **v2026.06.04** — CalVer. Pure shortwave band guide. POTA/SOTA/logging moved to companion app PileUp.
+Current: **v2026.06.09** — CalVer. Pure shortwave band guide. POTA/SOTA/logging moved to companion app PileUp.
 
 ## License
 
