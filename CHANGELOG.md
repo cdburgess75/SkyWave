@@ -18,6 +18,7 @@ All notable changes to SKYWAVE are documented here.
 - **Search count shows the true total** (e.g. "4,812 matches · showing first 1,200") instead of the capped 1,200.
 
 ### Added
+- **"Heard today" mark on Favorites** — tap ✓ on a favorite to dim the row with a green strikethrough on the station name plus a "✓ heard" pill; clears automatically at 0000 UTC. Stored in `skywave_heard_v1`, pruned to the current UTC day on boot.
 - `validGeo()` — latitude/longitude range validation (±90 / ±180) in the setup wizard and Tools; prevents out-of-range coordinates from producing garbage Maidenhead grids.
 - Delete confirmation on custom (My Freq) entries.
 - Favicon link and `og:` / `description` meta tags for link previews.
