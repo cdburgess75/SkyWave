@@ -2,6 +2,28 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.05] — 2026-07-05
+
+### Fixed
+- **`attr()` escaped in the wrong order** — replaced `"` before `&`, corrupting any station name containing a double quote so its favorite key could never be matched or un-starred. Now escapes `&` first.
+- **iOS home-screen icon** — `apple-touch-icon` pointed at an SVG, which iOS rejects (fell back to a page screenshot). Added rasterized `apple-touch-icon.png` (180×180) and `icon-512.png`.
+- **Right-rail K-index could hang on "Loading…"** — a failed NOAA fetch only updated the Prop tab; the rail now shows an error state instead of a permanent spinner.
+- **Stale manifest description** — dropped the "field logbook" wording that moved to PileUp.
+- **`theme-color` stayed dark in light mode** — browser chrome now follows the selected theme.
+
+### Changed
+- **`sw.js` shell uses relative paths** — service worker + PWA now install on any host, not just `/SkyWave/`. Manifest `start_url`/`scope` made relative too.
+- **`fetchKIndex` uses `fetchWithTimeout`** (7 s) instead of a bare `fetch` that could hang on a flaky connection.
+- **Timezone label computed once** at boot instead of every clock tick.
+- **Search count shows the true total** (e.g. "4,812 matches · showing first 1,200") instead of the capped 1,200.
+
+### Added
+- `validGeo()` — latitude/longitude range validation (±90 / ±180) in the setup wizard and Tools; prevents out-of-range coordinates from producing garbage Maidenhead grids.
+- Delete confirmation on custom (My Freq) entries.
+- Favicon link and `og:` / `description` meta tags for link previews.
+
+---
+
 ## [2026.06.09] — 2026-06-09
 
 ### Changed

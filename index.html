@@ -7,8 +7,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Skywave">
 <meta name="theme-color" content="#0c0b09">
+<meta name="description" content="A TV-Guide for shortwave — browse what's on the air right now, search by language or frequency, and plan grayline and propagation windows. Offline-first, no account.">
+<meta property="og:title" content="SKYWAVE — Shortwave Band Guide">
+<meta property="og:description" content="Browse what's on the air now, search by frequency, and plan propagation. Offline-first PWA, no dependencies.">
+<meta property="og:type" content="website">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icons/icon.svg">
+<link rel="icon" href="icons/icon.svg">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>SKYWAVE · Shortwave Band Guide</title>
 <style>
   :root{
@@ -669,7 +674,8 @@
 <script>
 "use strict";
 
-const VERSION="2026.06.09";
+const VERSION="2026.07.05";
+const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
 const METER=[["120 m","2300","2495"],["90 m","3200","3400"],["75 m","3900","4000"],
@@ -849,7 +855,7 @@ function freqUnit(k){return k>=1000?"MHz":"kHz";}
 function langName(c){return c?c.split(/[,\/]/).map(x=>LANG[x]||x).join(", "):"";}
 function tgtName(c){return TGT[c]||c||"";}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-function attr(s){return String(s).replace(/"/g,"&quot;").replace(/&/g,"&amp;");}
+function attr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;");}
 
 /* ============ row rendering ============ */
 function rowHTML(e){
@@ -898,8 +904,10 @@ function refreshSearch(){
   if(q)list=list.filter(e=>blob(e).includes(q));
   if(!band&&!lang&&!tgt&&!q){document.getElementById("searchCount").innerHTML="";
     document.getElementById("searchRows").innerHTML='<div class="empty">Type a station, language, country, or pick a filter.<br>'+DATA.length.toLocaleString()+' entries in the database.</div>';return;}
-  list=list.slice().sort((a,b)=>a.freq-b.freq).slice(0,1200);
-  renderRows("searchRows",list,"searchCount","matches"+(list.length>=1200?" (first 1200)":""));
+  list=list.slice().sort((a,b)=>a.freq-b.freq);
+  const total=list.length;
+  renderRows("searchRows",list.slice(0,1200),null,"");
+  document.getElementById("searchCount").innerHTML=total?('<b>'+total.toLocaleString()+'</b> matches'+(total>1200?' · showing first 1,200':'')):'';
 }
 function refreshFreq(){
   let v=document.getElementById("freqIn").value.trim().replace(",",".");
@@ -959,7 +967,7 @@ function addExamples(){
   let added=0;ex.forEach(o=>{if(!MINE.some(m=>m.freq===o.freq&&m.station===o.station)){MINE.push(o);added++;}});
   saveJSON(K.mine,MINE);rebuildData();renderMine();toast(added?added+" added":"already present");
 }
-function delMine(i){MINE.splice(i,1);saveJSON(K.mine,MINE);rebuildData();renderMine();toast("Removed");}
+function delMine(i){if(!confirm("Delete this custom frequency?"))return;MINE.splice(i,1);saveJSON(K.mine,MINE);rebuildData();renderMine();toast("Removed");}
 function renderMine(){
   document.getElementById("mineMsg").textContent="";
   const el=document.getElementById("mineRows");
@@ -999,6 +1007,7 @@ function renderIdent(){
   const g=toGrid(GEO.lat,GEO.lng);
   document.getElementById("hdrGrid").textContent=g;
 }
+function validGeo(la,ln){return isFinite(la)&&isFinite(ln)&&la>=-90&&la<=90&&ln>=-180&&ln<=180;}
 
 /* ============ theme / zoom / kiosk / right-rail ============ */
 let _wakeLock=null,_lastKp=null,_kFetched=false;
@@ -1006,6 +1015,8 @@ let _wakeLock=null,_lastKp=null,_kFetched=false;
 function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
+  const tc=document.querySelector('meta[name="theme-color"]');
+  if(tc)tc.setAttribute("content",t==="light"?"#f2f2f2":"#0c0b09");
   document.querySelectorAll("[data-theme-btn]").forEach(b=>b.classList.toggle("on",b.dataset.themeBtn===(t||"")));
 }
 function applyZoom(z){
@@ -1200,8 +1211,7 @@ function tick(){const d=new Date(),p=n=>String(n).padStart(2,"0");
   const locStr=PREFS.hr24===false
     ?d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit",hour12:true})
     :p(d.getHours())+":"+p(d.getMinutes());
-  document.getElementById("loc").textContent=locStr;
-  document.getElementById("locLbl").textContent="Local "+(Intl.DateTimeFormat().resolvedOptions().timeZone||"");}
+  document.getElementById("loc").textContent=locStr;}
 function updateDbStat(){const el=document.getElementById("dbstat");
   if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries<br>EiBi '+(META?META.code.toUpperCase():"")+' · offline ready · v'+VERSION;
   else el.innerHTML='Reference data loaded.<br>Update / load EiBi (Ref tab) · v'+VERSION+'.';}
@@ -1218,7 +1228,7 @@ function wizStep(n){
 }
 function updateWiz2Preview(){
   const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
-  if(!isFinite(la)||!isFinite(ln)){
+  if(!validGeo(la,ln)){
     ["wizGridPrev","wizSRPrev","wizSSPrev"].forEach(id=>document.getElementById(id).textContent="—");return;}
   document.getElementById("wizGridPrev").textContent=toGrid(la,ln);
   const st=sunTimes(new Date(),la,ln);
@@ -1241,7 +1251,7 @@ function closeWizard(){
 function fetchKIndex(){
   const el=document.getElementById("kIdxDisplay");if(!el)return;
   el.innerHTML='<div class="hint" style="padding:10px 0">Loading…</div>';
-  fetch("https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json")
+  fetchWithTimeout("https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",{cache:"no-store"},7000)
     .then(r=>r.json()).then(data=>{
       const rows=data.slice(1).filter(r=>r[2]==="observed");
       if(!rows.length){el.innerHTML='<div class="hint">No data available</div>';return;}
@@ -1263,6 +1273,8 @@ function fetchKIndex(){
         '<div class="kbars" style="flex:1">'+bars+'</div></div>';
     }).catch(()=>{
       el.innerHTML='<div class="hint">Could not load — check connection</div>';
+      const rk=document.getElementById("railK");
+      if(rk)rk.innerHTML='<div class="hint" style="font-size:10px">Could not load</div>';
     });
 }
 function renderProp(){
@@ -1340,7 +1352,7 @@ document.getElementById("wizGPS").addEventListener("click",()=>{
 });
 ["wizLat","wizLng"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{
   const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
-  if(isFinite(la)&&isFinite(ln)){GEO={lat:la,lng:ln,label:"custom"};saveJSON(K.geo,GEO);}
+  if(validGeo(la,ln)){GEO={lat:la,lng:ln,label:"custom"};saveJSON(K.geo,GEO);}
   updateWiz2Preview();
 }));
 document.getElementById("wizNext2").addEventListener("click",()=>{
@@ -1389,7 +1401,8 @@ document.getElementById("useLoc").addEventListener("click",()=>{
     saveJSON(K.geo,GEO);renderGray();renderIdent();toast("Location set");},()=>toast("Location denied"));
 });
 function saveGeo(){const la=parseFloat(document.getElementById("geoLat").value),ln=parseFloat(document.getElementById("geoLng").value);
-  if(isFinite(la)&&isFinite(ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);renderGray();renderIdent();}}
+  if(validGeo(la,ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);renderGray();renderIdent();}
+  else toast("Latitude −90 to 90, longitude −180 to 180");}
 document.getElementById("copyNow").addEventListener("click",()=>copyText(onAirText()));
 document.getElementById("dlCard").addEventListener("click",()=>downloadBlob("skywave-band-card.txt",bandCardText()));
 document.getElementById("printCard").addEventListener("click",doPrint);
@@ -1438,6 +1451,7 @@ document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 renderRail();
 if(typeof window.matchMedia==="function"&&window.matchMedia("(min-width:1280px)").matches&&navigator.onLine){_kFetched=true;fetchKIndex();}
 if(PREFS.setup===false)showWizard();
+document.getElementById("locLbl").textContent="Local "+TZ;
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-tools").hidden)renderGray();renderRail();},30000);

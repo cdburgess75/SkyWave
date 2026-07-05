@@ -79,7 +79,7 @@ See `HANDOFF.md` for full architecture, data-source contracts, coding convention
 
 ## Version
 
-Current: **v2026.06.09** — CalVer. Pure shortwave band guide. POTA/SOTA/logging moved to companion app PileUp.
+Current: **v2026.07.05** — CalVer. Pure shortwave band guide. POTA/SOTA/logging moved to companion app PileUp.
 
 ## License
 

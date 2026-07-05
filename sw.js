@@ -1,9 +1,10 @@
-const CACHE = "skywave-2026.06.09";
+const CACHE = "skywave-2026.07.05";
 const SHELL = [
-  "/SkyWave/",
-  "/SkyWave/index.html",
-  "/SkyWave/icons/icon.svg",
-  "/SkyWave/manifest.webmanifest"
+  "./",
+  "./index.html",
+  "./icons/icon.svg",
+  "./icons/apple-touch-icon.png",
+  "./manifest.webmanifest"
 ];
 
 self.addEventListener("install", e => {

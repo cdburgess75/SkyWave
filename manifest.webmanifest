@@ -1,9 +1,9 @@
 {
   "name": "SKYWAVE",
   "short_name": "Skywave",
-  "description": "Shortwave band guide and ham field logbook",
-  "start_url": "/SkyWave/",
-  "scope": "/SkyWave/",
+  "description": "Shortwave band guide for offline listening — EiBi schedule, grayline, and propagation.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0c0b09",
@@ -13,6 +13,18 @@
       "src": "icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
