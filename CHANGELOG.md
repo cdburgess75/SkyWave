@@ -2,6 +2,19 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.11] — 2026-07-11
+
+### Added
+- **Nets sub-tab** (Listen → Nets):
+  - **Live nets in session** from the [NetLogger](https://www.netlogger.org) `GetNetsInProgress` API via the CORS relay chain — net name, frequency, mode, NCS callsign, start time. Fetched on open (60 s freshness window) or manual ⟳ refresh; last list cached to `skywave_nets_v1` and shown with its age when offline or unreachable. Tolerant parser (JSON or NetLogger's `~`/`|` delimited form) that fails soft on anything unexpected.
+  - **Built-in directory of major scheduled HF nets** (Maritime Mobile Service Net, Intercontinental Net, Hurricane Watch Net, ECARS, MIDCARS) — regular schedule entries, so they work fully offline, show live on-air status, appear in On Air / Search / By Freq, and can be starred.
+- Professional README: hero screenshots (`docs/screenshot-desktop.png`, `docs/screenshot-mobile.png`), version/PWA/license badges, tab overview table
+
+### Changed
+- `docs/ARCHITECTURE.md` and `docs/DATA_SOURCES.md` rewritten for the post-split app (both still described the old spots/logbook pipelines); DATA_SOURCES now documents NetLogger, NOAA SWPC, and HamQSL contracts
+
+---
+
 ## [2026.07.05] — 2026-07-05
 
 ### Fixed

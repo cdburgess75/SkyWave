@@ -370,6 +370,7 @@
       <button data-sub="now" class="on">On Air</button>
       <button data-sub="search">Search</button>
       <button data-sub="freq">By Freq</button>
+      <button data-sub="nets">Nets</button>
     </div>
 
     <div id="sub-now">
@@ -407,6 +408,17 @@
       <div class="hint">Heard a signal and want to know who it is? Type the dial frequency — matches within tolerance, on-air first.</div>
       <div class="count" id="freqCount"></div>
       <div class="rows" id="freqRows"></div>
+    </div>
+
+    <div id="sub-nets" hidden>
+      <div class="ctrl">
+        <input type="search" id="netsFilter" placeholder="filter nets (name / mode / NCS)…" autocomplete="off">
+        <button class="btn ghost sm" id="netsRefresh" style="flex:0 0 auto">⟳ Refresh</button>
+      </div>
+      <div class="hint" id="netsMsg" style="margin-bottom:10px"></div>
+      <div class="count" id="netsCount"></div>
+      <div class="rows" id="netsRows"></div>
+      <div class="hint" style="margin-top:12px">Live nets in session via <a href="https://www.netlogger.org/" target="_blank" rel="noopener" style="color:var(--amber)">NetLogger</a> (needs a connection; last fetch kept for reference). The major scheduled HF nets below are built in and work fully offline — star ★ to keep one in Favorites.</div>
     </div>
   </section>
 
@@ -684,7 +696,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.05";
+const VERSION="2026.07.11";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -718,7 +730,8 @@ const TGT={Eu:"Europe",WEu:"W Europe",EEu:"E Europe",CEu:"C Europe",SEu:"S Europ
 /* ============ state & persistence ============ */
 let DATA=[], EIBI=[], haveEibi=false, META=null;
 const K={raw:"skywave_eibi_raw_v1",meta:"skywave_eibi_meta_v1",favs:"skywave_favs_v1",
- mine:"skywave_mine_v1",geo:"skywave_geo_v1",prefs:"skywave_prefs_v1",heard:"skywave_heard_v1"};
+ mine:"skywave_mine_v1",geo:"skywave_geo_v1",prefs:"skywave_prefs_v1",heard:"skywave_heard_v1",
+ nets:"skywave_nets_v1"};
 const STALE_DAYS=21;
 function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}}
@@ -741,7 +754,15 @@ function entry(freq,time,days,itu,station,lang,target,tx,src){
 function parseTime(t){const m=/(\d{3,4})\s*-\s*(\d{3,4})/.exec(t||"");if(!m)return[0,2400];return[parseInt(m[1],10),parseInt(m[2],10)];}
 function keyOf(e){return e.freq+"|"+(e.station||"")+"|"+(e.time||"");}
 function makeMine(o){const e=entry(o.freq,o.time,o.days,"",o.station,o.lang,o.target,"","mine");e.mode=o.mode||"";e.notes=o.notes||"";return e;}
+/* Major scheduled HF nets — built-in, offline. [freq kHz, UTC time, name, mode, target, notes] */
+const NETDIR=[
+ [14300,"1600-0200","Maritime Mobile Service Net","USB","World","maritime service net · daily"],
+ [14300,"1100-1600","Intercontinental Net","USB","World","traffic net · daily"],
+ [14325,"0000-2400","Hurricane Watch Net","USB","NAm","activated during Atlantic tropical events"],
+ [7255,"1200-0200","ECARS · East Coast Amateur Radio Service","LSB","USA","HF relay net · hours approximate"],
+ [7258,"1300-2300","MIDCARS · Midwest Amateur Radio Service","LSB","USA","HF relay net · hours approximate"]];
 function buildBase(){const a=[];TIME.forEach(r=>a.push(entry(r[0],"0000-2400","",r[1],r[2],r[3],r[4],"time/freq standard","ref")));
+  NETDIR.forEach(r=>{const e=entry(r[0],r[1],"","",r[2],"E",r[4],"ham net","net");e.mode=r[3];e.notes=r[5];a.push(e);});
   MINE.forEach(o=>a.push(makeMine(o)));return a;}
 function rebuildData(){DATA=buildBase().concat(EIBI);DATA.forEach(e=>{e._blob=(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();});rebuildFilters();refreshAll();}
 
@@ -933,7 +954,7 @@ function refreshFreq(){
   renderRows("freqRows",list,"freqCount","near "+fmtFreq(k)+" kHz (±"+tol+")");
 }
 function blob(e){return e._blob||(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();}
-function refreshAll(){refreshNow();refreshSearch();refreshFreq();renderStars();renderMine();}
+function refreshAll(){refreshNow();refreshSearch();refreshFreq();renderStars();renderMine();renderNets();}
 
 /* ============ filters ============ */
 function rebuildFilters(){
@@ -1015,6 +1036,107 @@ function renderMine(){
     '<div class="mid"><div class="st">'+esc(o.station)+md+'</div><div class="meta">'+esc(o.time)+(o.days?' '+esc(o.days):'')+(o.notes?' · '+esc(o.notes):'')+'</div></div>'+
     '<div class="right"><span class="act log" data-act="delmine" data-i="'+i+'">delete</span></div></div>';}).join("");
 }
+
+/* ============ live nets (NetLogger) ============ */
+const NETS_URL="https://www.netlogger.org/api/GetNetsInProgress.php?ProtocolVersion=2.3";
+let NETS=loadJSON(K.nets,{list:[],ts:0});
+let netsFetching=false;
+function netFreqKhz(v){
+  const n=parseFloat(String(v).replace(/[^\d.]/g,""));
+  if(!isFinite(n))return NaN;
+  const k=n<=1300?n*1000:n;           // NetLogger reports MHz; accept kHz too
+  return(k>=1500&&k<=1300000)?k:NaN;  // 1.5 MHz .. 1.3 GHz sanity window
+}
+const NET_MODE_RE=/^(SSB|USB|LSB|CW|AM|FM|DIGITAL|FT8|FT4|RTTY|PSK31|D-?STAR|DMR|C4FM|YSF|FUSION|ECHOLINK|ALLSTAR|P25|NXDN|MIXED)$/i;
+const NET_CALL_RE=/^[A-Z]{1,2}\d[A-Z0-9]{1,4}(\/[A-Z0-9]+)?$/i;
+function normNetObj(o){
+  const low={};Object.keys(o).forEach(k=>low[k.toLowerCase()]=o[k]);
+  const freq=netFreqKhz(low.frequency||low.freq||"");
+  const name=String(low.netname||low.name||"").trim();
+  if(!name||!isFinite(freq))return null;
+  return{freq,name,mode:String(low.mode||"").toUpperCase(),ncs:String(low.netcontrol||low.ncs||"").toUpperCase(),
+    band:String(low.band||""),start:String(low.starttime||low.start||"")};
+}
+function parseNets(text){
+  text=String(text||"").trim();
+  if(!text)return[];
+  try{const j=JSON.parse(text);
+    const arr=Array.isArray(j)?j:(j&&typeof j==="object"?(j.nets||j.data||null):null);
+    if(Array.isArray(arr)){const out=arr.map(o=>o&&typeof o==="object"?normNetObj(o):null).filter(Boolean);
+      if(out.length)return out;}
+  }catch(e){}
+  // NetLogger delimited fallback: records separated by "~", fields by "|"
+  const out=[];
+  for(let rec of text.split("~")){
+    rec=rec.trim();if(!rec||rec.indexOf("|")<0)continue;
+    const f=rec.split("|").map(x=>x.trim());
+    const name=f[0];if(!name||/^\*/.test(name))continue;
+    let freq=NaN,fi=-1;
+    for(let i=1;i<f.length;i++){const k=netFreqKhz(f[i]);if(isFinite(k)){freq=k;fi=i;break;}}
+    if(!isFinite(freq))continue;
+    const rest=f.filter((_,i)=>i!==0&&i!==fi);
+    const mode=(rest.find(x=>NET_MODE_RE.test(x))||"").toUpperCase();
+    const ncs=(rest.find(x=>NET_CALL_RE.test(x))||"").toUpperCase();
+    const start=rest.find(x=>/\d{1,2}:\d{2}/.test(x))||"";
+    const band=rest.find(x=>/^\d+(\.\d+)?\s*(m|cm)$/i.test(x))||"";
+    out.push({freq,name,mode,ncs,band,start});
+  }
+  return out;
+}
+async function getNets(){
+  for(const url of relays(NETS_URL)){
+    try{const res=await fetchWithTimeout(url,{cache:"no-store"},7000);if(!res||!res.ok)continue;
+      const list=parseNets(await res.text());
+      if(list.length)return list;
+    }catch(e){}
+  }
+  return null;
+}
+function netsStartStr(s){const m=/(\d{1,2}:\d{2})/.exec(s);return m?m[1]+"Z":"";}
+function renderNets(){
+  const el=document.getElementById("netsRows"),cnt=document.getElementById("netsCount");
+  const f=document.getElementById("netsFilter").value.trim().toLowerCase();
+  let list=(NETS.list||[]).slice();
+  if(f)list=list.filter(n=>(n.name+" "+n.mode+" "+n.ncs).toLowerCase().includes(f));
+  list.sort((a,b)=>a.freq-b.freq);
+  let html="";
+  if(list.length){
+    cnt.innerHTML='<b>'+list.length+'</b> nets in session';
+    html=list.map(n=>{
+      const badge=n.mode?'<span class="badge">'+esc(n.mode)+'</span>':'';
+      const meta=[n.ncs?'<span class="lang">NCS '+esc(n.ncs)+'</span>':'',n.band,netsStartStr(n.start)?("since "+netsStartStr(n.start)):""].filter(Boolean).join(" · ");
+      return '<div class="row now">'+
+        '<div class="freq">'+fmtFreq(n.freq)+'<span class="u">'+freqUnit(n.freq)+'</span></div>'+
+        '<div class="mid"><div class="st">'+esc(n.name)+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
+        '<div class="right"><span class="tag live">IN SESSION</span></div></div>';
+    }).join("");
+  } else {
+    cnt.innerHTML="";
+    html='<div class="empty">'+(NETS.list&&NETS.list.length?'No live nets match your filter.':(navigator.onLine?'No live nets loaded yet — tap ⟳ Refresh.':'Offline — live nets need a connection.'))+'</div>';
+  }
+  // built-in directory of major scheduled nets (offline, on-air aware, star-able)
+  let dir=DATA.filter(e=>e.src==="net");
+  if(f)dir=dir.filter(e=>blob(e).includes(f));
+  dir.sort((a,b)=>(onAir(b)-onAir(a))||a.freq-b.freq);
+  if(dir.length)html+='<div class="count" style="margin-top:16px">Major scheduled HF nets · built-in</div>'+dir.map(rowHTML).join("");
+  el.innerHTML=html;
+}
+function netsMsg(t){document.getElementById("netsMsg").textContent=t;}
+async function openNets(force){
+  renderNets();
+  if(!navigator.onLine){
+    netsMsg(NETS.ts?"Offline — showing the list fetched "+ageMin(NETS.ts)+" ago.":"Offline — connect to fetch live nets.");
+    return;
+  }
+  if(netsFetching)return;
+  if(!force&&NETS.ts&&Date.now()-NETS.ts<60000)return;   // fresh enough
+  netsFetching=true;netsMsg("Fetching nets in session…");
+  const list=await getNets();
+  netsFetching=false;
+  if(list){NETS={list,ts:Date.now()};saveJSON(K.nets,NETS);netsMsg("Updated "+new Date(NETS.ts).toUTCString().slice(17,22)+"Z");renderNets();}
+  else netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger. If you're in an in-app preview, open this in Safari and retry.");
+}
+function ageMin(ts){const m=Math.max(1,Math.round((Date.now()-ts)/60000));return m<60?m+" min":Math.round(m/60)+" h";}
 
 /* ============ antenna calculator ============ */
 function calcAnt(){
@@ -1352,7 +1474,7 @@ function showTab(name){
 }
 function showSub(group,sub){
   document.querySelectorAll("#seg-"+group+" button").forEach(b=>b.classList.toggle("on",b.dataset.sub===sub));
-  const map={listen:["now","search","freq"],log:["stars","mine"]};
+  const map={listen:["now","search","freq","nets"],log:["stars","mine"]};
   map[group].forEach(s=>document.getElementById("sub-"+s).hidden=(s!==sub));
 }
 
@@ -1402,7 +1524,9 @@ document.getElementById("wizNext2").addEventListener("click",()=>{
 document.getElementById("wizDone").addEventListener("click",closeWizard);
 document.getElementById("rerunWiz").addEventListener("click",e=>{e.preventDefault();showWizard();});
 
-document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>showSub("listen",b.dataset.sub)));
+document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>{showSub("listen",b.dataset.sub);if(b.dataset.sub==="nets")openNets(false);}));
+document.getElementById("netsFilter").addEventListener("input",renderNets);
+document.getElementById("netsRefresh").addEventListener("click",()=>openNets(true));
 document.querySelectorAll("#seg-log button").forEach(b=>b.addEventListener("click",()=>showSub("log",b.dataset.sub)));
 document.querySelectorAll("#nowChips .chip").forEach(c=>c.addEventListener("click",()=>{
   nowChip=c.dataset.chip;document.querySelectorAll("#nowChips .chip").forEach(x=>x.classList.toggle("on",x===c));refreshNow();}));

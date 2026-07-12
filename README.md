@@ -1,41 +1,47 @@
-# SKYWAVE — Shortwave Band Guide
+<div align="center">
 
-A communications-receiver-styled offline-first web app for shortwave listening. Think "TV Guide for shortwave" — browse what's on the air right now, search by language or frequency, and plan propagation windows.
+<img src="icons/icon.svg" width="88" alt="SKYWAVE icon">
 
-**Amber phosphor on black · Monospace · No build step · No dependencies**
+# SKYWAVE
 
----
+**Shortwave Band Guide — a "TV Guide for shortwave"**
 
-## → [Try it live: cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)
+Browse what's on the air right now, search by language or frequency,
+and plan grayline & propagation windows. Offline-first. No account, no tracking.
 
-*Works on any device — install to your home screen from Safari (iOS) or Chrome (Android/desktop) for a full offline experience.*
+[![Version](https://img.shields.io/badge/version-2026.07.11-f0923c)](CHANGELOG.md)
+[![PWA](https://img.shields.io/badge/PWA-offline--first-7de87a)](#install)
+[![Dependencies](https://img.shields.io/badge/dependencies-zero-7dd5f5)](#development)
+[![Single file](https://img.shields.io/badge/app-single%20HTML%20file-f0923c)](index.html)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
----
+### → **[Try it live: cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)** ←
 
-## Companion app
+*Works on any device — install to your home screen for a full offline experience.*
 
-Active ham operators looking for **POTA/SOTA spots, QSO logging, and ADIF export** should check out **[PileUp](https://github.com/cdburgess75/PileUp)** — the operating-focused companion to SkyWave. Same offline-first PWA architecture, fully independent.
+<br>
+
+<img src="docs/screenshot-desktop.png" width="900" alt="SKYWAVE desktop — On Air list with sidebar navigation, grayline and band-condition rail">
+
+<br><br>
+
+<img src="docs/screenshot-mobile.png" width="340" alt="SKYWAVE mobile — On Air Now list with LED dark theme">&nbsp;&nbsp;<img src="docs/screenshot-nets.png" width="340" alt="SKYWAVE mobile — live ham nets in session plus built-in scheduled HF nets">
+
+</div>
 
 ---
 
 ## What it is
 
-Five tabs across a bottom nav (mobile) or left sidebar (desktop ≥ 860 px):
+A communications-receiver-styled shortwave listening companion. Five tabs, bottom nav on mobile, sidebar on desktop:
 
-- **Listen** — EiBi broadcast schedule (On Air Now / Search / By Frequency)
-- **Saved** — Favorite stations & your own custom frequencies
-- **Tools** — Antenna calculator, grayline & band planner, export & print
-- **Ref** — EiBi schedule update, band tables, code key, display settings
-- **Prop** — Propagation charts, live planetary K-index, solar conditions
-
-## How to use
-
-1. Open the live link above in **Safari** or **Chrome** (not an in-app browser preview)
-2. **Share → Add to Home Screen** (iOS) or **Install app** (Chrome) for a full-screen PWA
-3. Everything offline works immediately — the app caches itself on first visit
-4. The EiBi schedule update requires a connection
-
-> **Why a real browser?** In-app webviews (e.g. Messages, social apps) sandbox outbound `fetch`. Live data only works in real Safari/Chrome or the hosted HTTPS deployment. The app will tell you if it detects this situation.
+| Tab | What's inside |
+|-----|---------------|
+| **▶ Listen** | EiBi broadcast schedule — On Air Now · Search · By Frequency · live ham Nets |
+| **✦ Saved** | Favorite stations (with "heard today" tracking) & your own custom frequencies |
+| **⚙ Tools** | Antenna calculator · grayline & band planner · export & print |
+| **◆ Ref** | EiBi schedule update · band tables · code key · display settings |
+| **≈ Prop** | Solar conditions · live planetary K-index · curated propagation tools |
 
 ## Features
 
@@ -44,43 +50,62 @@ Five tabs across a bottom nav (mobile) or left sidebar (desktop ≥ 860 px):
 | Shortwave broadcast schedule | EiBi database, auto-updated, stored offline |
 | On Air Now | Filters active broadcasts by time, language, band, or favorites |
 | Search | Full-text search across stations, languages, and targets |
-| By Frequency | Browse schedule sorted by frequency |
-| Favorites | Star stations; starred entries survive EiBi updates |
+| By Frequency | "Who is that on 9.420?" — dial-frequency lookup with ± tolerance |
+| Ham nets | Live nets in session via [NetLogger](https://www.netlogger.org) + built-in major HF nets (offline) |
+| Favorites | Star stations; ✓ mark them *heard today* (clears at 0000 UTC) |
 | My Frequencies | Save your own custom freq/mode/label entries |
 | Antenna calculator | Half-wave dipole, quarter-wave vertical, full-wave loop |
-| Grayline planner | Sunrise/sunset + band-by-band propagation advice for your location |
-| Propagation charts | HamQSL band condition banners |
-| K-index | Live planetary K-index from NOAA SWPC |
-| PWA / offline | Service worker + manifest; installs as standalone app |
-| First-run setup wizard | 3-step location wizard on first launch; re-run from Ref tab |
-| Maidenhead grid square | Computed from your location; displayed in header |
-| Responsive | Bottom nav on mobile; left sidebar on desktop ≥ 860 px |
+| Grayline planner | Sunrise/sunset + band-by-band propagation advice, computed on-device |
+| Propagation | HamQSL solar widget + live NOAA planetary K-index |
+| Maidenhead grid | 6-char locator from your location, shown in the header |
+| First-run wizard | 3-step location setup; re-run anytime from the Ref tab |
+| Kiosk mode | Full-screen shack-monitor mode with screen wake-lock |
+| Dark / light themes | LED-style theme, switchable; scroll-minimizing header |
+| PWA / offline | Service worker + manifest; installs as a standalone app |
+
+## Install
+
+1. Open the **[live link](https://cdburgess75.github.io/SkyWave/)** in **Safari** (iOS) or **Chrome** (Android/desktop) — not an in-app browser preview
+2. **Share → Add to Home Screen** (iOS) or **Install app** (Chrome)
+3. Everything offline works immediately — the app caches itself on first visit
+4. Only the EiBi schedule update and the Prop tab need a connection
+
+> **Why a real browser?** In-app webviews (Messages, social apps) sandbox outbound `fetch`, so live data silently fails there. The app detects this and tells you.
 
 ## Data sources
 
-- **EiBi shortwave schedule** — © Eike Bierwirth, free to copy & distribute. [eibispace.de](http://www.eibispace.de)
-- **NOAA K-index** — [SWPC JSON API](https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json) (CORS-open)
-- **HamQSL propagation** — [hamqsl.com](https://www.hamqsl.com) N0NBH / K4HG
+| Source | Used for | Terms |
+|--------|----------|-------|
+| [EiBi](http://www.eibispace.de) © Eike Bierwirth | Shortwave broadcast schedule | Free to copy & distribute |
+| [NOAA SWPC](https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json) | Planetary K-index | Public, CORS-open |
+| [HamQSL](https://www.hamqsl.com) N0NBH / K4HG | Solar conditions widget | Linked, credited |
 
-Please respect each source's terms: don't poll faster than ~60 s, identify politely.
+Please respect each source's terms — don't poll faster than ~60 s.
 
 ## Development
 
-No build step. The entire app is `index.html` — one self-contained file, vanilla JS (`"use strict"`), no third-party runtime libraries.
-
-### Smoke test
+**No build step.** The entire app is [`index.html`](index.html) — one self-contained file, vanilla JS (`"use strict"`), zero third-party runtime libraries.
 
 ```bash
-npm install -D jsdom
-node test/smoke.mjs
+npm install -D jsdom   # one-time
+node test/smoke.mjs    # syntax + DOM-coverage + boot checks
 ```
 
-See `HANDOFF.md` for full architecture, data-source contracts, coding conventions, and localStorage schema.
+| Doc | Contents |
+|-----|----------|
+| [`HANDOFF.md`](HANDOFF.md) | Full architecture, conventions, localStorage schema, roadmap |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Data flow and file layout |
+| [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md) | External API contracts |
+| [`CHANGELOG.md`](CHANGELOG.md) | Version history (CalVer `YYYY.MM.DD`) |
 
-## Version
+## Companion app
 
-Current: **v2026.07.05** — CalVer. Pure shortwave band guide. POTA/SOTA/logging moved to companion app PileUp.
+Active ham operators wanting **POTA/SOTA spots, QSO logging, and ADIF export** should check out **[PileUp](https://github.com/cdburgess75/PileUp)** — the operating-focused companion to SkyWave. Same offline-first architecture, fully independent.
 
 ## License
 
-Code: MIT (see LICENSE). Schedule data belongs to EiBi under its respective terms — do not relicense the data.
+Code: [MIT](LICENSE). Schedule data belongs to EiBi under its respective terms — do not relicense the data.
+
+<div align="center">
+<sub>Built for offline field use · All times UTC · 73</sub>
+</div>

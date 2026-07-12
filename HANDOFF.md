@@ -2,7 +2,7 @@
 
 **Project:** SKYWAVE · Shortwave Band Guide (offline-first PWA single-file web app)
 **Artifact:** `index.html` (+ `sw.js`, `manifest.webmanifest`)
-**Version:** v2026.07.05 (CalVer: `YYYY.MM.DD`, `.002` suffix for same-day releases)
+**Version:** v2026.07.11 (CalVer: `YYYY.MM.DD`, `.002` suffix for same-day releases)
 **Date:** June 2026
 **Primary user / owner:** Dave — licensed amateur operator (IC-7300), SWL/DX, Loranger LA. Army Signal Corps background. Thinks in UTC.
 **Purpose of this doc:** Hand the project to Claude Code (and a Git repo) with enough detail that a fresh agent can extend it safely without re-reverse-engineering anything.
@@ -15,7 +15,7 @@
 
 - It is **one self-contained HTML file**. No build step, no framework, no external JS/CSS. ~85 KB.
 - **Vanilla JS in `"use strict"`**, all inside a single `<script>` at the bottom of the file.
-- **`const VERSION="2026.07.05"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.002` for a same-day release.
+- **`const VERSION="2026.07.11"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.002` for a same-day release.
 - **Offline-first is the prime directive.** Everything except EiBi auto-update and the Prop tab must work with the radio off and the phone in airplane mode.
 - **State persists in `localStorage`** under `skywave_*` keys (see §6). All access is wrapped in `try/catch`.
 - **Dynamic rows use event delegation** from `document` on `[data-act]` attributes; row payloads ride in `data-*` attributes (escaped via `attr()`).
@@ -182,6 +182,8 @@ All keys defined in the `K` object. All reads/writes via `loadJSON`/`saveJSON` (
 | `skywave_mine_v1`      | `[{freq, mode, station, time, days, lang, target, notes}]`               | user custom frequencies |
 | `skywave_geo_v1`       | `{lat, lng, label}`                                                      | grayline location      |
 | `skywave_prefs_v1`     | `{autoUpd, setup, theme, zoom, hr24}`                                    | preferences; `setup: true` once wizard completes |
+| `skywave_heard_v1`     | `{"<keyOf entry>": "YYYY-MM-DD", …}`                                     | favorites marked heard today; pruned to current UTC day on boot |
+| `skywave_nets_v1`      | `{list:[{freq,name,mode,ncs,band,start}], ts}`                           | last fetched NetLogger nets-in-progress |
 
 **Not here:** logbook, POTA/SOTA spots, callsign, ADIF — those live in PileUp under `pileup_*` keys.
 
@@ -278,7 +280,8 @@ node test/smoke.mjs
 - **v0.4** — In-app-browser awareness; status-aware empty states; Propagation tab.
 - **v0.5** — First-run setup wizard (location → Maidenhead grid preview); grid square in header.
 - **v2026.06.09** — Code review pass: dead CSS/variable removal, `toggleFav` key unified via `keyOf()`, `loadText` timestamp preservation, double `rebuildData()` boot fix, `onAirText()` filter respect, stale `mineMsg` clear, re-run wizard link, K-index auto-load in wide-screen rail, Firefox zoom fallback, SW error surfacing.
-- **v2026.07.05 (current)** — Polish pass: fixed `attr()` escape order (quote-in-station-name corrupted favorite keys), PNG app icons (`apple-touch-icon.png` 180 + `icon-512.png`) so iOS home-screen icon works, favicon + `og:`/description meta tags, `theme-color` follows light/dark, lat/lng range validation (`validGeo`), `sw.js` relative paths for host portability, rail K-index error state, `fetchKIndex` timeout, TZ label computed once, My-Freq delete confirm, accurate search-result count. See CHANGELOG.md.
+- **v2026.07.05** — Polish pass: fixed `attr()` escape order (quote-in-station-name corrupted favorite keys), PNG app icons (`apple-touch-icon.png` 180 + `icon-512.png`) so iOS home-screen icon works, favicon + `og:`/description meta tags, `theme-color` follows light/dark, lat/lng range validation (`validGeo`), `sw.js` relative paths for host portability, rail K-index error state, `fetchKIndex` timeout, TZ label computed once, My-Freq delete confirm, accurate search-result count. Also: "heard today" mark on Favorites (sage strike + pill, clears 0000 UTC, `skywave_heard_v1`). See CHANGELOG.md.
+- **v2026.07.11 (current)** — **Nets**: 4th Listen sub-tab. Live nets-in-session via NetLogger API (`GetNetsInProgress`, relay chain, tolerant JSON/delimited parser, `skywave_nets_v1` cache, fails soft) + built-in `NETDIR` of major scheduled HF nets flowing through the normal DATA pipeline (offline, on-air aware, star-able). README given hero screenshots + badges; `docs/ARCHITECTURE.md` and `docs/DATA_SOURCES.md` rewritten for the post-split app. **Note:** the NetLogger response format could not be live-verified at build time (sandboxed network) — the parser is defensive; verify on a real device and adjust `parseNets()` if the field order differs.
 
 ---
 
