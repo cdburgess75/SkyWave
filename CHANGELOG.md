@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.12.004] — 2026-07-12
+
+### Added
+- **Southeast US nets in the built-in directory** — ten researched-and-verified regional HF nets join the five national ones: Louisiana Traffic Net (3.910), Mississippi Section Phone Net (3.862), Alabama Traffic Net Mike (3.965), Georgia Single Sideband Net (3.975), Tennessee Phone Net (3.980), South Carolina SSB Net (3.915), Florida Phone Traffic Net (3.940), Florida Midday Traffic Net (7.242), SouthCARS (7.251), and the Waterway Net (7.268). All offline, on-air aware, star-able; notes carry the local-time anchor (UTC times are daylight-time anchored; winter shifts +1 h).
+
+### Removed
+- All references to the former companion app — SkyWave stands alone. Operating-side features (logging, spots, ADIF) remain out of scope.
+
+---
+
 ## [2026.07.12.003] — 2026-07-12
 
 *Audit remediation release — items 1, 3, 5, 6, 7, 9 of the codebase-audit roadmap.*
@@ -66,7 +76,7 @@ All notable changes to SKYWAVE are documented here.
 - **`attr()` escaped in the wrong order** — replaced `"` before `&`, corrupting any station name containing a double quote so its favorite key could never be matched or un-starred. Now escapes `&` first.
 - **iOS home-screen icon** — `apple-touch-icon` pointed at an SVG, which iOS rejects (fell back to a page screenshot). Added rasterized `apple-touch-icon.png` (180×180) and `icon-512.png`.
 - **Right-rail K-index could hang on "Loading…"** — a failed NOAA fetch only updated the Prop tab; the rail now shows an error state instead of a permanent spinner.
-- **Stale manifest description** — dropped the "field logbook" wording that moved to PileUp.
+- **Stale manifest description** — dropped the leftover "field logbook" wording.
 - **`theme-color` stayed dark in light mode** — browser chrome now follows the selected theme.
 
 ### Changed
@@ -86,7 +96,7 @@ All notable changes to SKYWAVE are documented here.
 ## [2026.06.09] — 2026-06-09
 
 ### Changed
-- **App split**: operating tools (POTA/SOTA spots, QSO logbook, ADIF export, callsign/grid) moved to companion app [PileUp](https://github.com/cdburgess75/PileUp). SkyWave is now a pure shortwave band guide.
+- **App split**: operating tools (POTA/SOTA spots, QSO logbook, ADIF export, callsign/grid) removed. SkyWave is now a pure shortwave band guide.
 - Log tab renamed **Saved** — Favorites + My Freq only; logbook removed
 - Spots tab removed
 - Station settings card (callsign input) removed from Ref tab
@@ -117,7 +127,7 @@ All notable changes to SKYWAVE are documented here.
 
 ## [2026.06.04] — 2026-06-04
 
-*Last version of the all-in-one app before the SkyWave / PileUp split.*
+*Last version of the all-in-one app before the operating tools were split out.*
 
 ### Added
 - **CalVer versioning**: `VERSION` constant (`2026.06.04`); surfaced in dbstat display

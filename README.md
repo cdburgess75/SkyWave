@@ -51,7 +51,7 @@ Shortwave listening has a discovery problem: thousands of broadcasts rotate thro
 |---------|--------|
 | 📻 On Air Now | Live view of the EiBi schedule; chips for favorites/language, band + free-text filters, 30 s auto-refresh |
 | 🔍 Search / By Freq | Full-text search across 12k+ entries; dial-frequency identification with ±2/5/10 kHz tolerance |
-| 📡 Nets | Live nets in session (NetLogger API) + built-in directory of major HF nets (Maritime Mobile, Intercon, Hurricane Watch, ECARS, MIDCARS) — offline and on-air aware |
+| 📡 Nets | Live nets in session (NetLogger API) + 15 built-in national & Southeast-US HF nets (traffic nets for LA/MS/AL/GA/TN/SC/FL, SouthCARS, Waterway, Maritime Mobile, Hurricane Watch…) — offline and on-air aware |
 | ★ Favorites | Star any listing; ✓ "heard today" strikethrough that clears at 0000 UTC |
 | 📝 My Frequencies | Your own nets/channels merged into every view |
 | 🌅 Grayline planner | Sunrise/sunset/solar-noon + band advice from an on-device solar algorithm — no network |
@@ -145,7 +145,7 @@ Small, focused PRs are welcome. Ground rules (full detail in [`HANDOFF.md`](HAND
 - **Run `node test/smoke.mjs`** before pushing — all three checks green.
 - Version bumps are CalVer (`YYYY.MM.DD`) in `index.html` **and** `sw.js` cache name, with a [`CHANGELOG.md`](CHANGELOG.md) entry.
 
-Operating-side features (QSO logging, POTA/SOTA spots, ADIF) belong in the companion app **[PileUp](https://github.com/cdburgess75/PileUp)**, not here.
+Operating-side features (QSO logging, POTA/SOTA spots, ADIF export) are out of scope — SKYWAVE is a listening guide, not a logger.
 
 ## Data Sources & Credits
 

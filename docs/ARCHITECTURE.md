@@ -139,5 +139,5 @@ sanity-checking it into a 1.5 MHz – 1.3 GHz window. Unparseable input yields
 - [ ] Does it need the network? → cache the last result; render an offline/failed state.
 - [ ] Does it write to `localStorage`? → wrap in `try/catch`; use a `skywave_*` key; document in `HANDOFF.md` §6.
 - [ ] Does it add a dynamic row? → use `data-act` + `attr()` escaping; wire to the delegation handler.
-- [ ] Does it belong in PileUp instead (logging, spots, ADIF)? → put it there.
+- [ ] Is it an operating-side tool (logging, spots, ADIF)? → out of scope, don't add it.
 - [ ] Does it introduce a third-party library? → don't, unless executing a named roadmap item.

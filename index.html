@@ -714,7 +714,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.12.003";
+const VERSION="2026.07.12.004";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -773,13 +773,26 @@ function entry(freq,time,days,itu,station,lang,target,tx,src){
 function parseTime(t){const m=/(\d{3,4})\s*-\s*(\d{3,4})/.exec(t||"");if(!m)return[0,2400];return[parseInt(m[1],10),parseInt(m[2],10)];}
 function keyOf(e){return e.freq+"|"+(e.station||"")+"|"+(e.time||"");}
 function makeMine(o){const e=entry(o.freq,o.time,o.days,"",o.station,o.lang,o.target,"","mine");e.mode=o.mode||"";e.notes=o.notes||"";return e;}
-/* Major scheduled HF nets — built-in, offline. [freq kHz, UTC time, name, mode, target, notes] */
+/* Major scheduled HF nets — built-in, offline. [freq kHz, UTC time, name, mode, target, notes]
+   UTC times anchored to US daylight time; notes carry the local anchor (winter shifts +1h UTC). */
 const NETDIR=[
+ /* national / wide-area */
  [14300,"1600-0200","Maritime Mobile Service Net","USB","World","maritime service net · daily"],
  [14300,"1100-1600","Intercontinental Net","USB","World","traffic net · daily"],
  [14325,"0000-2400","Hurricane Watch Net","USB","NAm","activated during Atlantic tropical events"],
  [7255,"1200-0200","ECARS · East Coast Amateur Radio Service","LSB","USA","HF relay net · hours approximate"],
- [7258,"1300-2300","MIDCARS · Midwest Amateur Radio Service","LSB","USA","HF relay net · hours approximate"]];
+ [7258,"1300-2300","MIDCARS · Midwest Amateur Radio Service","LSB","USA","HF relay net · hours approximate"],
+ /* southeast US */
+ [3910,"2330-0030","Louisiana Traffic Net","LSB","USA","6:30 PM Central · daily"],
+ [3862,"2300-0000","Mississippi Section Phone Net","LSB","USA","6 PM Central · daily · alt 7238"],
+ [3965,"2330-0030","Alabama Traffic Net Mike","LSB","USA","6:30 PM Central · daily · alt 7243"],
+ [3975,"2300-0000","Georgia Single Sideband Net","LSB","USA","nightly 2300Z"],
+ [3980,"2330-0030","Tennessee Phone Net","LSB","USA","6:30 PM Central eve · weekday mornings too"],
+ [3915,"2300-0000","South Carolina SSB Net","LSB","USA","7 PM Eastern · nightly"],
+ [3940,"1100-1200","Florida Phone Traffic Net","LSB","USA","7 AM Eastern · daily"],
+ [7242,"1600-1700","Florida Midday Traffic Net","LSB","USA","noon Eastern · daily · alt 7198"],
+ [7251,"1200-1700","SouthCARS","LSB","USA","8 AM–1 PM Eastern · daily service net"],
+ [7268,"1145-1245","Waterway Net","LSB","USA","7:45 AM Eastern · daily · cruisers & maritime"]];
 function buildBase(){const a=[];TIME.forEach(r=>a.push(entry(r[0],"0000-2400","",r[1],r[2],r[3],r[4],"time/freq standard","ref")));
   NETDIR.forEach(r=>{const e=entry(r[0],r[1],"","",r[2],"E",r[4],"ham net","net");e.mode=r[3];e.notes=r[5];a.push(e);});
   MINE.forEach(o=>a.push(makeMine(o)));return a;}

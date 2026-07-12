@@ -1,7 +1,7 @@
 # SKYWAVE — Data Sources
 
-> POTA / SOTA spot APIs are **not** used by SkyWave — they belong to the
-> companion app [PileUp](https://github.com/cdburgess75/PileUp).
+> POTA / SOTA spot APIs are **not** used by SkyWave — operating-side
+> features are out of scope for this app.
 
 ## EiBi Shortwave Schedule
 
