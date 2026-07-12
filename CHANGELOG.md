@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.12] — 2026-07-12
+
+### Fixed
+- **Dark-theme readability (WCAG AA)** — secondary text `--ink-dim` was #686868, only 3.5:1 contrast on cards (below the 4.5:1 minimum for small text). Now #8a8a8a: 6.1:1 on black, 5.6:1 on cards. Lifts every hint, metadata line, label, count, chip, and nav caption at once.
+- Footer links were `--amber-dim` (4.2:1) — now full amber (8.9:1), matching other in-app links.
+- Light-theme "heard" pill green darkened #2E8B7A → #257263 (4.1:1 → 5.7:1) for the tiny 8px pill text.
+- README screenshots retaken with the improved contrast.
+
+---
+
 ## [2026.07.11] — 2026-07-11
 
 ### Added

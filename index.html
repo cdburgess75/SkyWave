@@ -23,7 +23,7 @@
     --green:#7de87a;--green-dim:#3a9438;
     --blue:#7dd5f5;--blue-dim:#3a88b0;
     --red:#e8635a;
-    --ink:#f0f0f0;--ink-dim:#686868;
+    --ink:#f0f0f0;--ink-dim:#8a8a8a;
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
     --header-bg:#000000;
   }
@@ -156,7 +156,7 @@
 
   /* "heard today" row — sage greens, scoped so they don't touch the rest of the theme */
   :root{--wkd:#AED8CA;--wkd-dim:#2E8B7A;}
-  [data-theme="light"]{--wkd:#2E8B7A;--wkd-dim:#AED8CA;}
+  [data-theme="light"]{--wkd:#257263;--wkd-dim:#AED8CA;}
   .row.worked{opacity:.62;}
   .row.worked .callsign{text-decoration:line-through;text-decoration-color:var(--wkd);text-decoration-thickness:2px;}
   .wkd{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
@@ -253,7 +253,7 @@
   header.min{padding-bottom:8px;}
 
   footer{margin-top:16px;font-size:9.5px;color:var(--ink-dim);line-height:1.7;text-align:center;}
-  footer a{color:var(--amber-dim);}
+  footer a{color:var(--amber);}
   .proptiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
   .proptile{display:block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;text-decoration:none;color:var(--ink);}
   .proptile:active{border-color:var(--amber-dim);}
@@ -696,7 +696,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.11";
+const VERSION="2026.07.12";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
