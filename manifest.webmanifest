@@ -1,13 +1,16 @@
 {
+  "id": "./",
   "name": "SKYWAVE",
   "short_name": "Skywave",
-  "description": "Shortwave band guide for offline listening — EiBi schedule, grayline, and propagation.",
+  "description": "Shortwave band guide for offline listening — EiBi schedule, ham nets, grayline, and propagation.",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0c0b09",
   "theme_color": "#0c0b09",
+  "categories": ["utilities", "news", "education"],
   "icons": [
     {
       "src": "icons/icon.svg",
@@ -26,6 +29,29 @@
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "docs/screenshot-mobile.png",
+      "sizes": "860x1720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "On Air Now — live shortwave schedule"
+    },
+    {
+      "src": "docs/screenshot-nets.png",
+      "sizes": "860x1720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Live ham nets in session"
+    },
+    {
+      "src": "docs/screenshot-desktop.png",
+      "sizes": "1340x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop layout with grayline and band rail"
     }
   ]
 }

@@ -1,5 +1,16 @@
-// Smoke test harness — run: node test/smoke.mjs
+// Smoke test harness — run: node test/smoke.mjs   (or: npm test)
 // Requires: npm i -D jsdom (in repo root)
+//
+// Three checks, all must pass:
+//   1. Syntax     — the app's <script> block compiles (new Function)
+//   2. Coverage   — every getElementById("x") has a matching id="x" in the HTML
+//   3. Boot       — the app initializes in jsdom without console errors and
+//                   the key layout elements exist afterwards
+//
+// NOTE: the app starts setInterval clocks at boot, which keep the jsdom event
+// loop alive forever. The explicit process.exit() at the bottom is REQUIRED —
+// without it the process hangs after passing and CI can only kill it via
+// timeout, masking the real exit code. Do not remove it.
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -76,15 +87,17 @@ await new Promise(r => setTimeout(r, 100));
 
 // Basic DOM-presence assertions
 const doc = dom.window.document;
-for (const id of ["tab-listen", "tab-log", "tab-tools", "tab-ref", "toast"]) {
+for (const id of ["tab-listen", "tab-log", "tab-tools", "tab-ref", "tab-prop", "toast", "updBar", "wizardModal"]) {
   if (!doc.getElementById(id)) {
     errors.push(`Expected element #${id} not found after boot`);
   }
 }
 
 if (errors.length) {
-  throw new Error(`FAIL  3/3  jsdom boot:\n  ${errors.join("\n  ")}`);
+  console.error(`FAIL  3/3  jsdom boot:\n  ${errors.join("\n  ")}`);
+  process.exit(1);
 }
 console.log("PASS  3/3  jsdom boot (all expected elements present)");
 
 console.log("\nAll smoke tests passed.");
+process.exit(0); // required: the app's setInterval keeps jsdom alive (see header)

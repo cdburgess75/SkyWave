@@ -2,6 +2,30 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.12.003] — 2026-07-12
+
+*Audit remediation release — items 1, 3, 5, 6, 7, 9 of the codebase-audit roadmap.*
+
+### Added
+- **CI** — `.github/workflows/test.yml` runs the test suite on every push to main and every PR
+- **`npm test`** — smoke harness + new `test/nets-parser.mjs` (14 checks) now live in the repo
+- **Keyboard & screen-reader accessibility** — quick-filter chips are real buttons with `aria-pressed`; ★ / ✓ / delete row actions are focusable and respond to Enter/Space with `aria-label`s; Escape closes the More sheet and wizard; wizard is `role="dialog"` with focus trap and initial focus; More-sheet rows keyboard-activatable; theme toggle announces its action
+- **`prefers-reduced-motion`** support — all transitions/animations disabled for users who request it
+- Algorithm guard comments on `onAir` (midnight-wrap rule), `seasonCode` (last-Sunday boundaries), and the SunCalc constants
+
+### Fixed
+- **Update banner showed to first-time visitors** — `clients.claim()` makes the page controlled the moment the first-ever service worker activates, so the "controlled?" check passed on first install. Now captures controlled-state *before* registration; the banner only appears on genuine updates. (Caught in screenshot verification; the banner also fired correctly on a real update, confirming the flow end-to-end.)
+- **Test harness exit codes** — `smoke.mjs` hung on the app's `setInterval` after passing, forcing `timeout` wrappers that masked real failures (exit 124 on pass *and* fail). Now exits 0/1 correctly, which is what makes CI possible
+- Right-rail K-index retries after a failed fetch (previously one-shot until a Prop-tab visit)
+- Setup wizard commits your location when you tap **Next** instead of on every keystroke (typing "30.61" no longer transiently saves latitude 3)
+- EiBi update no longer wastes an attempt on the direct `http://` fetch that mixed-content policy always blocks (relay-wrapped `http://` still works)
+
+### Changed
+- **Performance:** day-of-week schedule rules are parsed once per entry at load instead of ~12,000 times per 30-second refresh; all filter inputs debounced 150 ms
+- Manifest: added `id`, `lang`, `categories`, and install-sheet `screenshots`
+
+---
+
 ## [2026.07.12.002] — 2026-07-12
 
 ### Added

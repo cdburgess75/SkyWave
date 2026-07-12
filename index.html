@@ -332,6 +332,10 @@
     .rail-dim{color:var(--ink-dim);font-size:10px;}
   }
 
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition:none !important;animation:none !important;}
+  }
+
   #printArea{display:none;}
   @media print{
     body{background:#fff;color:#000;}
@@ -382,12 +386,12 @@
     </div>
 
     <div id="sub-now">
-      <div class="chips" id="nowChips">
-        <span class="chip on" data-chip="all">All</span>
-        <span class="chip" data-chip="fav">★ Favorites</span>
-        <span class="chip" data-chip="E">English</span>
-        <span class="chip" data-chip="S">Spanish</span>
-        <span class="chip" data-chip="F">French</span>
+      <div class="chips" id="nowChips" role="group" aria-label="Quick filters">
+        <button type="button" class="chip on" data-chip="all" aria-pressed="true">All</button>
+        <button type="button" class="chip" data-chip="fav" aria-pressed="false">★ Favorites</button>
+        <button type="button" class="chip" data-chip="E" aria-pressed="false">English</button>
+        <button type="button" class="chip" data-chip="S" aria-pressed="false">Spanish</button>
+        <button type="button" class="chip" data-chip="F" aria-pressed="false">French</button>
       </div>
       <div class="ctrl">
         <input type="search" id="nowFilter" placeholder="filter on-air (station / target / country)…" autocomplete="off">
@@ -630,12 +634,12 @@
 
 <!-- ============ MORE SHEET ============ -->
 <div class="morescrim" id="moreScrim"></div>
-<div class="moresheet" id="moreSheet">
+<div class="moresheet" id="moreSheet" role="dialog" aria-label="More tabs">
   <h4>◆ More</h4>
-  <div class="morerow" id="moreRef" data-tab="ref">
+  <div class="morerow" id="moreRef" data-tab="ref" role="button" tabindex="0">
     <span class="mlabel">◆ Reference</span>
   </div>
-  <div class="morerow" id="moreProp" data-tab="prop">
+  <div class="morerow" id="moreProp" data-tab="prop" role="button" tabindex="0">
     <span class="mlabel">◆ Propagation</span>
   </div>
 </div>
@@ -649,7 +653,7 @@
 </nav>
 
 <!-- ============ SETUP WIZARD ============ -->
-<div class="modal" id="wizardModal" hidden>
+<div class="modal" id="wizardModal" role="dialog" aria-modal="true" aria-label="Location setup" hidden>
   <div class="wizard">
     <div class="wiz-steps">
       <div class="wiz-dot on" id="wd1">1</div>
@@ -710,7 +714,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.12.002";
+const VERSION="2026.07.12.003";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -748,6 +752,7 @@ const K={raw:"skywave_eibi_raw_v1",meta:"skywave_eibi_meta_v1",favs:"skywave_fav
  nets:"skywave_nets_v1"};
 const STALE_DAYS=21;
 function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function debounce(fn,ms){let t;return function(){clearTimeout(t);t=setTimeout(fn,ms);};}
 function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}}
 let FAVS=loadJSON(K.favs,[]), MINE=loadJSON(K.mine,[]);
 let HEARD=loadJSON(K.heard,{});
@@ -762,7 +767,7 @@ function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
 /* ============ entry model ============ */
 function entry(freq,time,days,itu,station,lang,target,tx,src){
   const [s,e]=parseTime(time);
-  return {freq:+freq,time:time||"0000-2400",start:s,end:e,days:days||"",itu:itu||"",
+  return {freq:+freq,time:time||"0000-2400",start:s,end:e,days:days||"",_days:dayAllowed(days||""),itu:itu||"",
     station:station||"",lang:lang||"",target:target||"",tx:tx||"",mode:"",notes:"",src:src||"eibi"};
 }
 function parseTime(t){const m=/(\d{3,4})\s*-\s*(\d{3,4})/.exec(t||"");if(!m)return[0,2400];return[parseInt(m[1],10),parseInt(m[2],10)];}
@@ -815,6 +820,8 @@ function umsg(t,kind){const el=document.getElementById("updMsg");el.textContent=
 
 /* ============ season + online update ============ */
 function lastSun(y,mo){const d=new Date(Date.UTC(y,mo+1,0));return d.getUTCDate()-d.getUTCDay();}
+/* EiBi season: 'a'=summer starts last Sunday of March, 'b'=winter starts last
+   Sunday of October. Jan..late-Mar belongs to the PREVIOUS year's b season. */
 function seasonCode(d){d=d||new Date();const y=d.getUTCFullYear(),mo=d.getUTCMonth(),day=d.getUTCDate();
   const springSun=lastSun(y,2),fallSun=lastSun(y,9);
   const inA=(mo>2||(mo===2&&day>=springSun))&&(mo<9||(mo===9&&day<fallSun));
@@ -832,6 +839,7 @@ function fetchWithTimeout(url,opts,ms){const ac=new AbortController();const id=s
 async function fetchSchedule(code){
   const targets=["https://www.eibispace.de/dx/sked-"+code+".csv","http://www.eibispace.de/dx/sked-"+code+".csv"];
   for(const t of targets)for(const url of relays(t)){
+    if(url===t&&t.startsWith("http:"))continue; // direct http fetch is mixed-content-blocked on https; relays still reach it
     try{const res=await fetchWithTimeout(url,{cache:"no-store",redirect:"follow"});if(!res||!res.ok)continue;
       const text=await res.text();if((text.match(/;/g)||[]).length>200)return text;}catch(e){}
   }
@@ -874,9 +882,11 @@ function dayAllowed(daysStr){
   return set;
 }
 function dowE(d){const x=d.getUTCDay();return x===0?7:x;}
+/* On-air test. Midnight-wrapping slots (start>end): EiBi day codes name the
+   START day, so the post-midnight portion is checked against YESTERDAY's weekday. */
 function onAir(e,date){
   date=date||new Date();const now=date.getUTCHours()*100+date.getUTCMinutes();
-  const s=e.start,en=e.end,allowed=dayAllowed(e.days);
+  const s=e.start,en=e.end,allowed=e._days!==undefined?e._days:dayAllowed(e.days);
   const ok=n=>allowed===null||allowed.has(n);
   const tE=dowE(date),yE=tE===1?7:tE-1;
   if(s===en||(s===0&&en===2400))return ok(tE);
@@ -918,7 +928,7 @@ function rowHTML(e){
     '<div class="freq">'+fmtFreq(e.freq)+'<span class="u">'+freqUnit(e.freq)+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(e.station||"(unknown)")+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
     '<div class="right">'+tag+'<span class="time">'+esc(e.time)+(e.days?' '+esc(e.days):'')+'</span>'+
-      '<span class="acts"><span class="act fav'+fav+'" data-act="fav" '+da+'>★</span></span>'+
+      '<span class="acts"><span class="act fav'+fav+'" data-act="fav" role="button" tabindex="0" aria-label="Toggle favorite" aria-pressed="'+(fav?"true":"false")+'" '+da+'>★</span></span>'+
     '</div></div>';
 }
 function renderRows(elId,list,countId,label){
@@ -1006,8 +1016,8 @@ function starRowHTML(e){
     '<div class="mid"><div class="st"><span class="callsign">'+esc(e.station||"(unknown)")+'</span>'+badge+wkd+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
     '<div class="right">'+tag+'<span class="time">'+esc(e.time)+(e.days?' '+esc(e.days):'')+'</span>'+
       '<span class="acts">'+
-        '<span class="act heard'+(worked?' on':'')+'" data-act="heard" data-k="'+attr(k)+'" title="Mark heard today — clears at 0000 UTC">✓</span>'+
-        '<span class="act fav on" data-act="fav" '+da+'>★</span>'+
+        '<span class="act heard'+(worked?' on':'')+'" data-act="heard" data-k="'+attr(k)+'" role="button" tabindex="0" aria-label="Mark heard today" aria-pressed="'+(worked?"true":"false")+'" title="Mark heard today — clears at 0000 UTC">✓</span>'+
+        '<span class="act fav on" data-act="fav" role="button" tabindex="0" aria-label="Remove favorite" aria-pressed="true" '+da+'>★</span>'+
       '</span>'+
     '</div></div>';
 }
@@ -1048,7 +1058,7 @@ function renderMine(){
   el.innerHTML=MINE.map((o,i)=>{const md=o.mode?'<span class="badge">'+esc(o.mode)+'</span>':'';
     return '<div class="row mine"><div class="freq">'+fmtFreq(+o.freq)+'<span class="u">'+freqUnit(+o.freq)+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(o.station)+md+'</div><div class="meta">'+esc(o.time)+(o.days?' '+esc(o.days):'')+(o.notes?' · '+esc(o.notes):'')+'</div></div>'+
-    '<div class="right"><span class="act log" data-act="delmine" data-i="'+i+'">delete</span></div></div>';}).join("");
+    '<div class="right"><span class="act log" data-act="delmine" data-i="'+i+'" role="button" tabindex="0" aria-label="Delete '+attr(o.station)+'">delete</span></div></div>';}).join("");
 }
 
 /* ============ live nets (NetLogger) ============ */
@@ -1192,7 +1202,8 @@ function applyTheme(t){
   if(tc)tc.setAttribute("content",t==="light"?"#f2f2f2":"#0c0b09");
   const b=document.getElementById("themeToggle");
   if(b){b.textContent=t==="light"?"☀︎":"☾︎";
-    b.title=t==="light"?"Switch to dark theme":"Switch to light theme";}
+    b.title=t==="light"?"Switch to dark theme":"Switch to light theme";
+    b.setAttribute("aria-label",b.title);}
 }
 function applyZoom(z){
   PREFS.zoom=z;saveJSON(K.prefs,PREFS);
@@ -1261,6 +1272,9 @@ function renderRail(){
 }
 
 /* ============ sun / grayline ============ */
+/* Compact SunCalc core (Agafonkin). Constants: 0.0009/0.0053/0.0069 are the
+   standard solar-transit correction terms; h0=-0.833° = sun radius + refraction
+   (defines "sunrise"). Do not "simplify" these numbers. */
 const RAD=Math.PI/180,dayMs=86400000,J1970=2440588,J2000=2451545,OBL=RAD*23.4397;
 function toDays(d){return d.valueOf()/dayMs-0.5+J1970-J2000;}
 function sma(d){return RAD*(357.5291+0.98560028*d);}
@@ -1416,6 +1430,7 @@ function showWizard(){
   updateWiz2Preview();
   wizStep(1);
   document.getElementById("wizardModal").hidden=false;
+  document.getElementById("wizNext1").focus();
 }
 function closeWizard(){
   document.getElementById("wizardModal").hidden=true;
@@ -1447,6 +1462,7 @@ function fetchKIndex(){
         '<div class="ktime">'+ts+'Z</div></div>'+
         '<div class="kbars" style="flex:1">'+bars+'</div></div>';
     }).catch(()=>{
+      _kFetched=false;  // allow the rail to retry on a later tick
       el.innerHTML='<div class="hint">Could not load — check connection</div>';
       const rk=document.getElementById("railK");
       if(rk)rk.innerHTML='<div class="hint" style="font-size:10px">Could not load</div>';
@@ -1505,7 +1521,10 @@ document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.addEventListener("
 document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
 document.getElementById("moreBtn").addEventListener("click",openMore);
 document.getElementById("moreScrim").addEventListener("click",closeMore);
-document.querySelectorAll(".morerow[data-tab]").forEach(r=>r.addEventListener("click",()=>showTab(r.dataset.tab)));
+document.querySelectorAll(".morerow[data-tab]").forEach(r=>{
+  r.addEventListener("click",()=>showTab(r.dataset.tab));
+  r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showTab(r.dataset.tab);}});
+});
 
 // wizard
 document.getElementById("wizNext1").addEventListener("click",()=>{
@@ -1525,12 +1544,12 @@ document.getElementById("wizGPS").addEventListener("click",()=>{
     updateWiz2Preview();btn.textContent="◉ Use my GPS";btn.disabled=false;
   },()=>{btn.textContent="◉ Use my GPS";btn.disabled=false;toast("Location denied");});
 });
-["wizLat","wizLng"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{
-  const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
-  if(validGeo(la,ln)){GEO={lat:la,lng:ln,label:"custom"};saveJSON(K.geo,GEO);}
-  updateWiz2Preview();
-}));
+["wizLat","wizLng"].forEach(id=>document.getElementById(id).addEventListener("input",updateWiz2Preview));
 document.getElementById("wizNext2").addEventListener("click",()=>{
+  const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
+  if(validGeo(la,ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);}
+  else if(document.getElementById("wizLat").value.trim()||document.getElementById("wizLng").value.trim()){
+    toast("Latitude −90…90 · longitude −180…180");return;}
   document.getElementById("wiz3Grid").textContent=toGrid(GEO.lat,GEO.lng);
   const st=sunTimes(new Date(),GEO.lat,GEO.lng);
   document.getElementById("wiz3SR").textContent=st.sunrise?fmtUTC(st.sunrise)+"Z":st.polar||"—";
@@ -1541,27 +1560,54 @@ document.getElementById("wizDone").addEventListener("click",closeWizard);
 document.getElementById("rerunWiz").addEventListener("click",e=>{e.preventDefault();showWizard();});
 
 document.querySelectorAll("#seg-listen button").forEach(b=>b.addEventListener("click",()=>{showSub("listen",b.dataset.sub);if(b.dataset.sub==="nets")openNets(false);}));
-document.getElementById("netsFilter").addEventListener("input",renderNets);
+document.getElementById("netsFilter").addEventListener("input",debounce(renderNets,150));
 document.getElementById("netsRefresh").addEventListener("click",()=>openNets(true));
 document.querySelectorAll("#seg-log button").forEach(b=>b.addEventListener("click",()=>showSub("log",b.dataset.sub)));
 document.querySelectorAll("#nowChips .chip").forEach(c=>c.addEventListener("click",()=>{
-  nowChip=c.dataset.chip;document.querySelectorAll("#nowChips .chip").forEach(x=>x.classList.toggle("on",x===c));refreshNow();}));
-document.getElementById("nowFilter").addEventListener("input",refreshNow);
+  nowChip=c.dataset.chip;
+  document.querySelectorAll("#nowChips .chip").forEach(x=>{x.classList.toggle("on",x===c);x.setAttribute("aria-pressed",String(x===c));});
+  refreshNow();}));
+document.getElementById("nowFilter").addEventListener("input",debounce(refreshNow,150));
 document.getElementById("nowBand").addEventListener("change",refreshNow);
-document.getElementById("q").addEventListener("input",refreshSearch);
+document.getElementById("q").addEventListener("input",debounce(refreshSearch,150));
 ["fBand","fLang","fTarget"].forEach(id=>document.getElementById(id).addEventListener("change",refreshSearch));
-document.getElementById("freqIn").addEventListener("input",refreshFreq);
+document.getElementById("freqIn").addEventListener("input",debounce(refreshFreq,150));
 document.getElementById("freqTol").addEventListener("change",refreshFreq);
 
-// row action delegation
-document.addEventListener("click",ev=>{
-  const t=ev.target.closest("[data-act]");if(!t)return;
+// row action delegation — shared by click and keyboard (Enter/Space)
+function handleAct(t){
   const a=t.dataset.act;
   if(a==="fav"){
     const o={freq:+t.dataset.f,station:t.dataset.st,time:t.dataset.tm,lang:t.dataset.lg,target:t.dataset.tg,itu:t.dataset.it,days:""};
     toggleFav(o);
   } else if(a==="heard"){toggleHeard(t.dataset.k);}
   else if(a==="delmine"){delMine(+t.dataset.i);}
+}
+document.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-act]");if(t)handleAct(t);
+});
+document.addEventListener("keydown",ev=>{
+  // activate row actions from the keyboard
+  if(ev.key==="Enter"||ev.key===" "){
+    const t=ev.target&&ev.target.closest?ev.target.closest("[data-act]"):null;
+    if(t){ev.preventDefault();handleAct(t);return;}
+  }
+  // Escape closes the More sheet, then the wizard
+  if(ev.key==="Escape"){
+    if(document.getElementById("moreSheet").classList.contains("open"))closeMore();
+    else if(!document.getElementById("wizardModal").hidden)closeWizard();
+    return;
+  }
+  // keep Tab inside the wizard while it's open
+  if(ev.key==="Tab"&&!document.getElementById("wizardModal").hidden){
+    const f=[...document.querySelectorAll("#wizardModal button,#wizardModal input")]
+      .filter(x=>!x.disabled&&x.offsetParent!==null);
+    if(f.length){
+      const first=f[0],last=f[f.length-1];
+      if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last.focus();}
+      else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus();}
+    }
+  }
 });
 
 // my freq
@@ -1644,11 +1690,15 @@ function showUpdateBanner(){
 }
 document.getElementById("updApply").addEventListener("click",()=>location.reload());
 if("serviceWorker" in navigator){
+  // capture BEFORE register(): sw.js calls clients.claim(), so .controller is
+  // non-null right after the very first install — checking it later would show
+  // the "new version" banner to every first-time visitor
+  const hadController=!!navigator.serviceWorker.controller;
   navigator.serviceWorker.register("sw.js").then(reg=>{
     reg.addEventListener("updatefound",()=>{
       const nw=reg.installing;if(!nw)return;
       nw.addEventListener("statechange",()=>{
-        if(nw.state==="activated"&&navigator.serviceWorker.controller)showUpdateBanner();
+        if(nw.state==="activated"&&hadController)showUpdateBanner();
       });
     });
   }).catch(e=>console.warn("SW:",e));
