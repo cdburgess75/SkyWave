@@ -2,6 +2,17 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.12.002] — 2026-07-12
+
+### Added
+- **Update banner** — when the service worker downloads a new version, an amber "⟳ New version ready — Update" banner slides down from the top; tap Update to apply, or it auto-dismisses after 8 s
+- **Version in Ref footer** — "SKYWAVE vYYYY.MM.DD · CalVer" (also still shown in the header status line)
+
+### Changed
+- **Theme toggle is now a single moon/sun button** (☾ in dark, ☀ in light) replacing the two labeled Dark/Light buttons — icon reflects the current mode, one tap switches
+
+---
+
 ## [2026.07.12] — 2026-07-12
 
 ### Fixed

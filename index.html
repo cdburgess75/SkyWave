@@ -74,6 +74,8 @@
     transition:.15s;white-space:nowrap;}
   .tgl-btn:hover{color:var(--ink);}
   .tgl-btn.on{color:var(--amber);border-color:var(--amber-dim);}
+  .theme-btn{font-size:15px;line-height:1;padding:4px 11px;color:var(--ink);border-radius:8px;}
+  .theme-btn:hover{color:var(--amber);border-color:var(--amber-dim);}
   .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;}
   .clock{display:flex;flex-direction:column;gap:1px;}
   .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
@@ -210,6 +212,13 @@
     border-radius:16px 16px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.6);}
   .sheet h3{margin:0 0 12px;font-size:12px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;}
 
+  /* update-available banner */
+  .updbar{position:fixed;top:0;left:50%;transform:translate(-50%,-120%);z-index:90;display:flex;gap:12px;align-items:center;
+    background:var(--panel2);border:1px solid var(--amber);border-top:none;border-radius:0 0 12px 12px;
+    padding:10px 16px max(10px,env(safe-area-inset-top));box-shadow:0 6px 24px rgba(0,0,0,.55),0 0 18px rgba(240,146,60,.25);
+    transition:transform .35s ease;font-size:11px;letter-spacing:.06em;color:var(--ink);max-width:92vw;white-space:nowrap;}
+  .updbar.show{transform:translate(-50%,0);}
+  .updbar b{color:var(--amber);}
   .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--green);color:#06170c;
     font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:.25s;pointer-events:none;text-transform:uppercase;}
   .toast.show{opacity:1;}
@@ -351,8 +360,7 @@
     <div class="brand">
       <h1>SKYWAVE</h1><span class="sub">Shortwave Band Guide</span>
       <div class="hdr-controls">
-        <button class="tgl-btn on" data-theme-btn="" title="Dark theme">◑ Dark</button>
-        <button class="tgl-btn" data-theme-btn="light" title="Light theme">◐ Light</button>
+        <button class="tgl-btn theme-btn" id="themeToggle" title="Switch to light theme">☾&#xFE0E;</button>
         <button class="kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode">⛶ Kiosk</button>
       </div>
     </div>
@@ -535,6 +543,7 @@
     <div class="card" id="refHam"></div>
     <div class="card"><h3>◆ Code key</h3><div class="legend" id="legend"></div></div>
     <footer>
+      <span id="verFoot"></span><br>
       Schedule data: EiBi Shortwave Schedules by Eike Bierwirth — <a href="http://www.eibispace.de/">eibispace.de</a> · free to copy &amp; distribute.<br>
       Times UTC. On-air status &amp; grayline computed from your device clock &amp; coordinates. Built for offline field use.<br>
       <a href="#" id="rerunWiz">Re-run location setup</a>
@@ -613,6 +622,11 @@
 </div><!-- /#layout -->
 
 <div class="toast" id="toast"></div>
+
+<div class="updbar" id="updBar" role="status" aria-live="polite">
+  <span>⟳ <b>New version ready</b></span>
+  <button class="btn sm" id="updApply">Update</button>
+</div>
 
 <!-- ============ MORE SHEET ============ -->
 <div class="morescrim" id="moreScrim"></div>
@@ -696,7 +710,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.12";
+const VERSION="2026.07.12.002";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1176,7 +1190,9 @@ function applyTheme(t){
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
   const tc=document.querySelector('meta[name="theme-color"]');
   if(tc)tc.setAttribute("content",t==="light"?"#f2f2f2":"#0c0b09");
-  document.querySelectorAll("[data-theme-btn]").forEach(b=>b.classList.toggle("on",b.dataset.themeBtn===(t||"")));
+  const b=document.getElementById("themeToggle");
+  if(b){b.textContent=t==="light"?"☀︎":"☾︎";
+    b.title=t==="light"?"Switch to dark theme":"Switch to light theme";}
 }
 function applyZoom(z){
   PREFS.zoom=z;saveJSON(K.prefs,PREFS);
@@ -1480,7 +1496,7 @@ function showSub(group,sub){
 
 /* ============ wire up ============ */
 // display controls
-document.querySelectorAll("[data-theme-btn]").forEach(b=>b.addEventListener("click",()=>applyTheme(b.dataset.themeBtn)));
+document.getElementById("themeToggle").addEventListener("click",()=>applyTheme(PREFS.theme==="light"?"":"light"));
 document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.addEventListener("click",()=>applyZoom(parseFloat(b.dataset.zoomBtn))));
 document.getElementById("hr24Toggle").addEventListener("change",e=>{PREFS.hr24=e.target.checked;saveJSON(K.prefs,PREFS);tick();});
 document.getElementById("kioskBtn").addEventListener("click",toggleKiosk);
@@ -1613,14 +1629,29 @@ document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 renderRail();
 if(typeof window.matchMedia==="function"&&window.matchMedia("(min-width:1280px)").matches&&navigator.onLine){_kFetched=true;fetchKIndex();}
 if(PREFS.setup===false)showWizard();
+document.getElementById("verFoot").textContent="SKYWAVE v"+VERSION+" · CalVer";
 document.getElementById("locLbl").textContent="Local "+TZ;
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-tools").hidden)renderGray();renderRail();},30000);
 window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
   if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
+function showUpdateBanner(){
+  const bar=document.getElementById("updBar");
+  bar.classList.add("show");
+  clearTimeout(showUpdateBanner._t);
+  showUpdateBanner._t=setTimeout(()=>bar.classList.remove("show"),8000);
+}
+document.getElementById("updApply").addEventListener("click",()=>location.reload());
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").catch(e=>console.warn("SW:",e));
+  navigator.serviceWorker.register("sw.js").then(reg=>{
+    reg.addEventListener("updatefound",()=>{
+      const nw=reg.installing;if(!nw)return;
+      nw.addEventListener("statechange",()=>{
+        if(nw.state==="activated"&&navigator.serviceWorker.controller)showUpdateBanner();
+      });
+    });
+  }).catch(e=>console.warn("SW:",e));
 }
 </script>
 </body>
