@@ -52,26 +52,37 @@ not send CORS headers.
 ## NetLogger — live nets in session
 
 **Website:** https://www.netlogger.org
-**API endpoint:** `GET https://www.netlogger.org/api/GetNetsInProgress.php?ProtocolVersion=2.3`
+**API endpoints (per server, queried in parallel and merged):**
+`GET http://{server}/cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3`
+Servers: `www.netlogger.org`, `www.netlogger1.org`, `www.netlogger2.org`,
+`www.netlogger3.org` (canonical list at `netlogger.org/downloads/ServerList.txt`).
 **Used for:** the live half of the Listen → Nets sub-tab.
+**Verified against:** open-source consumers
+[ham2k/nets](https://github.com/ham2k/nets) and
+[seven1m/ragchew.site](https://github.com/seven1m/ragchew.site), whose test
+fixtures capture the wire format verbatim.
+
+### Wire format (production)
+
+Payload sits between HTML comment markers inside the response body:
+
+```
+<!--NetLogger Start Data-->
+NetName|Freq(MHz)|Logger|NetControl|YYYYMMDDHHMMSS|Mode|Band|AIM|Interval|AltName||Subscribers|~
+…more records…
+<!--NetLogger End Data-->
+```
+
+Fields pipe-separated in fixed order; records terminated by `|~`. Empty
+markers = a valid "no nets in session" response (distinct from failure).
 
 ### Parsing
 
-The service returns **XML** under a `<NetLoggerXML>` root (per the
-[XML Data Service Interface Specification](https://www.netlogger.org/api/)),
-which instructs clients to parse tolerantly and ignore unknown nodes.
-`parseNets()` tries three formats in order:
-
-1. **XML** (the documented format) — every `<Net>` element, reading both
-   child elements (`<NetName>…</NetName>`) and attributes
-   (`<Net NetName="…">`), entities decoded, field names matched
-   case-insensitively (`NetName`, `Frequency`, `Mode`, `NetControl`, `Band`,
-   `Date`/`StartTime`).
-2. **JSON** — an array (or `{nets:[…]}`) of objects, same field mapping.
-3. **Delimited** — records separated by `~`, fields by `|`; the frequency
-   field is located heuristically (first numeric token that lands in a
-   1.5 MHz – 1.3 GHz window after MHz→kHz normalization). Records starting
-   with `*` (status markers) are skipped.
+`parseNets()` tries four formats in order: **AIM markers** (production,
+above) → **XML** (`<NetLoggerXML>` per the older
+[XML Data Service spec](https://www.netlogger.org/api/)) → **JSON** →
+**generic delimited** (heuristic frequency detection). Anything
+unparseable yields `[]` and the UI keeps the cached list.
 
 Anything unparseable yields `[]` and the UI keeps the cached list
 (`skywave_nets_v1`, with fetch timestamp) — the feature fails soft.

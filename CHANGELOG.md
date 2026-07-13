@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.003] — 2026-07-13
+
+### Fixed
+- **Live nets: the endpoint was wrong the whole time.** Verified against open-source NetLogger consumers (ham2k/nets, ragchew.site): the production API is `GET {server}/cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3` — every previous URL (`/api/GetNetsInProgress.php` and variants) was a 404, which is why the app always reported "couldn't reach." Nets are also distributed across four servers (netlogger.org + netlogger1–3.org): all are now queried in parallel and merged, deduped by name+frequency.
+- **True wire format implemented:** payload between `<!--NetLogger Start Data-->`/`End Data` markers, pipe-separated fixed fields, records ending `|~`, compact `YYYYMMDDHHMMSS` start times. New `parseNetsAIM()` tried first (XML/JSON/heuristic fallbacks retained). An empty marker pair now correctly renders as "no nets in session" instead of a failure. 8 new tests against the verbatim wire fixture (28 total).
+
+---
+
 ## [2026.07.13.002] — 2026-07-13
 
 ### Changed

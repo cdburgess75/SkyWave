@@ -717,7 +717,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.13.002";
+const VERSION="2026.07.13.003";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1078,12 +1078,15 @@ function renderMine(){
 }
 
 /* ============ live nets (NetLogger) ============ */
-/* Candidate endpoints — the NetLogger XML API uses versioned Get*.php names;
-   try the likely variants until one yields parseable nets. */
-const NETS_URLS=[
- "https://www.netlogger.org/api/GetNetsInProgress2.php?ProtocolVersion=2.3",
- "https://www.netlogger.org/api/GetNetsInProgress.php?ProtocolVersion=2.3",
- "https://www.netlogger.org/api/GetNetsInProgress.php"];
+/* NetLogger production API (verified against open-source consumers ham2k/nets
+   and ragchew.site): nets are distributed across multiple servers, each queried at
+   /cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3
+   Response payload sits between <!--NetLogger Start Data--> / End Data markers:
+   pipe-separated fields, records terminated by |~ :
+   NetName|Freq(MHz)|Logger|NetControl|YYYYMMDDHHMMSS|Mode|Band|AIM|Interval|AltName||Subs|~ */
+const NETS_SERVERS=["https://www.netlogger.org","http://www.netlogger1.org",
+ "http://www.netlogger2.org","http://www.netlogger3.org"];
+const NETS_PATH="/cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3";
 let NETS=loadJSON(K.nets,{list:[],ts:0});
 let netsFetching=false;
 function netFreqKhz(v){
@@ -1119,9 +1122,28 @@ function parseNetsXML(text){
   }
   return out;
 }
+/* The real production format: payload between HTML-comment markers, fixed
+   pipe-separated field order, records terminated by "|~". */
+function parseNetsAIM(text){
+  const m=/<!--\s*NetLogger Start Data\s*-->([\s\S]*?)<!--\s*NetLogger End Data\s*-->/.exec(text);
+  if(!m)return null;                       // markers absent → not this format
+  const out=[];
+  for(let rec of m[1].split("|~")){
+    rec=rec.trim();if(!rec)continue;
+    const f=rec.split("|").map(x=>x.trim());
+    if(f.length<7)continue;
+    const freq=netFreqKhz(f[1]);if(!isFinite(freq))continue;
+    const st=f[4]||"";                     // compact UTC timestamp YYYYMMDDHHMMSS
+    const start=/^\d{12,14}$/.test(st)?st.slice(8,10)+":"+st.slice(10,12):st;
+    out.push({freq,name:f[0],mode:(f[5]||"").toUpperCase(),ncs:(f[3]||"").toUpperCase(),band:f[6]||"",start});
+  }
+  return out;                              // [] = valid response, zero nets
+}
 function parseNets(text){
   text=String(text||"").trim();
   if(!text)return[];
+  const aim=parseNetsAIM(text);
+  if(aim!==null)return aim;
   if(/<NetLoggerXML|<Net[\s>]/i.test(text)){
     const x=parseNetsXML(text);
     if(x.length)return x;
@@ -1149,14 +1171,21 @@ function parseNets(text){
   }
   return out;
 }
-async function getNets(){
-  for(const ep of NETS_URLS)for(const url of relays(ep)){
-    try{const res=await fetchWithTimeout(url,{cache:"no-store"},7000);if(!res||!res.ok)continue;
-      const list=parseNets(await res.text());
-      if(list.length)return list;
-    }catch(e){}
+async function relayFetch(ep){
+  for(const url of relays(ep)){
+    if(url===ep&&ep.startsWith("http:"))continue; // direct http = mixed-content-blocked; relays reach it
+    try{const res=await fetchWithTimeout(url,{cache:"no-store"},7000);if(res&&res.ok)return await res.text();}catch(e){}
   }
   return null;
+}
+async function getNets(){
+  // all servers in parallel; merge whatever responds, dedupe by name+freq
+  const texts=await Promise.all(NETS_SERVERS.map(s=>relayFetch(s+NETS_PATH)));
+  if(texts.every(t=>t===null))return null;   // nothing reachable at all
+  const seen=new Set(),out=[];
+  for(const t of texts){if(t===null)continue;
+    for(const n of parseNets(t)){const k=n.name+"|"+n.freq;if(!seen.has(k)){seen.add(k);out.push(n);}}}
+  return out;                                 // may be [] — a valid "no nets right now"
 }
 function netsStartStr(s){const m=/(\d{1,2}:\d{2})/.exec(s);return m?m[1]+"Z":"";}
 function renderNets(){

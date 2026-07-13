@@ -15,8 +15,8 @@ const js = html.split("<script>")[1]?.split("</script>")[0];
 if (!js) { console.error("FAIL: could not extract script block"); process.exit(1); }
 
 // Extract the pure parser block (no DOM, no storage access)
-const s = js.indexOf("const NETS_URL");
-const e = js.indexOf("async function getNets");
+const s = js.indexOf("const NETS_SERVERS");
+const e = js.indexOf("async function relayFetch");
 if (s < 0 || e < 0) { console.error("FAIL: nets parser block not found"); process.exit(1); }
 const block = js.slice(s, e)
   .replace(/let NETS=loadJSON[^\n]*\n/, "")
@@ -51,7 +51,24 @@ const j = parseNets(json);
 t("json: parses valid, drops invalid", j.length === 1 && j[0].freq === 14325);
 t("json: name mapped", j[0].name === "Hurricane Watch Net");
 
-// --- XML format (NetLogger XML Data Service — the documented real format) ---
+// --- AIM format (the REAL production format — fixture verbatim from
+// --- NetLogger's wire protocol as captured in ragchew.site's test suite) ---
+const aim = '<html><body><!--NetLogger Start Data-->' +
+  'List Spec Net|146.52|KI5ZDF-TIM R - v3.1.7L|KI5ZDF|20260305022439|FM|2m|Y|20000|List Spec Net||1|~' +
+  'OMISS 40m SSB Net|7.185|W5ABC-BOB - v3.1.7W|KD5FUV|20260305230000|SSB|40m|Y|20000|OMISS||14|~' +
+  '<!--NetLogger End Data--></body></html>';
+const a = parseNets(aim);
+t("aim: parses 2 nets", a.length === 2);
+t("aim: name exact", a[0].name === "List Spec Net");
+t("aim: 146.52 MHz → 146520 kHz", a[0].freq === 146520);
+t("aim: NCS is field 4 (not the logger)", a[0].ncs === "KI5ZDF");
+t("aim: mode/band", a[0].mode === "FM" && a[0].band === "2m");
+t("aim: compact timestamp → HH:MM", a[0].start === "02:24");
+t("aim: second record", a[1].name === "OMISS 40m SSB Net" && a[1].freq === 7185);
+const aimEmpty = parseNets('<!--NetLogger Start Data--><!--NetLogger End Data-->');
+t("aim: empty markers → [] (valid zero-nets response)", Array.isArray(aimEmpty) && aimEmpty.length === 0);
+
+// --- XML format (NetLogger XML Data Service — documented alternate) ---
 const xml = `<?xml version="1.0"?><NetLoggerXML><ServerList><Server><ServerName>NETLOGGER</ServerName></Server></ServerList><NetList>
 <Net><NetName>OMISS 40m SSB Net &amp; Friends</NetName><Frequency>7.185</Frequency><NetControl>KD5FUV</NetControl><Logger>W5ABC</Logger><ServerName>NETLOGGER</ServerName><Mode>SSB</Mode><Band>40m</Band><Date>2026-07-12 22:00:00</Date></Net>
 <Net NetName="Georgia Single Sideband Net" Frequency="3.975" NetControl="K4ABC" Mode="LSB" Band="80m" Date="2026-07-12 23:00:00"/>
