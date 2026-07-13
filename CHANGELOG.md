@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.011] — 2026-07-13
+
+### Fixed
+- **New icon wasn't reaching devices** — remove/re-add still showed the old art because the icon kept the same filename, so Safari and the GitHub Pages CDN served cached copies. All icon URLs (`apple-touch-icon`, favicon, manifest entries, service-worker shell) now carry a `?v=2` cache-buster, forcing a fresh download everywhere.
+
+---
+
 ## [2026.07.13.010] — 2026-07-13
 
 ### Changed

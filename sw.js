@@ -1,9 +1,9 @@
-const CACHE = "skywave-2026.07.13.010";
+const CACHE = "skywave-2026.07.13.011";
 const SHELL = [
   "./",
   "./index.html",
-  "./icons/icon.svg",
-  "./icons/apple-touch-icon.png",
+  "./icons/icon.svg?v=2",
+  "./icons/apple-touch-icon.png?v=2",
   "./manifest.webmanifest"
 ];
 
