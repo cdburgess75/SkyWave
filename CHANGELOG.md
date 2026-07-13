@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.013] — 2026-07-13
+
+### Changed
+- **Icon: polar grayline map** (owner's concept) — pole-centered flat-Earth disc in the style of classic ham grayline charts: stylized continents around the pole, radial lat/long graticule, the night shadow sweeping the lower disc with the map visible through it, and the glowing amber grayline at the day/night boundary. Icon URLs bumped to `?v=4`.
+
+---
+
 ## [2026.07.13.012] — 2026-07-13
 
 ### Changed

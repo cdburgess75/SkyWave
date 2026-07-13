@@ -4,10 +4,10 @@
       <stop offset="0" stop-color="#070b1c"/>
       <stop offset="1" stop-color="#0b0a12"/>
     </linearGradient>
-    <radialGradient id="day" cx=".32" cy=".38" r=".9">
-      <stop offset="0" stop-color="#a6d8f8"/>
-      <stop offset=".55" stop-color="#3178c0"/>
-      <stop offset="1" stop-color="#16457c"/>
+    <radialGradient id="ocean" cx=".5" cy=".5" r=".55">
+      <stop offset="0" stop-color="#3f88c8"/>
+      <stop offset=".7" stop-color="#2c6cae"/>
+      <stop offset="1" stop-color="#1c4f88"/>
     </radialGradient>
     <radialGradient id="atmo" cx=".5" cy=".5" r=".5">
       <stop offset=".78" stop-color="#7dd5f5" stop-opacity="0"/>
@@ -31,42 +31,46 @@
     <circle cx="20" cy="160" r="1.1" opacity=".6"/>
     <circle cx="172" cy="150" r="1.2" opacity=".65"/>
     <circle cx="146" cy="178" r="1" opacity=".5"/>
-    <circle cx="88" cy="176" r=".9" opacity=".45"/>
   </g>
 
-  <!-- atmosphere halo -->
   <circle cx="96" cy="100" r="74" fill="url(#atmo)"/>
+  <circle cx="96" cy="100" r="62" fill="url(#ocean)"/>
 
-  <!-- day disk -->
-  <circle cx="96" cy="100" r="62" fill="url(#day)"/>
-
-  <!-- night side: right of the terminator (arc bulging toward the day side) -->
   <g clip-path="url(#disk)">
-    <path d="M96,38 A14,62 0 0 0 96,162 L158,162 L158,38 Z" fill="#060a16" opacity=".96"/>
-    <!-- city lights on the night side -->
-    <g fill="#ffd780">
-      <circle cx="118" cy="84" r="1.1" opacity=".8"/>
-      <circle cx="130" cy="100" r=".9" opacity=".7"/>
-      <circle cx="122" cy="118" r="1" opacity=".75"/>
-      <circle cx="138" cy="86" r=".8" opacity=".6"/>
-      <circle cx="112" cy="136" r=".9" opacity=".6"/>
-      <circle cx="136" cy="126" r=".8" opacity=".55"/>
+    <!-- stylized continents, north pole centered (polar azimuthal style) -->
+    <g fill="#6f9c52" stroke="#5c8544" stroke-width=".6">
+      <!-- Greenland near pole -->
+      <path d="M88,84 q6,-8 14,-5 q6,3 3,10 q-4,7 -11,5 q-8,-3 -6,-10 Z"/>
+      <!-- North America: sweeps down-left from pole -->
+      <path d="M84,88 q-12,-4 -22,2 q-10,7 -12,17 q-1,8 6,10 q6,1 9,7 q4,7 10,4 q4,-7 2,-13 q7,-2 8,-9 q2,-10 -1,-18 Z"/>
+      <!-- South America -->
+      <path d="M64,130 q7,-3 11,2 q4,6 1,13 q-3,8 -9,7 q-6,-2 -6,-9 q-1,-9 3,-13 Z"/>
+      <!-- Eurasia: broad arc upper-right of pole -->
+      <path d="M104,82 q6,-12 18,-12 q14,0 22,8 q8,8 8,17 q0,8 -8,9 q-9,1 -14,7 q-7,7 -14,3 q-6,-4 -6,-11 q-8,-4 -8,-11 q0,-6 2,-10 Z"/>
+      <!-- Australia -->
+      <path d="M138,126 q7,-3 12,1 q5,5 1,10 q-5,5 -11,3 q-6,-3 -5,-8 q1,-4 3,-6 Z"/>
     </g>
-    <!-- graticule -->
-    <g stroke="#dff2ff" stroke-width="1" fill="none" opacity=".22">
-      <ellipse cx="96" cy="100" rx="62" ry="62"/>
-      <ellipse cx="96" cy="100" rx="40" ry="62"/>
-      <ellipse cx="96" cy="100" rx="14" ry="62"/>
+    <!-- Africa: warmer tan -->
+    <path d="M108,112 q8,-4 14,0 q6,5 4,14 q-2,10 -9,13 q-7,2 -10,-4 q-3,-7 -2,-13 q1,-7 3,-10 Z" fill="#b09a62" stroke="#96814e" stroke-width=".6"/>
+
+    <!-- polar graticule: concentric circles + spokes -->
+    <g stroke="#eaf6ff" fill="none" opacity=".18" stroke-width=".9">
+      <circle cx="96" cy="100" r="16"/>
+      <circle cx="96" cy="100" r="32"/>
+      <circle cx="96" cy="100" r="47"/>
+      <line x1="96" y1="38" x2="96" y2="162"/>
       <line x1="34" y1="100" x2="158" y2="100"/>
-      <path d="M40,69 Q96,55 152,69"/>
-      <path d="M40,131 Q96,145 152,131"/>
+      <line x1="52" y1="56" x2="140" y2="144"/>
+      <line x1="140" y1="56" x2="52" y2="144"/>
     </g>
+
+    <!-- night shadow sweeping the lower part, map visible through it -->
+    <path d="M34,120 Q96,98 158,120 L158,170 L34,170 Z" fill="#04070f" opacity=".62"/>
   </g>
 
-  <!-- THE GRAYLINE: glowing amber terminator -->
-  <path d="M96,38 A14,62 0 0 0 96,162" stroke="#ffb300" stroke-width="9" fill="none" opacity=".35" filter="url(#soft)"/>
-  <path d="M96,38 A14,62 0 0 0 96,162" stroke="#ffcf60" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- THE GRAYLINE -->
+  <path d="M34,120 Q96,98 158,120" stroke="#ffb300" stroke-width="8" fill="none" opacity=".35" filter="url(#soft)" clip-path="url(#disk)"/>
+  <path d="M34,120 Q96,98 158,120" stroke="#ffcf60" stroke-width="2.6" fill="none" stroke-linecap="round" clip-path="url(#disk)"/>
 
-  <!-- limb line -->
   <circle cx="96" cy="100" r="62" fill="none" stroke="#9fd4f0" stroke-width="1.2" opacity=".5"/>
 </svg>
