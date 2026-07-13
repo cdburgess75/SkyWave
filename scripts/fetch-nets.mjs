@@ -86,15 +86,14 @@ async function probePage(url) {
     }
   } catch (e) { console.error(`${url}: ${e.message}`); }
 }
-await probePage("https://www.netlogger.org/");
-await probePage("https://www.netlogger.org/pastnets/DisplayPastNetList.php");
-// does the old cgi tree exist at all?
-for (const p of ["/cgi-bin/NetLogger/GetServerInfo.pl", "/cgi-bin/NetLogger/"]) {
-  try {
-    const r = await fetch("http://www.netlogger.org" + p, { headers: UA, redirect: "manual", signal: AbortSignal.timeout(8000) });
-    console.log(`http://www.netlogger.org${p}: HTTP ${r.status}${r.headers.get("location") ? " → " + r.headers.get("location") : ""}`);
-  } catch (e) { console.error(`${p}: ${e.message}`); }
-}
+// the homepage IS the active-nets page (server-rendered) — dump it verbatim
+try {
+  const res = await fetch("https://www.netlogger.org/", { headers: UA, signal: AbortSignal.timeout(10000) });
+  const html = await res.text();
+  console.log(`=== HOMEPAGE RAW (HTTP ${res.status}, ${html.length} bytes) ===`);
+  console.log(html);
+  console.log("=== END HOMEPAGE RAW ===");
+} catch (e) { console.error("homepage dump:", e.message); }
 
 const servers = await discoverServers();
 console.log("Servers to query:", servers.join(", "));
