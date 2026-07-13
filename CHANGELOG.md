@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.010] — 2026-07-13
+
+### Changed
+- **Version number moved under the SKYWAVE logo** in the header (small dim line above the grid square); removed from the right-side status text, which now only reports schedule state. Hides with the brand when the header minimizes on scroll.
+- **Icon redesigned (take two)** — the previous double-hop art read as golden arches. Now a single asymmetric hop: steep launch off the tower, one skip-flash on the ionosphere, long glide to the far horizon — under a glowing crescent moon. SVG + 512/180 PNGs regenerated. (Remove and re-add the home-screen icon to see it — iOS caches icons.)
+
+---
+
 ## [2026.07.13.009] — 2026-07-13
 
 ### Added
