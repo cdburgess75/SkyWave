@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.014] — 2026-07-13
+
+### Changed
+- **Icon: real land masses.** The stylized continents were judged cartoonish — the icon now carries genuine Natural Earth 110m coastlines, projected on-runner into the north-polar azimuthal disc by a new dispatch-only workflow (`gen-icon.yml` + `scripts/gen-earth-paths.mjs`, output via the `assets` branch). Africa, Eurasia, the Americas, and the Arctic are recognizably themselves; crisp sage land fills, tight amber grayline, sharper styling throughout. Icon URLs bumped to `?v=5`.
+
+---
+
 ## [2026.07.13.013] — 2026-07-13
 
 ### Changed
