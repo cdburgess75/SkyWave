@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.12.006] — 2026-07-12
+
+### Fixed
+- **Live nets still unreachable in the field** — hardened the fetch path on two fronts: `getNets()` now tries three candidate NetLogger endpoints (`GetNetsInProgress2.php`, `GetNetsInProgress.php` with and without `ProtocolVersion`) since the exact script name couldn't be confirmed from the sandbox, and the long-dead `thingproxy.freeboard.io` relay was replaced with `api.codetabs.com` in the shared relay chain (EiBi updates benefit too).
+- Nets failure message now suggests the relays may be busy and to retry, instead of only blaming in-app previews.
+
+---
+
 ## [2026.07.12.005] — 2026-07-12
 
 ### Fixed

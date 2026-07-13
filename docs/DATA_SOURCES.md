@@ -125,7 +125,7 @@ permissive headers, requests are routed through public relays as a fallback:
 | 0        | Direct (no relay)                          | Works for NOAA; rarely for EiBi/NetLogger |
 | 1        | `https://api.allorigins.win/raw?url=…`     | Most reliable public relay   |
 | 2        | `https://corsproxy.io/?url=…`              | Fallback                     |
-| 3        | `https://thingproxy.freeboard.io/fetch/…`  | Last resort                  |
+| 3        | `https://api.codetabs.com/v1/proxy?quest=…` | Last resort                 |
 
 **This is the single biggest reliability risk** (Compromise C1 in
 `HANDOFF.md`). Public relays can be rate-limited or disappear without notice.

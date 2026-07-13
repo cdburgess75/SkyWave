@@ -714,7 +714,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.12.005";
+const VERSION="2026.07.12.006";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -846,7 +846,7 @@ function seasonList(){const set=new Set([seasonCode()]);const d=new Date();
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),5,15))));
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),11,15))));return[...set];}
 function relays(raw){return[raw,"https://api.allorigins.win/raw?url="+encodeURIComponent(raw),
-  "https://corsproxy.io/?url="+encodeURIComponent(raw),"https://thingproxy.freeboard.io/fetch/"+raw];}
+  "https://corsproxy.io/?url="+encodeURIComponent(raw),"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(raw)];}
 function fetchWithTimeout(url,opts,ms){const ac=new AbortController();const id=setTimeout(()=>ac.abort(),ms||7000);
   return fetch(url,{...opts,signal:ac.signal}).finally(()=>clearTimeout(id));}
 async function fetchSchedule(code){
@@ -1075,7 +1075,12 @@ function renderMine(){
 }
 
 /* ============ live nets (NetLogger) ============ */
-const NETS_URL="https://www.netlogger.org/api/GetNetsInProgress.php?ProtocolVersion=2.3";
+/* Candidate endpoints — the NetLogger XML API uses versioned Get*.php names;
+   try the likely variants until one yields parseable nets. */
+const NETS_URLS=[
+ "https://www.netlogger.org/api/GetNetsInProgress2.php?ProtocolVersion=2.3",
+ "https://www.netlogger.org/api/GetNetsInProgress.php?ProtocolVersion=2.3",
+ "https://www.netlogger.org/api/GetNetsInProgress.php"];
 let NETS=loadJSON(K.nets,{list:[],ts:0});
 let netsFetching=false;
 function netFreqKhz(v){
@@ -1142,7 +1147,7 @@ function parseNets(text){
   return out;
 }
 async function getNets(){
-  for(const url of relays(NETS_URL)){
+  for(const ep of NETS_URLS)for(const url of relays(ep)){
     try{const res=await fetchWithTimeout(url,{cache:"no-store"},7000);if(!res||!res.ok)continue;
       const list=parseNets(await res.text());
       if(list.length)return list;
@@ -1192,7 +1197,7 @@ async function openNets(force){
   const list=await getNets();
   netsFetching=false;
   if(list){NETS={list,ts:Date.now()};saveJSON(K.nets,NETS);netsMsg("Updated "+new Date(NETS.ts).toUTCString().slice(17,22)+"Z");renderNets();}
-  else netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger. If you're in an in-app preview, open this in Safari and retry.");
+  else netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger — its public relays may be busy; tap ⟳ to retry in a minute. (In an in-app preview? Open in Safari.)");
 }
 function ageMin(ts){const m=Math.max(1,Math.round((Date.now()-ts)/60000));return m<60?m+" min":Math.round(m/60)+" h";}
 
