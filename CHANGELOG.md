@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.002] — 2026-07-13
+
+### Changed
+- **Update banner moved to the bottom of the screen**, just above the nav bar — the top position kept colliding with the iOS status bar (and old cached versions still drew it broken there, making the button unclickable). Bottom placement is thumb-reachable and immune to notch/status-bar geometry; slides up instead of down. Desktop shows it bottom-center.
+
+---
+
 ## [2026.07.13] — 2026-07-13
 
 ### Changed

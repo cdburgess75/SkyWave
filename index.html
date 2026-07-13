@@ -212,13 +212,16 @@
     border-radius:16px 16px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.6);}
   .sheet h3{margin:0 0 12px;font-size:12px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;}
 
-  /* update-available banner */
-  .updbar{position:fixed;top:0;left:50%;transform:translate(-50%,-120%);z-index:90;display:flex;gap:12px;align-items:center;
-    background:var(--panel2);border:1px solid var(--amber);border-top:none;border-radius:0 0 12px 12px;
-    padding:max(12px,env(safe-area-inset-top)) 16px 12px;box-shadow:0 6px 24px rgba(0,0,0,.55),0 0 18px rgba(240,146,60,.25);
+  /* update-available banner — anchored above the bottom nav (thumb-reachable,
+     no iOS status-bar conflict); slides up from below */
+  .updbar{position:fixed;left:50%;bottom:calc(72px + env(safe-area-inset-bottom));z-index:90;
+    transform:translate(-50%,calc(100% + 140px));display:flex;gap:12px;align-items:center;
+    background:var(--panel2);border:1px solid var(--amber);border-radius:12px;
+    padding:11px 16px;box-shadow:0 6px 24px rgba(0,0,0,.55),0 0 18px rgba(240,146,60,.25);
     transition:transform .35s ease;font-size:11px;letter-spacing:.06em;color:var(--ink);max-width:92vw;white-space:nowrap;}
   .updbar.show{transform:translate(-50%,0);}
   .updbar b{color:var(--amber);}
+  @media(min-width:860px){.updbar{bottom:24px;}}
   .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--green);color:#06170c;
     font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:.25s;pointer-events:none;text-transform:uppercase;}
   .toast.show{opacity:1;}
@@ -714,7 +717,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.13";
+const VERSION="2026.07.13.002";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
