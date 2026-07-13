@@ -353,6 +353,11 @@
 </style>
 </head>
 <body>
+<div id="errBar" hidden style="position:fixed;top:0;left:0;right:0;z-index:99;background:#3a1210;color:#f0b0a8;
+  font:600 12px/1.5 ui-monospace,Menlo,monospace;padding:max(10px,env(safe-area-inset-top)) 14px 10px;text-align:center;border-bottom:1px solid #e8635a">
+  ⚠ Something went wrong — <span id="errMsg"></span>.
+  <a href="" style="color:#f0923c">Tap to reload</a>
+</div>
 <div id="layout">
 <nav class="sidenav" id="sideNav">
   <div class="snav-brand">SKY<br>WAVE</div>
@@ -717,7 +722,19 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.13.003";
+/* global error surface — never die silently */
+window.addEventListener("error",function(ev){
+  try{
+    var bar=document.getElementById("errBar");
+    if(bar){bar.hidden=false;
+      document.getElementById("errMsg").textContent=(ev&&ev.message)?String(ev.message).slice(0,120):"Script error";}
+  }catch(e){}
+});
+window.addEventListener("unhandledrejection",function(ev){
+  try{console.warn("Unhandled:",ev.reason);}catch(e){}
+});
+
+const VERSION="2026.07.13.004";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1184,7 +1201,8 @@ async function getNets(){
   if(texts.every(t=>t===null))return null;   // nothing reachable at all
   const seen=new Set(),out=[];
   for(const t of texts){if(t===null)continue;
-    for(const n of parseNets(t)){const k=n.name+"|"+n.freq;if(!seen.has(k)){seen.add(k);out.push(n);}}}
+    let parsed=[];try{parsed=parseNets(t);}catch(e){continue;}  // one bad server can't sink the merge
+    for(const n of parsed){const k=n.name+"|"+n.freq;if(!seen.has(k)){seen.add(k);out.push(n);}}}
   return out;                                 // may be [] — a valid "no nets right now"
 }
 function netsStartStr(s){const m=/(\d{1,2}:\d{2})/.exec(s);return m?m[1]+"Z":"";}
@@ -1226,8 +1244,9 @@ async function openNets(force){
   if(netsFetching)return;
   if(!force&&NETS.ts&&Date.now()-NETS.ts<60000)return;   // fresh enough
   netsFetching=true;netsMsg("Fetching nets in session…");
-  const list=await getNets();
-  netsFetching=false;
+  let list=null;
+  try{list=await getNets();}catch(e){list=null;}
+  finally{netsFetching=false;}   // never let a throw wedge the flag
   if(list){NETS={list,ts:Date.now()};saveJSON(K.nets,NETS);netsMsg("Updated "+new Date(NETS.ts).toUTCString().slice(17,22)+"Z");renderNets();}
   else netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger — its public relays may be busy; tap ⟳ to retry in a minute. (In an in-app preview? Open in Safari.)");
 }

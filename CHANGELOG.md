@@ -2,6 +2,18 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.004] — 2026-07-13
+
+*QA-audit remediation.*
+
+### Added
+- **Global error surface** — `window` `error`/`unhandledrejection` handlers plus a pure-HTML red fallback bar ("⚠ Something went wrong — … Tap to reload"). A script failure now tells the user instead of freezing silently; the reload link works even if the main script never ran. Verified by driving a real uncaught throw in-browser.
+
+### Fixed
+- **Nets fetch could wedge permanently** — `openNets()` set its in-flight flag without `try/finally`, and a parser throw inside `getNets()` escaped the fetch guards; either would leave `netsFetching=true` forever, silently disabling all future live-nets fetches until reload. Flag now cleared in `finally`; each server's response parses inside its own `try` so one bad payload can't sink the merge.
+
+---
+
 ## [2026.07.13.003] — 2026-07-13
 
 ### Fixed
