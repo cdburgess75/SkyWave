@@ -2,7 +2,7 @@
 
 **Project:** SKYWAVE · Shortwave Band Guide (offline-first PWA single-file web app)
 **Artifact:** `index.html` (+ `sw.js`, `manifest.webmanifest`)
-**Version:** v2026.07.12.006 (CalVer: `YYYY.MM.DD`, `.00N` suffix for same-day releases)
+**Version:** v2026.07.13 (CalVer: `YYYY.MM.DD`, `.00N` suffix for same-day releases)
 **Date:** June 2026
 **Primary user / owner:** Dave — licensed amateur operator (IC-7300), SWL/DX, Loranger LA. Army Signal Corps background. Thinks in UTC.
 **Purpose of this doc:** Hand the project to Claude Code (and a Git repo) with enough detail that a fresh agent can extend it safely without re-reverse-engineering anything.
@@ -13,7 +13,7 @@
 
 - It is **one self-contained HTML file**. No build step, no framework, no external JS/CSS. ~85 KB.
 - **Vanilla JS in `"use strict"`**, all inside a single `<script>` at the bottom of the file.
-- **`const VERSION="2026.07.12.006"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.00N` for same-day releases. Bump the `sw.js` cache name in the same commit.
+- **`const VERSION="2026.07.13"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.00N` for same-day releases. Bump the `sw.js` cache name in the same commit.
 - **To test:** `npm test` — smoke harness + nets-parser unit tests; CI runs both on every push to main (`.github/workflows/test.yml`).
 - **Offline-first is the prime directive.** Everything except EiBi auto-update and the Prop tab must work with the radio off and the phone in airplane mode.
 - **State persists in `localStorage`** under `skywave_*` keys (see §6). All access is wrapped in `try/catch`.
@@ -27,7 +27,7 @@
 
 A communications-receiver-styled (amber phosphor on black, monospace) shortwave band guide. Think "TV Guide for shortwave." Five top-level tabs:
 
-1. **Listen** — EiBi broadcast schedule (On Air Now / Search / By Frequency)
+1. **Listen** — Nets (default) / On Air Now / Search / By Frequency
 2. **Saved** — Favorite stations & custom frequencies
 3. **Tools** — Antenna calculator / Grayline & band planner / Export & print
 4. **Ref** — EiBi schedule update + band tables + code key + display settings
@@ -70,7 +70,7 @@ Any static HTTPS host works (GitHub Pages, Cloudflare Pages, Netlify). The `sw.j
     <nav class="sidenav">      desktop sidebar nav (≥860px)
     <div class="wrap">
       <header> brand + #themeToggle (☾/☀) + #kioskBtn + #hdrGrid + UTC/local clocks + dbstat
-      <section id="tab-listen">  seg + sub-now / sub-search / sub-freq / sub-nets
+      <section id="tab-listen">  seg + sub-nets (default) / sub-now / sub-search / sub-freq
       <section id="tab-log">     seg + sub-stars / sub-mine          ← Saved tab (ID reuses "log")
       <section id="tab-tools">   antenna card / grayline card / export card
       <section id="tab-ref">     display card + loadbox(update) + band tables + code key + footer (version)
@@ -119,6 +119,7 @@ Intentional for portability. Refactor-to-modules is roadmap R4.
 
 ### 4.1 Listen
 
+- **Nets** (default sub-tab, `openNets`/`renderNets`): live nets in session (NetLogger XML API via relays, cached in `skywave_nets_v1`) above the built-in `NETDIR` directory of 15 scheduled national + Southeast-US nets. Fetches at boot when online and on sub-tab open (60 s freshness) or ⟳.
 - **On Air** (`refreshNow`): filters `DATA` by `onAir(e)`; sorts by frequency; shows live UTC. Quick chips (All / ★ Favorites / English / Spanish / French) + free-text filter + meter-band dropdown. Auto-re-renders every 30 s while visible.
 - **Search** (`refreshSearch`): full-text over station/lang/country/target + band/lang/target dropdowns. Capped at 1200 results.
 - **By Freq** (`refreshFreq`): enter kHz or MHz; shows entries within ±2/5/10 kHz, on-air first. The "I hear something on 9.420, who is it?" workflow.

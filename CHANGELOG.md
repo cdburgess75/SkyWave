@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13] — 2026-07-13
+
+### Changed
+- **Nets is now the first sub-tab and the default view** — Listen opens on Nets (leftmost, selected on launch); the live list fetches automatically at startup when online. On Air / Search / By Freq follow.
+
+### Fixed
+- **Update banner collided with the iPhone status bar** — a three-value padding shorthand put the notch clearance (`env(safe-area-inset-top)`) on the *bottom* of the banner instead of the top, so the text/button rendered under the iOS clock with a tall empty box below. Field-reported with screenshot; safe-area padding now on top where it belongs.
+
+---
+
 ## [2026.07.12.006] — 2026-07-12
 
 ### Fixed

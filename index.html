@@ -215,7 +215,7 @@
   /* update-available banner */
   .updbar{position:fixed;top:0;left:50%;transform:translate(-50%,-120%);z-index:90;display:flex;gap:12px;align-items:center;
     background:var(--panel2);border:1px solid var(--amber);border-top:none;border-radius:0 0 12px 12px;
-    padding:10px 16px max(10px,env(safe-area-inset-top));box-shadow:0 6px 24px rgba(0,0,0,.55),0 0 18px rgba(240,146,60,.25);
+    padding:max(12px,env(safe-area-inset-top)) 16px 12px;box-shadow:0 6px 24px rgba(0,0,0,.55),0 0 18px rgba(240,146,60,.25);
     transition:transform .35s ease;font-size:11px;letter-spacing:.06em;color:var(--ink);max-width:92vw;white-space:nowrap;}
   .updbar.show{transform:translate(-50%,0);}
   .updbar b{color:var(--amber);}
@@ -379,13 +379,13 @@
   <!-- ============ LISTEN ============ -->
   <section id="tab-listen">
     <div class="seg" id="seg-listen">
-      <button data-sub="now" class="on">On Air</button>
+      <button data-sub="nets" class="on">Nets</button>
+      <button data-sub="now">On Air</button>
       <button data-sub="search">Search</button>
       <button data-sub="freq">By Freq</button>
-      <button data-sub="nets">Nets</button>
     </div>
 
-    <div id="sub-now">
+    <div id="sub-now" hidden>
       <div class="chips" id="nowChips" role="group" aria-label="Quick filters">
         <button type="button" class="chip on" data-chip="all" aria-pressed="true">All</button>
         <button type="button" class="chip" data-chip="fav" aria-pressed="false">★ Favorites</button>
@@ -422,7 +422,7 @@
       <div class="rows" id="freqRows"></div>
     </div>
 
-    <div id="sub-nets" hidden>
+    <div id="sub-nets">
       <div class="ctrl">
         <input type="search" id="netsFilter" placeholder="filter nets (name / mode / NCS)…" autocomplete="off">
         <button class="btn ghost sm" id="netsRefresh" style="flex:0 0 auto">⟳ Refresh</button>
@@ -714,7 +714,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.12.006";
+const VERSION="2026.07.13";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1545,7 +1545,7 @@ function showTab(name){
 }
 function showSub(group,sub){
   document.querySelectorAll("#seg-"+group+" button").forEach(b=>b.classList.toggle("on",b.dataset.sub===sub));
-  const map={listen:["now","search","freq","nets"],log:["stars","mine"]};
+  const map={listen:["nets","now","search","freq"],log:["stars","mine"]};
   map[group].forEach(s=>document.getElementById("sub-"+s).hidden=(s!==sub));
 }
 
@@ -1714,6 +1714,7 @@ document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 renderRail();
 if(typeof window.matchMedia==="function"&&window.matchMedia("(min-width:1280px)").matches&&navigator.onLine){_kFetched=true;fetchKIndex();}
 if(PREFS.setup===false)showWizard();
+openNets(false);   // Nets is the default Listen view — render directory + fetch live list
 document.getElementById("verFoot").textContent="SKYWAVE v"+VERSION+" · CalVer";
 document.getElementById("locLbl").textContent="Local "+TZ;
 tick();setInterval(tick,1000);

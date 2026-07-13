@@ -37,14 +37,14 @@
       "sizes": "860x1720",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "On Air Now — live shortwave schedule"
+      "label": "Ham nets — live + scheduled (default view)"
     },
     {
-      "src": "docs/screenshot-nets.png",
+      "src": "docs/screenshot-onair.png",
       "sizes": "860x1720",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Live ham nets in session"
+      "label": "On Air Now — live shortwave schedule"
     },
     {
       "src": "docs/screenshot-desktop.png",

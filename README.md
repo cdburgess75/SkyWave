@@ -14,11 +14,11 @@
 
 ### → **[Live app: cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)** ←
 
-<img src="docs/screenshot-desktop.png" width="900" alt="SKYWAVE on desktop — On Air list, sidebar navigation, grayline and band-condition rail">
+<img src="docs/screenshot-desktop.png" width="900" alt="SKYWAVE on desktop — Nets view, sidebar navigation, grayline and band-condition rail">
 
 <br><br>
 
-<img src="docs/screenshot-mobile.png" width="330" alt="On Air Now — mobile">&nbsp;&nbsp;<img src="docs/screenshot-nets.png" width="330" alt="Live ham nets in session — mobile">
+<img src="docs/screenshot-mobile.png" width="330" alt="Ham nets — the default view, mobile">&nbsp;&nbsp;<img src="docs/screenshot-onair.png" width="330" alt="On Air Now — mobile">
 
 </div>
 
@@ -51,7 +51,7 @@ Shortwave listening has a discovery problem: thousands of broadcasts rotate thro
 |---------|--------|
 | 📻 On Air Now | Live view of the EiBi schedule; chips for favorites/language, band + free-text filters, 30 s auto-refresh |
 | 🔍 Search / By Freq | Full-text search across 12k+ entries; dial-frequency identification with ±2/5/10 kHz tolerance |
-| 📡 Nets | Live nets in session (NetLogger API) + 15 built-in national & Southeast-US HF nets (traffic nets for LA/MS/AL/GA/TN/SC/FL, SouthCARS, Waterway, Maritime Mobile, Hurricane Watch…) — offline and on-air aware |
+| 📡 Nets *(default view)* | Live nets in session (NetLogger API) + 15 built-in national & Southeast-US HF nets (traffic nets for LA/MS/AL/GA/TN/SC/FL, SouthCARS, Waterway, Maritime Mobile, Hurricane Watch…) — offline and on-air aware |
 | ★ Favorites | Star any listing; ✓ "heard today" strikethrough that clears at 0000 UTC |
 | 📝 My Frequencies | Your own nets/channels merged into every view |
 | 🌅 Grayline planner | Sunrise/sunset/solar-noon + band advice from an on-device solar algorithm — no network |
@@ -119,7 +119,7 @@ Opening `index.html` directly from disk also works for everything except the ser
 |------------|---------|
 | See what's broadcasting now | **Listen → On Air** — filter by band, language, or text |
 | Identify a signal on the dial | **Listen → By Freq** — type `9420` or `9.420` |
-| Find active ham nets | **Listen → Nets** — live list on top, scheduled majors below |
+| Find active ham nets | Open the app — **Nets is the default view**: live list on top, scheduled majors below |
 | Keep a station | Tap **★** on any row; find it under **Saved** |
 | Mark a catch | Tap **✓** on a favorite — struck through until 0000 UTC |
 | Plan a band opening | **Tools → Grayline** — band advice for your location |
