@@ -56,7 +56,7 @@
   [data-theme="light"] .netdot.on{box-shadow:none;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--mono);}
-  body{min-height:100vh;
+  body{min-height:100vh;overflow-x:clip;
     background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 5px);
     padding-bottom:env(safe-area-inset-bottom);}
   .wrap{max-width:760px;margin:0 auto;padding:0 14px 96px;}
@@ -76,12 +76,13 @@
   .tgl-btn.on{color:var(--amber);border-color:var(--amber-dim);}
   .theme-btn{font-size:15px;line-height:1;padding:4px 11px;color:var(--ink);border-radius:8px;}
   .theme-btn:hover{color:var(--amber);border-color:var(--amber-dim);}
-  .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;}
+  .clocks{display:flex;gap:12px 18px;align-items:flex-end;margin-top:9px;flex-wrap:wrap;}
   .clock{display:flex;flex-direction:column;gap:1px;}
   .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
   .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--amber);}
   .clock.local .val{font-size:16px;color:var(--ink);text-shadow:none;}
-  .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);max-width:42%;}
+  .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);
+    max-width:46%;min-width:0;overflow-wrap:anywhere;}
   .dbstat b{color:var(--green);font-weight:600;}
 
   .bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:stretch;
@@ -743,7 +744,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.13.007";
+const VERSION="2026.07.13.008";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */

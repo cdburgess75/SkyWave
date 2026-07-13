@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.008] — 2026-07-13
+
+### Fixed
+- **Header overflow at larger font zoom** (field-reported with screenshot): the status text clipped mid-word off the right edge and the page gained a sideways scroll, making the sticky header look detached. The now-longer version string is one unbreakable token; with font zoom up, the clocks row exceeded the viewport. The clocks row now wraps, the status block can break long tokens (`overflow-wrap:anywhere`), and `overflow-x:clip` on the body guarantees no horizontal scroll at any zoom.
+
+---
+
 ## [2026.07.13.007] — 2026-07-13
 
 ### Changed
