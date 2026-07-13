@@ -21,10 +21,18 @@ async function discoverServers() {
     });
     if (!res.ok) { console.error(`ServerList.txt: HTTP ${res.status}`); return FALLBACK_SERVERS; }
     const text = await res.text();
-    console.log("--- ServerList.txt (first 500 chars) ---\n" + text.slice(0, 500) + "\n----------------------------------------");
-    const hosts = [...new Set([...text.matchAll(/([a-z0-9-]+(?:\.[a-z0-9-]+)+)/gi)].map((m) => m[1].toLowerCase())
-      .filter((h) => /netlogger/.test(h)))];
-    return hosts.length ? hosts.slice(0, 6) : FALLBACK_SERVERS;
+    console.log("--- ServerList.txt (first 2000 chars) ---\n" + text.slice(0, 2000) + "\n----------------------------------------");
+    // hosts are on the non-comment lines; take every hostname-looking token as-is
+    const hosts = [];
+    for (const line of text.split(/\r?\n/)) {
+      if (!line.trim() || line.trim().startsWith("#")) continue;
+      for (const m of line.matchAll(/([a-z0-9-]+(?:\.[a-z0-9-]+)+)/gi)) {
+        const h = m[1].toLowerCase();
+        if (!hosts.includes(h)) hosts.push(h);
+      }
+    }
+    console.log("Hosts found in ServerList:", hosts.join(", ") || "(none)");
+    return hosts.length ? hosts.slice(0, 8) : FALLBACK_SERVERS;
   } catch (e) {
     console.error(`ServerList.txt: ${e.message}`);
     return FALLBACK_SERVERS;
