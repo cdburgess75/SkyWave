@@ -6,13 +6,30 @@
 
 import { mkdirSync, writeFileSync } from "node:fs";
 
-const SERVERS = [
-  "https://www.netlogger.org",
-  "http://www.netlogger1.org",
-  "http://www.netlogger2.org",
-  "http://www.netlogger3.org",
-];
+// Server discovery per the real NetLogger client flow (confirmed via
+// ragchew.site): ServerList.txt names the live net servers; the cgi-bin
+// endpoints live on THOSE hosts, not necessarily on the main website.
+const SERVER_LIST_URL = "https://www.netlogger.org/downloads/ServerList.txt";
+const FALLBACK_SERVERS = ["www.netlogger.org", "www.netlogger1.org", "www.netlogger2.org", "www.netlogger3.org", "www.netlogger4.org"];
 const PATH = "/cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3";
+
+async function discoverServers() {
+  try {
+    const res = await fetch(SERVER_LIST_URL, {
+      headers: { "User-Agent": "SkyWave-nets-mirror/1.0 (+https://github.com/cdburgess75/SkyWave)" },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) { console.error(`ServerList.txt: HTTP ${res.status}`); return FALLBACK_SERVERS; }
+    const text = await res.text();
+    console.log("--- ServerList.txt (first 500 chars) ---\n" + text.slice(0, 500) + "\n----------------------------------------");
+    const hosts = [...new Set([...text.matchAll(/([a-z0-9-]+(?:\.[a-z0-9-]+)+)/gi)].map((m) => m[1].toLowerCase())
+      .filter((h) => /netlogger/.test(h)))];
+    return hosts.length ? hosts.slice(0, 6) : FALLBACK_SERVERS;
+  } catch (e) {
+    console.error(`ServerList.txt: ${e.message}`);
+    return FALLBACK_SERVERS;
+  }
+}
 
 function netFreqKhz(v) {
   const n = parseFloat(String(v).replace(/[^\d.]/g, ""));
@@ -43,23 +60,31 @@ const seen = new Set();
 const nets = [];
 let reached = 0;
 
-for (const server of SERVERS) {
+const servers = await discoverServers();
+console.log("Servers to query:", servers.join(", "));
+
+for (const host of servers) {
+  const url = "https://" + host + PATH;
   try {
-    const res = await fetch(server + PATH, {
+    const res = await fetch(url, {
       headers: { "User-Agent": "SkyWave-nets-mirror/1.0 (+https://github.com/cdburgess75/SkyWave)" },
       signal: AbortSignal.timeout(10000),
     });
-    if (!res.ok) { console.error(`${server}: HTTP ${res.status}`); continue; }
-    const list = parseAIM(await res.text());
-    if (list === null) { console.error(`${server}: no AIM markers in response`); continue; }
+    if (!res.ok) { console.error(`${host}: HTTP ${res.status}`); continue; }
+    const body = await res.text();
+    const list = parseAIM(body);
+    if (list === null) {
+      console.error(`${host}: no AIM markers — first 300 chars:\n${body.slice(0, 300)}`);
+      continue;
+    }
     reached++;
     for (const n of list) {
       const k = n.name + "|" + n.freq;
       if (!seen.has(k)) { seen.add(k); nets.push(n); }
     }
-    console.log(`${server}: ${list.length} nets`);
+    console.log(`${host}: ${list.length} nets`);
   } catch (e) {
-    console.error(`${server}: ${e.message}`);
+    console.error(`${host}: ${e.message}`);
   }
 }
 
