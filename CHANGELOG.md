@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.015] — 2026-07-13
+
+### Changed
+- **Icon: "Dusk Gold" chosen from a five-option lineup** — gold Natural Earth continents on a deep indigo polar disc, diagonal amber grayline with the night shadow sweeping the lower-left. Icon URLs bumped to `?v=6`.
+
+---
+
 ## [2026.07.13.014] — 2026-07-13
 
 ### Changed
