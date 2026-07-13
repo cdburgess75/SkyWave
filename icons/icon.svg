@@ -1,7 +1,71 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="28" fill="#0c0b09"/>
-  <text x="96" y="72" font-family="ui-monospace,Menlo,monospace" font-size="44" font-weight="700" text-anchor="middle" fill="#ffb300" letter-spacing="3">SKY</text>
-  <text x="96" y="126" font-family="ui-monospace,Menlo,monospace" font-size="44" font-weight="700" text-anchor="middle" fill="#ffb300" letter-spacing="3">WAVE</text>
-  <line x1="32" y1="145" x2="160" y2="145" stroke="#ffb300" stroke-width="2" opacity=".35"/>
-  <text x="96" y="165" font-family="ui-monospace,Menlo,monospace" font-size="13" text-anchor="middle" fill="#ffb300" opacity=".55" letter-spacing="4">&#x25C6; HF &#x25C6;</text>
+  <!-- SkyWave: an HF signal skipping off the ionosphere under a night sky -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1024"/>
+      <stop offset=".55" stop-color="#0b0a14"/>
+      <stop offset="1" stop-color="#140c05"/>
+    </linearGradient>
+    <linearGradient id="iono" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7dd5f5" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#7dd5f5" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#7dd5f5" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffb300" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#ffb300" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#bfeaff" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#bfeaff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="3.5"/></filter>
+  </defs>
+
+  <rect width="192" height="192" rx="28" fill="url(#sky)"/>
+
+  <!-- stars -->
+  <g fill="#cfe8ff">
+    <circle cx="28" cy="36" r="1.3" opacity=".85"/>
+    <circle cx="57" cy="20" r="1" opacity=".6"/>
+    <circle cx="112" cy="16" r="1.1" opacity=".7"/>
+    <circle cx="150" cy="26" r="1.4" opacity=".85"/>
+    <circle cx="172" cy="56" r="1" opacity=".5"/>
+    <circle cx="88" cy="34" r=".9" opacity=".5"/>
+    <circle cx="132" cy="48" r=".9" opacity=".55"/>
+    <circle cx="18" cy="70" r=".9" opacity=".45"/>
+  </g>
+
+  <!-- ionosphere band -->
+  <path d="M6,40 Q96,18 186,40" stroke="url(#iono)" stroke-width="12" fill="none" filter="url(#soft)"/>
+  <path d="M6,40 Q96,18 186,40" stroke="#bfeaff" stroke-width="1.5" fill="none" opacity=".8"/>
+
+  <!-- earth -->
+  <path d="M0,160 Q96,132 192,160 L192,192 L0,192 Z" fill="#17100a"/>
+  <path d="M0,160 Q96,132 192,160" stroke="#ffb300" stroke-width="1.2" fill="none" opacity=".4"/>
+
+  <!-- antenna tower on the horizon -->
+  <g stroke="#e8ddc8" stroke-width="2.6" stroke-linecap="round">
+    <line x1="36" y1="150" x2="36" y2="112"/>
+    <line x1="28" y1="151" x2="36" y2="126"/>
+    <line x1="44" y1="151" x2="36" y2="126"/>
+    <line x1="31" y1="136" x2="41" y2="136" stroke-width="1.6"/>
+    <line x1="33" y1="124" x2="39" y2="124" stroke-width="1.6"/>
+  </g>
+  <circle cx="36" cy="108" r="10" fill="url(#glowA)"/>
+  <circle cx="36" cy="108" r="3.2" fill="#ffb300"/>
+
+  <!-- the skywave: two ionospheric hops, landing on the far horizon -->
+  <path d="M36,108 Q66,-52 98,140 Q133,-70 172,154" stroke="#ffb300" stroke-width="9" fill="none" opacity=".3" filter="url(#soft)"/>
+  <path d="M36,108 Q66,-52 98,140 Q133,-70 172,154" stroke="#ffcf60" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+
+  <!-- skip points: kisses on the ionosphere, bounces on the ground -->
+  <circle cx="67" cy="36" r="9" fill="url(#glowB)"/>
+  <circle cx="67" cy="36" r="2.4" fill="#eaf7ff"/>
+  <circle cx="135" cy="31" r="9" fill="url(#glowB)"/>
+  <circle cx="135" cy="31" r="2.4" fill="#eaf7ff"/>
+  <circle cx="98" cy="141" r="9" fill="url(#glowA)"/>
+  <circle cx="98" cy="141" r="2.4" fill="#ffd780"/>
+  <circle cx="172" cy="154" r="8" fill="url(#glowA)"/>
+  <circle cx="172" cy="154" r="2.2" fill="#ffd780"/>
 </svg>

@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.007] — 2026-07-13
+
+### Changed
+- **New icon** — replaced the text-only tile with skywave propagation art: an amber HF signal launched from an antenna tower, double-hopping off a glowing ionosphere band under a starfield, landing on the far horizon. SVG + PNGs (512/180) regenerated.
+- **Home-screen label is now "SkyWave"** (capital S and W, one word) in both the iOS title meta and the PWA manifest. Note: iOS caches home-screen icons — remove the app from the home screen and re-add it to see the new icon and label.
+
+---
+
 ## [2026.07.13.006] — 2026-07-13
 
 ### Fixed

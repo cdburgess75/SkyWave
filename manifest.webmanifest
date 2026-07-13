@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "SKYWAVE",
-  "short_name": "Skywave",
+  "name": "SkyWave",
+  "short_name": "SkyWave",
   "description": "Shortwave band guide for offline listening — EiBi schedule, ham nets, grayline, and propagation.",
   "lang": "en",
   "start_url": "./",
