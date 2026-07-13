@@ -47,3 +47,25 @@ for (const f of gj.features) {
 mkdirSync("out", { recursive: true });
 writeFileSync("out/earth-path.txt", d);
 console.log(`earth-path.txt: ${d.length} chars, ${rings} rings, ${skipped} antarctic polys skipped`);
+
+// second output: plain equirectangular (0..W × 0..H box) for wall-chart style
+const W = 170, H = 85;
+let dr = "";
+for (const f of gj.features) {
+  const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+  for (const poly of polys) {
+    for (const ring of poly) {
+      let seg = "", px = null, py = null;
+      for (const [lon, lat] of ring) {
+        const x = Math.round(((lon + 180) / 360 * W) * 10) / 10;
+        const y = Math.round(((90 - lat) / 180 * H) * 10) / 10;
+        if (px === x && py === y) continue;
+        seg += (seg ? "L" : "M") + x + " " + y;
+        px = x; py = y;
+      }
+      if (seg.length > 40) dr += seg + "Z";
+    }
+  }
+}
+writeFileSync("out/earth-rect.txt", dr);
+console.log(`earth-rect.txt: ${dr.length} chars`);

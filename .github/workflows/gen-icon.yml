@@ -21,7 +21,7 @@ jobs:
           git init -b assets
           git config user.name "skywave-assets"
           git config user.email "actions@users.noreply.github.com"
-          git add earth-path.txt
+          git add earth-path.txt earth-rect.txt
           git commit -m "earth paths @ $(date -u +%FT%TZ)"
           git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" assets
         env:
