@@ -69,13 +69,32 @@ const nets = [];
 let reached = 0;
 const UA = { "User-Agent": "SkyWave-nets-mirror/1.0 (+https://github.com/cdburgess75/SkyWave)" };
 
-// diagnostic: what endpoint does the website's own nets page use?
-try {
-  const res = await fetch("https://www.netlogger.org/", { headers: UA, signal: AbortSignal.timeout(10000) });
-  const html = await res.text();
-  const refs = [...new Set([...html.matchAll(/["'(]([^"'()\s]*(?:cgi-bin|GetNets|\.php)[^"'()\s]*)["')]/gi)].map((m) => m[1]))];
-  console.log("Homepage endpoint references:", refs.slice(0, 15).join("  ") || "(none found)");
-} catch (e) { console.error("homepage probe:", e.message); }
+// diagnostic: find the endpoint the website's own "nets in progress" display uses
+async function probePage(url) {
+  try {
+    const res = await fetch(url, { headers: UA, signal: AbortSignal.timeout(10000) });
+    const html = await res.text();
+    const attrs = [...new Set([...html.matchAll(/(?:href|src|action)\s*=\s*["']([^"'#]+)["']/gi)].map((m) => m[1]))]
+      .filter((u) => !/\.(css|png|jpe?g|gif|svg|ico|woff2?)(\?|$)/i.test(u));
+    const jsUrls = [...new Set([...html.matchAll(/(?:fetch|open)\s*\(\s*["']([^"']+)["']/gi)].map((m) => m[1]))];
+    console.log(`--- ${url} (HTTP ${res.status}, ${html.length} bytes) ---`);
+    console.log("links/src/action:", attrs.slice(0, 40).join("  ") || "(none)");
+    if (jsUrls.length) console.log("js fetch/open:", jsUrls.slice(0, 15).join("  "));
+    if (/Nets in Progress/i.test(html)) {
+      const i = html.search(/Nets in Progress/i);
+      console.log("…context around 'Nets in Progress':\n" + html.slice(Math.max(0, i - 200), i + 600).replace(/\s+/g, " "));
+    }
+  } catch (e) { console.error(`${url}: ${e.message}`); }
+}
+await probePage("https://www.netlogger.org/");
+await probePage("https://www.netlogger.org/pastnets/DisplayPastNetList.php");
+// does the old cgi tree exist at all?
+for (const p of ["/cgi-bin/NetLogger/GetServerInfo.pl", "/cgi-bin/NetLogger/"]) {
+  try {
+    const r = await fetch("http://www.netlogger.org" + p, { headers: UA, redirect: "manual", signal: AbortSignal.timeout(8000) });
+    console.log(`http://www.netlogger.org${p}: HTTP ${r.status}${r.headers.get("location") ? " → " + r.headers.get("location") : ""}`);
+  } catch (e) { console.error(`${p}: ${e.message}`); }
+}
 
 const servers = await discoverServers();
 console.log("Servers to query:", servers.join(", "));
