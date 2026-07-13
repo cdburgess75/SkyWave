@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.009] — 2026-07-13
+
+### Added
+- **"Starting soon" on the Nets tab** — scheduled nets from the built-in directory that begin within the next 60 minutes get their own section between the live list and the full directory, each with an amber countdown tag ("IN 25 MIN", "ANY MIN"). Day-of-week aware, midnight-safe, refreshes with the 30-second tick, respects the text filter, and 24-hour listings (Hurricane Watch) are excluded since they never "start". Fully offline. Verified with a frozen-clock boot test (7 checks).
+
+---
+
 ## [2026.07.13.008] — 2026-07-13
 
 ### Fixed

@@ -152,6 +152,7 @@
   .time{font-size:11px;color:var(--ink);font-variant-numeric:tabular-nums;opacity:.75;}
   .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
   .tag.live{color:#06170c;background:var(--green);border-color:var(--green);font-weight:700;}
+  .tag.soon{color:var(--amber);border-color:var(--amber);font-weight:700;}
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
   .acts{display:flex;gap:8px;margin-top:2px;}
   .act{font-size:13px;cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;}
@@ -744,7 +745,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.13.008";
+const VERSION="2026.07.13.009";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -944,6 +945,23 @@ function onAir(e,date){
   if(now<en)return ok(yE);
   return false;
 }
+/* Minutes until an entry's next start (null if none within a day, if the
+   entry is 24h, or if the start day isn't in its day-of-week set). */
+function minsUntilStart(e,date){
+  date=date||new Date();
+  const s=e.start,en=e.end;
+  if(!isFinite(s)||s===en||(s===0&&en===2400))return null;   // 24h — never "starts"
+  const nowM=date.getUTCHours()*60+date.getUTCMinutes();
+  const sM=Math.floor(s/100)*60+(s%100);
+  let d=sM-nowM,dayOffset=0;
+  if(d<0){d+=1440;dayOffset=1;}
+  const allowed=e._days!==undefined?e._days:dayAllowed(e.days);
+  if(allowed){
+    const dw=dowE(new Date(date.getTime()+dayOffset*86400000));
+    if(!allowed.has(dw))return null;
+  }
+  return d;
+}
 function modeOf(e){
   if(e.mode)return e.mode;
   const t=((e.lang||"")+" "+(e.tx||"")+" "+(e.station||"")).toUpperCase();
@@ -966,9 +984,9 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 function attr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;");}
 
 /* ============ row rendering ============ */
-function rowHTML(e){
+function rowHTML(e,tagOverride){
   const live=onAir(e),isRef=e.src==="ref",isMine=e.src==="mine";
-  const tag=isRef?'<span class="tag ref">REF</span>':live?'<span class="tag live">ON AIR</span>':'<span class="tag">'+esc(e.time.slice(0,4))+'</span>';
+  const tag=tagOverride||(isRef?'<span class="tag ref">REF</span>':live?'<span class="tag live">ON AIR</span>':'<span class="tag">'+esc(e.time.slice(0,4))+'</span>');
   const md=modeOf(e),badge=md?'<span class="badge">'+md+'</span>':'';
   const meta=[langName(e.lang)?'<span class="lang">'+esc(langName(e.lang))+'</span>':'',tgtName(e.target),e.itu,e.notes].filter(Boolean).join(" · ");
   const k=keyOf(e),fav=favSet.has(k)?" on":"";
@@ -984,7 +1002,7 @@ function renderRows(elId,list,countId,label){
   const el=document.getElementById(elId);
   if(!list.length){el.innerHTML='<div class="empty">No matches.<br>'+(haveEibi?'Try widening your filters.':'Load the EiBi schedule (Ref tab) for the full station list.')+'</div>';
     if(countId)document.getElementById(countId).innerHTML="";return;}
-  el.innerHTML=list.map(rowHTML).join("");
+  el.innerHTML=list.map(e=>rowHTML(e)).join("");
   if(countId)document.getElementById(countId).innerHTML='<b>'+list.length.toLocaleString()+'</b> '+label;
 }
 
@@ -1277,11 +1295,25 @@ function renderNets(){
     cnt.innerHTML="";
     html='<div class="empty">'+(NETS.list&&NETS.list.length?'No live nets match your filter.':(navigator.onLine?'No live nets loaded yet — tap ⟳ Refresh.':'Offline — live nets need a connection.'))+'</div>';
   }
+  // starting soon: scheduled nets that begin within the next 60 minutes
+  const now=new Date(),soonSet=new Set();
+  let soon=[];
+  for(const e of DATA){
+    if(e.src!=="net"||onAir(e,now))continue;
+    if(f&&!blob(e).includes(f))continue;
+    const m=minsUntilStart(e,now);
+    if(m!==null&&m<=60){soon.push([m,e]);soonSet.add(e);}
+  }
+  soon.sort((a,b)=>a[0]-b[0]);
+  if(soon.length){
+    html+='<div class="count" style="margin-top:16px"><b>'+soon.length+'</b> starting within the hour</div>'+
+      soon.map(([m,e])=>rowHTML(e,'<span class="tag soon">'+(m<=1?"ANY MIN":"IN "+m+" MIN")+'</span>')).join("");
+  }
   // built-in directory of major scheduled nets (offline, on-air aware, star-able)
-  let dir=DATA.filter(e=>e.src==="net");
+  let dir=DATA.filter(e=>e.src==="net"&&!soonSet.has(e));
   if(f)dir=dir.filter(e=>blob(e).includes(f));
   dir.sort((a,b)=>(onAir(b)-onAir(a))||a.freq-b.freq);
-  if(dir.length)html+='<div class="count" style="margin-top:16px">Major scheduled HF nets · built-in</div>'+dir.map(rowHTML).join("");
+  if(dir.length)html+='<div class="count" style="margin-top:16px">Major scheduled HF nets · built-in</div>'+dir.map(e=>rowHTML(e)).join("");
   el.innerHTML=html;
 }
 function netsMsg(t){document.getElementById("netsMsg").textContent=t;}
@@ -1828,6 +1860,7 @@ document.getElementById("verFoot").textContent="SKYWAVE v"+VERSION+" · CalVer";
 document.getElementById("locLbl").textContent="Local "+TZ;
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
+  if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-nets").hidden)renderNets();
   if(!document.getElementById("tab-tools").hidden)renderGray();renderRail();},30000);
 window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
   if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
