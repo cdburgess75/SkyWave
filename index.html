@@ -743,7 +743,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.13.005";
+const VERSION="2026.07.13.006";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1110,15 +1110,13 @@ function renderMine(){
 }
 
 /* ============ live nets (NetLogger) ============ */
-/* NetLogger production API (verified against open-source consumers ham2k/nets
-   and ragchew.site): nets are distributed across multiple servers, each queried at
-   /cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3
-   Response payload sits between <!--NetLogger Start Data--> / End Data markers:
-   pipe-separated fields, records terminated by |~ :
-   NetName|Freq(MHz)|Logger|NetControl|YYYYMMDDHHMMSS|Mode|Band|AIM|Interval|AltName||Subs|~ */
-const NETS_SERVERS=["https://www.netlogger.org","http://www.netlogger1.org",
- "http://www.netlogger2.org","http://www.netlogger3.org"];
-const NETS_PATH="/cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3";
+/* NetLogger's old cgi-bin API is gone (404 on every server, verified July 2026).
+   The source of truth is the server-rendered "Currently Active Nets" table on
+   the netlogger.org homepage, delimited by
+   <!-- Begin/End Currently Active Nets --> comments. The scheduled GitHub
+   Action mirrors it to nets.json (primary path); this URL is the live
+   fallback, fetched via the relay chain. */
+const NETS_SOURCE="https://www.netlogger.org/";
 let NETS=loadJSON(K.nets,{list:[],ts:0});
 let netsFetching=false;
 function netFreqKhz(v){
@@ -1171,9 +1169,31 @@ function parseNetsAIM(text){
   }
   return out;                              // [] = valid response, zero nets
 }
+/* The netlogger.org homepage table (the live format). Cell order verified
+   2026-07-13: Name(+www link) | Freq MHz | Band | Mode | Server | Start
+   "YYYY-MM-DD HH:MM:SS" | Elapsed | Subscribers | Opened By ("CALL-NAME - vX"). */
+function parseNetsHomepage(text){
+  const m=/<!--\s*Begin Currently Active Nets\s*-->([\s\S]*?)<!--\s*End Currently Active Nets\s*-->/i.exec(text);
+  if(!m)return null;                        // markers absent → not this format
+  const strip=s=>s.replace(/<[^>]+>/g," ").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/\s+/g," ").trim();
+  const out=[];
+  for(const row of m[1].match(/<tr>\s*<td>[\s\S]*?<\/tr>/gi)||[]){
+    const c=[...row.matchAll(/<td>([\s\S]*?)<\/td>/gi)].map(x=>strip(x[1]));
+    if(c.length<6)continue;
+    const name=c[0].replace(/\s*\(www\)\s*$/i,"").trim();
+    const freq=netFreqKhz(c[1]);
+    if(!name||!isFinite(freq))continue;
+    const sm=/\d{4}-\d{2}-\d{2} (\d{2}:\d{2})/.exec(c[5]||"");
+    const ncs=((c[8]||"").split(/[\s-]/)[0]||"").toUpperCase();
+    out.push({freq,name,mode:(c[3]||"").toUpperCase(),band:c[2]||"",ncs,start:sm?sm[1]:""});
+  }
+  return out;                               // [] = valid page, zero nets
+}
 function parseNets(text){
   text=String(text||"").trim();
   if(!text)return[];
+  const hp=parseNetsHomepage(text);
+  if(hp!==null)return hp;
   const aim=parseNetsAIM(text);
   if(aim!==null)return aim;
   if(/<NetLoggerXML|<Net[\s>]/i.test(text)){
@@ -1228,14 +1248,11 @@ async function getNets(){
       }
     }
   }catch(e){}
-  // 2) live servers via relay chain; merge whatever responds, dedupe by name+freq
-  const texts=await Promise.all(NETS_SERVERS.map(s=>relayFetch(s+NETS_PATH)));
-  if(texts.every(t=>t===null))return null;   // nothing reachable at all
-  const seen=new Set(),out=[];
-  for(const t of texts){if(t===null)continue;
-    let parsed=[];try{parsed=parseNets(t);}catch(e){continue;}  // one bad server can't sink the merge
-    for(const n of parsed){const k=n.name+"|"+n.freq;if(!seen.has(k)){seen.add(k);out.push(n);}}}
-  return{list:out,ts:Date.now()};             // list may be [] — a valid "no nets right now"
+  // 2) live homepage via relay chain (mirror unavailable or stale)
+  const t=await relayFetch(NETS_SOURCE);
+  if(t===null)return null;
+  let list=[];try{list=parseNets(t);}catch(e){return null;}
+  return{list,ts:Date.now()};                 // list may be [] — a valid "no nets right now"
 }
 function netsStartStr(s){const m=/(\d{1,2}:\d{2})/.exec(s);return m?m[1]+"Z":"";}
 function renderNets(){

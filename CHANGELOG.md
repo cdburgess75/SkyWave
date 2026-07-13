@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.006] — 2026-07-13
+
+### Fixed
+- **Live nets, root cause finally proven and fixed.** Running the mirror from GitHub's servers (full network access) showed NetLogger's old cgi-bin API returns **404 on every server** — it no longer exists. The real source is the server-rendered "Currently Active Nets" table on the netlogger.org homepage itself (as the owner said all along). The mirror and the app's fallback now parse that table (name, frequency, band, mode, start time, NCS from "Opened By"), verified against live markup captured in the workflow logs. A `CurrentlyActiveNets=N` sanity check prevents ever publishing a wrongly-empty list. 7 new parser tests (35 total); XML/AIM parsers retained as fallbacks.
+
+---
+
 ## [2026.07.13.005] — 2026-07-13
 
 ### Added
