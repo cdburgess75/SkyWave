@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.005] — 2026-07-13
+
+### Added
+- **Live nets now come from the app's own repo — no third-party relays in the primary path.** Browsers can't read netlogger.org directly (no CORS headers), and field evidence showed the public proxies failing for NetLogger while EiBi worked. Fix: a scheduled GitHub Action (`.github/workflows/nets.yml` + `scripts/fetch-nets.mjs`) fetches all four NetLogger servers server-side every ~10 minutes, merges/dedupes, and publishes `nets.json` to a single-commit `data` branch. The app reads it straight from `raw.githubusercontent.com` (CORS-open, same GitHub that already hosts the app). Live servers via the relay chain remain only as a fallback when the mirror is older than 30 minutes. The "Updated" time shown is the mirror's real fetch time.
+- **Optional custom relay field** (Ref → Custom relay) + `workers/relay.js` for anyone who wants their own private relay — entirely optional, nothing depends on it. Stored in `PREFS.relay`, tried first when set (helps EiBi too).
+
+---
+
 ## [2026.07.13.004] — 2026-07-13
 
 *QA-audit remediation.*

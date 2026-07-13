@@ -549,6 +549,15 @@
         <button class="btn ghost" id="loadBtn">Load file</button>
         <div class="hint" id="loadMsg" style="margin-top:8px"></div>
       </details>
+      <details>
+        <summary>Custom relay (your own Cloudflare Worker — most reliable)</summary>
+        <div class="hint" style="margin:8px 0">Live data (EiBi, nets) is fetched through public CORS relays that can be blocked or busy. Deploying the tiny worker in <b>workers/relay.js</b> from the repo gives you a private, reliable relay — paste its URL here and it's tried first.</div>
+        <div class="updrow">
+          <input type="text" id="relayIn" placeholder="https://skywave-relay.you.workers.dev" autocomplete="off" style="flex:1">
+          <button class="btn ghost" id="relaySave">Save</button>
+        </div>
+        <div class="hint" id="relayMsg" style="margin-top:8px"></div>
+      </details>
     </div>
     <div class="card" id="refMeter"></div>
     <div class="card" id="refTime"></div>
@@ -734,7 +743,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.13.004";
+const VERSION="2026.07.13.005";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -780,7 +789,7 @@ let HEARD=loadJSON(K.heard,{});
   Object.keys(HEARD).forEach(k=>{if(HEARD[k]!==td){delete HEARD[k];ch=true;}});
   if(ch)saveJSON(K.heard,HEARD);})();
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
-let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true});
+let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true,relay:""});
 let favSet=new Set();
 function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
 
@@ -865,8 +874,14 @@ function seasonList(){const set=new Set([seasonCode()]);const d=new Date();
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),0,15))));
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),5,15))));
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),11,15))));return[...set];}
-function relays(raw){return[raw,"https://api.allorigins.win/raw?url="+encodeURIComponent(raw),
-  "https://corsproxy.io/?url="+encodeURIComponent(raw),"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(raw)];}
+function relays(raw){
+  const out=[];
+  const c=(PREFS.relay||"").trim().replace(/\/+$/,"");   // user's own Cloudflare Worker (Ref tab)
+  if(c)out.push(c+(c.indexOf("?")>=0?"&":"?")+"url="+encodeURIComponent(raw));
+  out.push(raw,"https://api.allorigins.win/raw?url="+encodeURIComponent(raw),
+    "https://corsproxy.io/?url="+encodeURIComponent(raw),"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(raw));
+  return out;
+}
 function fetchWithTimeout(url,opts,ms){const ac=new AbortController();const id=setTimeout(()=>ac.abort(),ms||7000);
   return fetch(url,{...opts,signal:ac.signal}).finally(()=>clearTimeout(id));}
 async function fetchSchedule(code){
@@ -1195,15 +1210,32 @@ async function relayFetch(ep){
   }
   return null;
 }
+/* Own-repo mirror: a scheduled GitHub Action (.github/workflows/nets.yml)
+   fetches NetLogger server-side every ~10 min and publishes nets.json to the
+   `data` branch. raw.githubusercontent.com is CORS-open, so the app reads it
+   directly — no third-party relays in the primary path. */
+const NETS_MIRROR="https://raw.githubusercontent.com/cdburgess75/SkyWave/data/nets.json";
+const NETS_MIRROR_MAX_AGE=30*60000;   // fall back to live servers if mirror is stale
 async function getNets(){
-  // all servers in parallel; merge whatever responds, dedupe by name+freq
+  // 1) own mirror — direct fetch, no relay
+  try{
+    const res=await fetchWithTimeout(NETS_MIRROR,{cache:"no-store"},7000);
+    if(res&&res.ok){
+      const j=await res.json();
+      if(j&&Array.isArray(j.nets)&&isFinite(j.ts)&&Date.now()-j.ts<NETS_MIRROR_MAX_AGE){
+        const list=j.nets.map(o=>o&&typeof o==="object"?normNetObj(o):null).filter(Boolean);
+        return{list,ts:j.ts};
+      }
+    }
+  }catch(e){}
+  // 2) live servers via relay chain; merge whatever responds, dedupe by name+freq
   const texts=await Promise.all(NETS_SERVERS.map(s=>relayFetch(s+NETS_PATH)));
   if(texts.every(t=>t===null))return null;   // nothing reachable at all
   const seen=new Set(),out=[];
   for(const t of texts){if(t===null)continue;
     let parsed=[];try{parsed=parseNets(t);}catch(e){continue;}  // one bad server can't sink the merge
     for(const n of parsed){const k=n.name+"|"+n.freq;if(!seen.has(k)){seen.add(k);out.push(n);}}}
-  return out;                                 // may be [] — a valid "no nets right now"
+  return{list:out,ts:Date.now()};             // list may be [] — a valid "no nets right now"
 }
 function netsStartStr(s){const m=/(\d{1,2}:\d{2})/.exec(s);return m?m[1]+"Z":"";}
 function renderNets(){
@@ -1244,10 +1276,10 @@ async function openNets(force){
   if(netsFetching)return;
   if(!force&&NETS.ts&&Date.now()-NETS.ts<60000)return;   // fresh enough
   netsFetching=true;netsMsg("Fetching nets in session…");
-  let list=null;
-  try{list=await getNets();}catch(e){list=null;}
+  let r=null;
+  try{r=await getNets();}catch(e){r=null;}
   finally{netsFetching=false;}   // never let a throw wedge the flag
-  if(list){NETS={list,ts:Date.now()};saveJSON(K.nets,NETS);netsMsg("Updated "+new Date(NETS.ts).toUTCString().slice(17,22)+"Z");renderNets();}
+  if(r){NETS={list:r.list,ts:r.ts};saveJSON(K.nets,NETS);netsMsg("Updated "+new Date(NETS.ts).toUTCString().slice(17,22)+"Z");renderNets();}
   else netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger — its public relays may be busy; tap ⟳ to retry in a minute. (In an in-app preview? Open in Safari.)");
 }
 function ageMin(ts){const m=Math.max(1,Math.round((Date.now()-ts)/60000));return m<60?m+" min":Math.round(m/60)+" h";}
@@ -1729,6 +1761,13 @@ document.getElementById("loadBtn").addEventListener("click",()=>document.getElem
 document.getElementById("fileIn").addEventListener("change",ev=>{const file=ev.target.files[0];if(!file)return;
   msg("Reading "+file.name+"…",false);const r=new FileReader();r.onload=()=>loadText(r.result,{code:selectedSeason()});
   r.onerror=()=>msg("Could not read the file.",true);r.readAsText(file);});
+document.getElementById("relaySave").addEventListener("click",()=>{
+  const v=document.getElementById("relayIn").value.trim();
+  if(v&&!/^https:\/\/[a-z0-9.-]+/i.test(v)){document.getElementById("relayMsg").textContent="Must be an https:// URL (or blank to disable).";return;}
+  PREFS.relay=v;saveJSON(K.prefs,PREFS);
+  document.getElementById("relayMsg").textContent=v?"Saved — your relay is tried first for all live data.":"Cleared — using public relays only.";
+  toast(v?"Relay saved":"Relay cleared");
+});
 document.getElementById("clearBtn").addEventListener("click",()=>{
   try{localStorage.removeItem(K.raw);localStorage.removeItem(K.meta);}catch(e){}
   EIBI=[];haveEibi=false;META=null;rebuildData();updateDbStat();showClear();renderLastUpd();umsg("Cleared. Reference data still available offline.","warn");});
@@ -1754,6 +1793,7 @@ rebuildFavSet();
   seasonList().forEach(c=>{if(c!==seasonCode())o.push('<option value="'+c+'">'+c.toUpperCase()+'</option>');});
   sel.innerHTML=o.join("");})();
 document.getElementById("autoUpd").checked=PREFS.autoUpd!==false;
+document.getElementById("relayIn").value=PREFS.relay||"";
 syncEibiLink();setNetDot();renderRef();
 EIBI=[];
 try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);

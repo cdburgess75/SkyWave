@@ -52,7 +52,16 @@ not send CORS headers.
 ## NetLogger — live nets in session
 
 **Website:** https://www.netlogger.org
-**API endpoints (per server, queried in parallel and merged):**
+**Primary path — own-repo mirror (no third-party relays):** a scheduled
+GitHub Action (`.github/workflows/nets.yml`, every ~10 min) runs
+`scripts/fetch-nets.mjs`, which queries every NetLogger server server-side,
+merges/dedupes, and force-pushes `nets.json` to the single-commit `data`
+branch. The app fetches
+`https://raw.githubusercontent.com/cdburgess75/SkyWave/data/nets.json`
+directly (raw.githubusercontent.com sends `Access-Control-Allow-Origin: *`).
+Mirror older than 30 min → fall back to querying the servers live via the
+relay chain.
+**Live API (per server, fallback path):**
 `GET http://{server}/cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3`
 Servers: `www.netlogger.org`, `www.netlogger1.org`, `www.netlogger2.org`,
 `www.netlogger3.org` (canonical list at `netlogger.org/downloads/ServerList.txt`).

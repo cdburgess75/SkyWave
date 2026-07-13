@@ -2,7 +2,7 @@
 
 **Project:** SKYWAVE · Shortwave Band Guide (offline-first PWA single-file web app)
 **Artifact:** `index.html` (+ `sw.js`, `manifest.webmanifest`)
-**Version:** v2026.07.13.004 (CalVer: `YYYY.MM.DD`, `.00N` suffix for same-day releases)
+**Version:** v2026.07.13.005 (CalVer: `YYYY.MM.DD`, `.00N` suffix for same-day releases)
 **Date:** June 2026
 **Primary user / owner:** Dave — licensed amateur operator (IC-7300), SWL/DX, Loranger LA. Army Signal Corps background. Thinks in UTC.
 **Purpose of this doc:** Hand the project to Claude Code (and a Git repo) with enough detail that a fresh agent can extend it safely without re-reverse-engineering anything.
@@ -13,7 +13,7 @@
 
 - It is **one self-contained HTML file**. No build step, no framework, no external JS/CSS. ~85 KB.
 - **Vanilla JS in `"use strict"`**, all inside a single `<script>` at the bottom of the file.
-- **`const VERSION="2026.07.13.004"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.00N` for same-day releases. Bump the `sw.js` cache name in the same commit.
+- **`const VERSION="2026.07.13.005"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.00N` for same-day releases. Bump the `sw.js` cache name in the same commit.
 - **To test:** `npm test` — smoke harness + nets-parser unit tests; CI runs both on every push to main (`.github/workflows/test.yml`).
 - **Offline-first is the prime directive.** Everything except EiBi auto-update and the Prop tab must work with the radio off and the phone in airplane mode.
 - **State persists in `localStorage`** under `skywave_*` keys (see §6). All access is wrapped in `try/catch`.
@@ -189,7 +189,7 @@ All keys defined in the `K` object. All reads/writes via `loadJSON`/`saveJSON` (
 | `skywave_favs_v1`      | `[{freq, station, time, lang?, target?, itu?}]`                          | favorites              |
 | `skywave_mine_v1`      | `[{freq, mode, station, time, days, lang, target, notes}]`               | user custom frequencies |
 | `skywave_geo_v1`       | `{lat, lng, label}`                                                      | grayline location      |
-| `skywave_prefs_v1`     | `{autoUpd, setup, theme, zoom, hr24}`                                    | preferences; `setup: true` once wizard completes |
+| `skywave_prefs_v1`     | `{autoUpd, setup, theme, zoom, hr24, relay}`                             | preferences; `setup: true` once wizard completes; `relay` = optional self-hosted Worker URL (tried first in `relays()`) |
 | `skywave_heard_v1`     | `{"<keyOf entry>": "YYYY-MM-DD", …}`                                     | favorites marked heard today; pruned to current UTC day on boot |
 | `skywave_nets_v1`      | `{list:[{freq,name,mode,ncs,band,start}], ts}`                           | last fetched NetLogger nets-in-progress |
 
