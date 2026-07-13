@@ -67,32 +67,46 @@ function parseAIM(text) {
 const seen = new Set();
 const nets = [];
 let reached = 0;
+const UA = { "User-Agent": "SkyWave-nets-mirror/1.0 (+https://github.com/cdburgess75/SkyWave)" };
+
+// diagnostic: what endpoint does the website's own nets page use?
+try {
+  const res = await fetch("https://www.netlogger.org/", { headers: UA, signal: AbortSignal.timeout(10000) });
+  const html = await res.text();
+  const refs = [...new Set([...html.matchAll(/["'(]([^"'()\s]*(?:cgi-bin|GetNets|\.php)[^"'()\s]*)["')]/gi)].map((m) => m[1]))];
+  console.log("Homepage endpoint references:", refs.slice(0, 15).join("  ") || "(none found)");
+} catch (e) { console.error("homepage probe:", e.message); }
 
 const servers = await discoverServers();
 console.log("Servers to query:", servers.join(", "));
 
+// ServerList says port 80 — probe http first, then https, no silent redirects
 for (const host of servers) {
-  const url = "https://" + host + PATH;
-  try {
-    const res = await fetch(url, {
-      headers: { "User-Agent": "SkyWave-nets-mirror/1.0 (+https://github.com/cdburgess75/SkyWave)" },
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!res.ok) { console.error(`${host}: HTTP ${res.status}`); continue; }
-    const body = await res.text();
-    const list = parseAIM(body);
-    if (list === null) {
-      console.error(`${host}: no AIM markers — first 300 chars:\n${body.slice(0, 300)}`);
-      continue;
+  for (const scheme of ["http", "https"]) {
+    const url = scheme + "://" + host + PATH;
+    try {
+      const res = await fetch(url, { headers: UA, redirect: "manual", signal: AbortSignal.timeout(10000) });
+      if (res.status >= 300 && res.status < 400) {
+        console.error(`${url}: HTTP ${res.status} → ${res.headers.get("location")}`);
+        continue;
+      }
+      if (!res.ok) { console.error(`${url}: HTTP ${res.status}`); continue; }
+      const body = await res.text();
+      const list = parseAIM(body);
+      if (list === null) {
+        console.error(`${url}: 200 but no AIM markers — first 300 chars:\n${body.slice(0, 300)}`);
+        continue;
+      }
+      reached++;
+      for (const n of list) {
+        const k = n.name + "|" + n.freq;
+        if (!seen.has(k)) { seen.add(k); nets.push(n); }
+      }
+      console.log(`${url}: ${list.length} nets`);
+      break; // this host worked on this scheme; skip the other scheme
+    } catch (e) {
+      console.error(`${url}: ${e.message}`);
     }
-    reached++;
-    for (const n of list) {
-      const k = n.name + "|" + n.freq;
-      if (!seen.has(k)) { seen.add(k); nets.push(n); }
-    }
-    console.log(`${host}: ${list.length} nets`);
-  } catch (e) {
-    console.error(`${host}: ${e.message}`);
   }
 }
 
