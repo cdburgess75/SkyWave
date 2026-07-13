@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.13.012] — 2026-07-13
+
+### Changed
+- **Icon, final form: the grayline itself.** Earth from space — day side as a blue wireframe globe, night side dark with amber city lights, and the glowing amber terminator running down the middle: the grayline the app is built around (owner's concept). Icon URLs bumped to `?v=3` so every cache fetches the new art.
+
+---
+
 ## [2026.07.13.011] — 2026-07-13
 
 ### Fixed

@@ -1,74 +1,72 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-  <!-- SkyWave: a single HF hop off the ionosphere, under a crescent moon -->
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0a1024"/>
-      <stop offset=".55" stop-color="#0b0a14"/>
-      <stop offset="1" stop-color="#140c05"/>
+    <linearGradient id="space" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#070b1c"/>
+      <stop offset="1" stop-color="#0b0a12"/>
     </linearGradient>
-    <linearGradient id="iono" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#7dd5f5" stop-opacity="0"/>
-      <stop offset=".5" stop-color="#7dd5f5" stop-opacity=".9"/>
+    <radialGradient id="day" cx=".32" cy=".38" r=".9">
+      <stop offset="0" stop-color="#a6d8f8"/>
+      <stop offset=".55" stop-color="#3178c0"/>
+      <stop offset="1" stop-color="#16457c"/>
+    </radialGradient>
+    <radialGradient id="atmo" cx=".5" cy=".5" r=".5">
+      <stop offset=".78" stop-color="#7dd5f5" stop-opacity="0"/>
+      <stop offset=".92" stop-color="#7dd5f5" stop-opacity=".35"/>
       <stop offset="1" stop-color="#7dd5f5" stop-opacity="0"/>
-    </linearGradient>
-    <radialGradient id="glowA" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#ffb300" stop-opacity=".95"/>
-      <stop offset="1" stop-color="#ffb300" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="glowB" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#bfeaff" stop-opacity=".9"/>
-      <stop offset="1" stop-color="#bfeaff" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="soft"><feGaussianBlur stdDeviation="3.5"/></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="3"/></filter>
+    <clipPath id="disk"><circle cx="96" cy="100" r="62"/></clipPath>
   </defs>
 
-  <rect width="192" height="192" rx="28" fill="url(#sky)"/>
+  <rect width="192" height="192" rx="28" fill="url(#space)"/>
 
   <!-- stars -->
   <g fill="#cfe8ff">
-    <circle cx="26" cy="40" r="1.3" opacity=".85"/>
-    <circle cx="54" cy="24" r="1" opacity=".6"/>
-    <circle cx="104" cy="18" r="1.1" opacity=".7"/>
-    <circle cx="166" cy="60" r="1.2" opacity=".7"/>
-    <circle cx="84" cy="44" r=".9" opacity=".5"/>
-    <circle cx="128" cy="52" r=".9" opacity=".55"/>
-    <circle cx="16" cy="76" r=".9" opacity=".45"/>
-    <circle cx="176" cy="92" r=".9" opacity=".5"/>
+    <circle cx="26" cy="30" r="1.3" opacity=".8"/>
+    <circle cx="62" cy="16" r="1" opacity=".6"/>
+    <circle cx="122" cy="14" r="1.1" opacity=".7"/>
+    <circle cx="164" cy="28" r="1.3" opacity=".8"/>
+    <circle cx="178" cy="72" r="1" opacity=".5"/>
+    <circle cx="14" cy="96" r="1" opacity=".5"/>
+    <circle cx="20" cy="160" r="1.1" opacity=".6"/>
+    <circle cx="172" cy="150" r="1.2" opacity=".65"/>
+    <circle cx="146" cy="178" r="1" opacity=".5"/>
+    <circle cx="88" cy="176" r=".9" opacity=".45"/>
   </g>
 
-  <!-- crescent moon -->
-  <g>
-    <circle cx="150" cy="34" r="12" fill="#e8f2fa" opacity=".92"/>
-    <circle cx="156" cy="30" r="11" fill="url(#sky)"/>
-    <circle cx="150" cy="34" r="18" fill="url(#glowB)" opacity=".5"/>
+  <!-- atmosphere halo -->
+  <circle cx="96" cy="100" r="74" fill="url(#atmo)"/>
+
+  <!-- day disk -->
+  <circle cx="96" cy="100" r="62" fill="url(#day)"/>
+
+  <!-- night side: right of the terminator (arc bulging toward the day side) -->
+  <g clip-path="url(#disk)">
+    <path d="M96,38 A14,62 0 0 0 96,162 L158,162 L158,38 Z" fill="#060a16" opacity=".96"/>
+    <!-- city lights on the night side -->
+    <g fill="#ffd780">
+      <circle cx="118" cy="84" r="1.1" opacity=".8"/>
+      <circle cx="130" cy="100" r=".9" opacity=".7"/>
+      <circle cx="122" cy="118" r="1" opacity=".75"/>
+      <circle cx="138" cy="86" r=".8" opacity=".6"/>
+      <circle cx="112" cy="136" r=".9" opacity=".6"/>
+      <circle cx="136" cy="126" r=".8" opacity=".55"/>
+    </g>
+    <!-- graticule -->
+    <g stroke="#dff2ff" stroke-width="1" fill="none" opacity=".22">
+      <ellipse cx="96" cy="100" rx="62" ry="62"/>
+      <ellipse cx="96" cy="100" rx="40" ry="62"/>
+      <ellipse cx="96" cy="100" rx="14" ry="62"/>
+      <line x1="34" y1="100" x2="158" y2="100"/>
+      <path d="M40,69 Q96,55 152,69"/>
+      <path d="M40,131 Q96,145 152,131"/>
+    </g>
   </g>
 
-  <!-- ionosphere band -->
-  <path d="M6,46 Q96,24 186,46" stroke="url(#iono)" stroke-width="12" fill="none" filter="url(#soft)"/>
-  <path d="M6,46 Q96,24 186,46" stroke="#bfeaff" stroke-width="1.5" fill="none" opacity=".8"/>
+  <!-- THE GRAYLINE: glowing amber terminator -->
+  <path d="M96,38 A14,62 0 0 0 96,162" stroke="#ffb300" stroke-width="9" fill="none" opacity=".35" filter="url(#soft)"/>
+  <path d="M96,38 A14,62 0 0 0 96,162" stroke="#ffcf60" stroke-width="3" fill="none" stroke-linecap="round"/>
 
-  <!-- earth -->
-  <path d="M0,160 Q96,132 192,160 L192,192 L0,192 Z" fill="#17100a"/>
-  <path d="M0,160 Q96,132 192,160" stroke="#ffb300" stroke-width="1.2" fill="none" opacity=".4"/>
-
-  <!-- antenna tower on the horizon -->
-  <g stroke="#e8ddc8" stroke-width="2.6" stroke-linecap="round">
-    <line x1="38" y1="152" x2="38" y2="106"/>
-    <line x1="29" y1="153" x2="38" y2="122"/>
-    <line x1="47" y1="153" x2="38" y2="122"/>
-    <line x1="32" y1="138" x2="44" y2="138" stroke-width="1.6"/>
-    <line x1="34" y1="122" x2="42" y2="122" stroke-width="1.6"/>
-  </g>
-  <circle cx="38" cy="102" r="10" fill="url(#glowA)"/>
-  <circle cx="38" cy="102" r="3.2" fill="#ffb300"/>
-
-  <!-- the skywave: one clean hop, steep launch, long glide down -->
-  <path d="M38,102 Q78,-58 166,152" stroke="#ffb300" stroke-width="9" fill="none" opacity=".3" filter="url(#soft)"/>
-  <path d="M38,102 Q78,-58 166,152" stroke="#ffcf60" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-
-  <!-- skip point on the ionosphere, landing on the far horizon -->
-  <circle cx="90" cy="34" r="9" fill="url(#glowB)"/>
-  <circle cx="90" cy="34" r="2.4" fill="#eaf7ff"/>
-  <circle cx="166" cy="152" r="8" fill="url(#glowA)"/>
-  <circle cx="166" cy="152" r="2.2" fill="#ffd780"/>
+  <!-- limb line -->
+  <circle cx="96" cy="100" r="62" fill="none" stroke="#9fd4f0" stroke-width="1.2" opacity=".5"/>
 </svg>
