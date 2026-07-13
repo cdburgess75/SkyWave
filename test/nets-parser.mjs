@@ -51,6 +51,20 @@ const j = parseNets(json);
 t("json: parses valid, drops invalid", j.length === 1 && j[0].freq === 14325);
 t("json: name mapped", j[0].name === "Hurricane Watch Net");
 
+// --- XML format (NetLogger XML Data Service — the documented real format) ---
+const xml = `<?xml version="1.0"?><NetLoggerXML><ServerList><Server><ServerName>NETLOGGER</ServerName></Server></ServerList><NetList>
+<Net><NetName>OMISS 40m SSB Net &amp; Friends</NetName><Frequency>7.185</Frequency><NetControl>KD5FUV</NetControl><Logger>W5ABC</Logger><ServerName>NETLOGGER</ServerName><Mode>SSB</Mode><Band>40m</Band><Date>2026-07-12 22:00:00</Date></Net>
+<Net NetName="Georgia Single Sideband Net" Frequency="3.975" NetControl="K4ABC" Mode="LSB" Band="80m" Date="2026-07-12 23:00:00"/>
+<Net><NetName>Broken no freq</NetName><Mode>SSB</Mode></Net>
+</NetList></NetLoggerXML>`;
+const x = parseNets(xml);
+t("xml: parses 2 valid nets, drops freq-less", x.length === 2);
+t("xml: &amp; entity decoded", x[0].name === "OMISS 40m SSB Net & Friends");
+t("xml: child-element freq MHz → kHz", x[0].freq === 7185);
+t("xml: attribute-style net parsed", x[1].name === "Georgia Single Sideband Net" && x[1].freq === 3975);
+t("xml: start time from <Date>", /22:00/.test(x[0].start));
+t("xml: NCS mapped", x[0].ncs === "KD5FUV");
+
 // --- garbage inputs must fail soft ---
 t("garbage html → []", parseNets("<html><body>404</body></html>").length === 0);
 t("empty → []", parseNets("").length === 0);

@@ -714,7 +714,7 @@
 <script>
 "use strict";
 
-const VERSION="2026.07.12.004";
+const VERSION="2026.07.12.005";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1092,11 +1092,32 @@ function normNetObj(o){
   const name=String(low.netname||low.name||"").trim();
   if(!name||!isFinite(freq))return null;
   return{freq,name,mode:String(low.mode||"").toUpperCase(),ncs:String(low.netcontrol||low.ncs||"").toUpperCase(),
-    band:String(low.band||""),start:String(low.starttime||low.start||"")};
+    band:String(low.band||""),start:String(low.starttime||low.start||low.date||low.started||"")};
+}
+function xmlUnescape(s){return String(s).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"')
+  .replace(/&#39;|&apos;/g,"'").replace(/&amp;/g,"&");}
+/* NetLogger XML Data Service: <NetLoggerXML>…<Net>…</Net>… — per spec, parse
+   tolerantly and ignore unknown nodes/attributes. Accepts both child-element
+   (<NetName>x</NetName>) and attribute (<Net NetName="x"…>) styles. */
+function parseNetsXML(text){
+  const out=[];
+  const chunks=text.match(/<Net\b[^>]*\/>|<Net[\s>][\s\S]*?<\/Net>/g)||[];
+  for(const chunk of chunks){
+    const o={};
+    const open=/<Net\b([^>]*?)\/?>/.exec(chunk);
+    if(open)for(const m of open[1].matchAll(/([A-Za-z_]+)\s*=\s*"([^"]*)"/g))o[m[1]]=xmlUnescape(m[2]);
+    for(const m of chunk.matchAll(/<([A-Za-z_]+)>([^<]*)<\/\1>/g))o[m[1]]=xmlUnescape(m[2]);
+    const n=normNetObj(o);if(n)out.push(n);
+  }
+  return out;
 }
 function parseNets(text){
   text=String(text||"").trim();
   if(!text)return[];
+  if(/<NetLoggerXML|<Net[\s>]/i.test(text)){
+    const x=parseNetsXML(text);
+    if(x.length)return x;
+  }
   try{const j=JSON.parse(text);
     const arr=Array.isArray(j)?j:(j&&typeof j==="object"?(j.nets||j.data||null):null);
     if(Array.isArray(arr)){const out=arr.map(o=>o&&typeof o==="object"?normNetObj(o):null).filter(Boolean);

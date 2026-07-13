@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.12.005] — 2026-07-12
+
+### Fixed
+- **Live nets never loaded — parser didn't speak XML.** Field testing reported "NetLogger cannot be reached"; research into the [NetLogger XML Data Service spec](https://www.netlogger.org/api/) showed the API returns XML under a `<NetLoggerXML>` root — a format `parseNets()` didn't handle, so even successful responses parsed to zero nets and displayed as unreachable. Added a tolerant XML branch (child-element and attribute styles, entity decoding, unknown nodes ignored per spec) tried before the JSON/delimited fallbacks. 6 new parser tests (20 total).
+
+---
+
 ## [2026.07.12.004] — 2026-07-12
 
 ### Added

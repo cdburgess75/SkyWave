@@ -2,7 +2,7 @@
 
 **Project:** SKYWAVE · Shortwave Band Guide (offline-first PWA single-file web app)
 **Artifact:** `index.html` (+ `sw.js`, `manifest.webmanifest`)
-**Version:** v2026.07.12.004 (CalVer: `YYYY.MM.DD`, `.00N` suffix for same-day releases)
+**Version:** v2026.07.12.005 (CalVer: `YYYY.MM.DD`, `.00N` suffix for same-day releases)
 **Date:** June 2026
 **Primary user / owner:** Dave — licensed amateur operator (IC-7300), SWL/DX, Loranger LA. Army Signal Corps background. Thinks in UTC.
 **Purpose of this doc:** Hand the project to Claude Code (and a Git repo) with enough detail that a fresh agent can extend it safely without re-reverse-engineering anything.
@@ -13,12 +13,11 @@
 
 - It is **one self-contained HTML file**. No build step, no framework, no external JS/CSS. ~85 KB.
 - **Vanilla JS in `"use strict"`**, all inside a single `<script>` at the bottom of the file.
-- **`const VERSION="2026.07.12.004"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.00N` for same-day releases. Bump the `sw.js` cache name in the same commit.
+- **`const VERSION="2026.07.12.005"` near the top** of the script block. CalVer: `YYYY.MM.DD`; append `.00N` for same-day releases. Bump the `sw.js` cache name in the same commit.
 - **To test:** `npm test` — smoke harness + nets-parser unit tests; CI runs both on every push to main (`.github/workflows/test.yml`).
 - **Offline-first is the prime directive.** Everything except EiBi auto-update and the Prop tab must work with the radio off and the phone in airplane mode.
 - **State persists in `localStorage`** under `skywave_*` keys (see §6). All access is wrapped in `try/catch`.
 - **Dynamic rows use event delegation** from `document` on `[data-act]` attributes; row payloads ride in `data-*` attributes (escaped via `attr()`).
-- **To test:** `node test/smoke.mjs` — Node + jsdom smoke harness (see §9). All three checks must pass.
 - **Do not** add third-party libraries, break the single-file model, introduce `localStorage` usage that isn't `try/catch`-guarded, or add operating-side features (QSO logging, POTA/SOTA spots, ADIF) — SkyWave is a listening guide.
 - **Known sharp edge:** live features fail inside in-app browsers (e.g. the Claude app preview) because those webviews block `fetch`. The app detects and explains this. Real Safari (or any hosted HTTPS deploy) is required for live data.
 
@@ -98,14 +97,17 @@ Any static HTTPS host works (GitHub Pages, Cloudflare Pages, Netlify). The `sw.j
 ### Data flow
 
 ```
-buildBase() = TIME stations (built-in) + MINE (user custom)   ── always present
+buildBase() = TIME stations + NETDIR scheduled nets + MINE (user custom)  ── always present
 EIBI[]      = parsed EiBi schedule (loaded/updated; may be empty)
 DATA        = buildBase().concat(EIBI)        ← single source the Listen tab reads
 rebuildData() recomputes DATA + filters + re-renders
+
+Live nets (transient, not schedule entries):
+openNets() → getNets() (NetLogger XML API × relays) → parseNets() → NETS{list,ts} → renderNets()
 ```
 
-- `entry(freq,time,days,itu,station,lang,target,tx,src)` is the normalized record. `parseTime()` precomputes integer `start`/`end` HHMM.
-- Listen renders from `DATA`. No separate spots pipeline exists in SkyWave.
+- `entry(freq,time,days,itu,station,lang,target,tx,src)` is the normalized record. `parseTime()` precomputes integer `start`/`end` HHMM; `_days` precomputes the day-of-week set.
+- Listen renders from `DATA`; the Nets sub-tab renders live `NETS` above the `src==="net"` directory rows.
 
 ### No build, no modules
 
@@ -286,7 +288,8 @@ node test/smoke.mjs
 - **v0.5** — First-run setup wizard (location → Maidenhead grid preview); grid square in header.
 - **v2026.06.09** — Code review pass: dead CSS/variable removal, `toggleFav` key unified via `keyOf()`, `loadText` timestamp preservation, double `rebuildData()` boot fix, `onAirText()` filter respect, stale `mineMsg` clear, re-run wizard link, K-index auto-load in wide-screen rail, Firefox zoom fallback, SW error surfacing.
 - **v2026.07.05** — Polish pass: fixed `attr()` escape order (quote-in-station-name corrupted favorite keys), PNG app icons (`apple-touch-icon.png` 180 + `icon-512.png`) so iOS home-screen icon works, favicon + `og:`/description meta tags, `theme-color` follows light/dark, lat/lng range validation (`validGeo`), `sw.js` relative paths for host portability, rail K-index error state, `fetchKIndex` timeout, TZ label computed once, My-Freq delete confirm, accurate search-result count. Also: "heard today" mark on Favorites (sage strike + pill, clears 0000 UTC, `skywave_heard_v1`). See CHANGELOG.md.
-- **v2026.07.12.004 (current)** — NETDIR grown to 15 nets: ten verified Southeast-US nets added (state traffic nets LA/MS/AL/GA/TN/SC, FL phone + midday, SouthCARS, Waterway). UTC times are daylight-anchored; notes carry local times. Former companion-app references removed — SkyWave stands alone.
+- **v2026.07.12.005 (current)** — Nets parser speaks the documented NetLogger XML format (was JSON/delimited only — live nets always parsed to zero). 20 parser tests.
+- **v2026.07.12.004** — NETDIR grown to 15 nets: ten verified Southeast-US nets added (state traffic nets LA/MS/AL/GA/TN/SC, FL phone + midday, SouthCARS, Waterway). UTC times are daylight-anchored; notes carry local times. Former companion-app references removed — SkyWave stands alone.
 - **v2026.07.12–.003** — WCAG AA contrast pass (`--ink-dim` #8a8a8a); moon/sun theme toggle; update-ready banner; version in Ref footer; audit remediation: CI workflow + real test exit codes, nets-parser tests in repo, `_days` precomputed per entry, debounced filters, K-index retry reset, wizard GEO commit-on-Next, keyboard/ARIA accessibility (chips are buttons, row actions focusable, Escape, wizard focus trap), `prefers-reduced-motion`, manifest id/screenshots/categories.
 - **v2026.07.11** — **Nets**: 4th Listen sub-tab. Live nets-in-session via NetLogger API (`GetNetsInProgress`, relay chain, tolerant JSON/delimited parser, `skywave_nets_v1` cache, fails soft) + built-in `NETDIR` of major scheduled HF nets flowing through the normal DATA pipeline (offline, on-air aware, star-able). README given hero screenshots + badges; `docs/ARCHITECTURE.md` and `docs/DATA_SOURCES.md` rewritten for the post-split app. **Note:** the NetLogger response format could not be live-verified at build time (sandboxed network) — the parser is defensive; verify on a real device and adjust `parseNets()` if the field order differs.
 

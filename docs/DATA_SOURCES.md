@@ -57,17 +57,21 @@ not send CORS headers.
 
 ### Parsing
 
-`parseNets()` is deliberately tolerant because the endpoint serves the
-NetLogger desktop client, not browsers:
+The service returns **XML** under a `<NetLoggerXML>` root (per the
+[XML Data Service Interface Specification](https://www.netlogger.org/api/)),
+which instructs clients to parse tolerantly and ignore unknown nodes.
+`parseNets()` tries three formats in order:
 
-1. **JSON** — an array (or `{nets:[…]}`) of objects; field names matched
+1. **XML** (the documented format) — every `<Net>` element, reading both
+   child elements (`<NetName>…</NetName>`) and attributes
+   (`<Net NetName="…">`), entities decoded, field names matched
    case-insensitively (`NetName`, `Frequency`, `Mode`, `NetControl`, `Band`,
-   `StartTime`).
-2. **Delimited** — records separated by `~`, fields by `|`; the frequency
+   `Date`/`StartTime`).
+2. **JSON** — an array (or `{nets:[…]}`) of objects, same field mapping.
+3. **Delimited** — records separated by `~`, fields by `|`; the frequency
    field is located heuristically (first numeric token that lands in a
-   1.5 MHz – 1.3 GHz window after MHz→kHz normalization), mode / NCS callsign /
-   start time / band are pattern-matched from the remaining fields. Records
-   starting with `*` (status markers) are skipped.
+   1.5 MHz – 1.3 GHz window after MHz→kHz normalization). Records starting
+   with `*` (status markers) are skipped.
 
 Anything unparseable yields `[]` and the UI keeps the cached list
 (`skywave_nets_v1`, with fetch timestamp) — the feature fails soft.
