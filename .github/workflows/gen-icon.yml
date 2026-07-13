@@ -1,0 +1,28 @@
+name: Generate icon earth paths
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  gen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/gen-earth-paths.mjs
+      - name: Publish to single-commit assets branch
+        run: |
+          cd out
+          git init -b assets
+          git config user.name "skywave-assets"
+          git config user.email "actions@users.noreply.github.com"
+          git add earth-path.txt
+          git commit -m "earth paths @ $(date -u +%FT%TZ)"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
