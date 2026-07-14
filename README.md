@@ -71,6 +71,7 @@ SkyWave/
 ├── test/
 │   └── smoke.mjs           ← Node + jsdom smoke harness (3 checks)
 ├── docs/
+│   ├── GUIDE.md            ← user guide: install + every tab, plain English
 │   ├── ARCHITECTURE.md     ← data pipeline, rendering model, algorithms
 │   ├── DATA_SOURCES.md     ← external API contracts (EiBi, NetLogger, NOAA, HamQSL)
 │   └── screenshot-*.png
@@ -114,6 +115,9 @@ python3 -m http.server 8000    # any static server works
 Opening `index.html` directly from disk also works for everything except the service worker.
 
 ## Usage
+
+> **New here?** The **[full User Guide](docs/GUIDE.md)** walks through install and
+> every tab in plain English. The table below is the quick reference.
 
 | I want to… | Do this |
 |------------|---------|
