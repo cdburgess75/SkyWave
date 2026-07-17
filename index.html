@@ -71,6 +71,8 @@
     box-shadow:0 6px 18px rgba(0,0,0,.5);}
   .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
   .brand h1{font-size:17px;letter-spacing:.42em;margin:0;color:var(--amber);font-weight:700;}
+  .brandcol{display:flex;flex-direction:column;gap:3px;}
+  .brandcol h1{line-height:1;}
   .brand .sub{font-size:9.5px;letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;}
   .hdr-controls{display:flex;gap:5px;align-items:center;margin-left:auto;flex-shrink:0;}
   .tgl-btn{background:none;border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
@@ -80,11 +82,11 @@
   .tgl-btn.on{color:var(--amber);border-color:var(--amber-dim);}
   .theme-btn{font-size:15px;line-height:1;padding:4px 11px;color:var(--ink);border-radius:8px;}
   .theme-btn:hover{color:var(--amber);border-color:var(--amber-dim);}
-  .clocks{display:flex;gap:12px 18px;align-items:flex-end;margin-top:9px;flex-wrap:wrap;}
+  .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;flex-wrap:wrap;}
   .clock{display:flex;flex-direction:column;gap:1px;}
   .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
   .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--clk-green);}
-  .clock.local .val{font-size:16px;color:var(--clk-blue);}
+  .clock.local .val{color:var(--clk-blue);}
   .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);
     max-width:46%;min-width:0;overflow-wrap:anywhere;}
   .dbstat b{color:var(--green);font-weight:600;}
@@ -260,12 +262,12 @@
   .wiz-skip{background:none;border:none;color:var(--ink-dim);font-size:10px;font-family:var(--mono);
     letter-spacing:.06em;cursor:pointer;text-decoration:underline;padding:4px 2px;margin-left:auto;}
 
-  .hdrver{font-size:8.5px;letter-spacing:.22em;color:var(--ink-dim);margin-top:3px;}
+  .hdrver{font-size:8px;letter-spacing:.14em;color:var(--amber-dim);line-height:1;white-space:nowrap;}
 
   /* scroll-minimized header */
-  .brand,.ident,.hdrver{transition:max-height .28s ease,opacity .2s,margin .25s ease;max-height:80px;overflow:hidden;}
+  .brand,.ident{transition:max-height .28s ease,opacity .2s,margin .25s ease;max-height:80px;overflow:hidden;}
   header.min .brand{max-height:0;opacity:0;margin:0;}
-  header.min .ident,header.min .hdrver{max-height:0;opacity:0;margin:0;}
+  header.min .ident{max-height:0;opacity:0;margin:0;}
   header.min .clock.local,header.min .dbstat{display:none;}
   header.min .clock .lbl{display:none;}
   header.min .clocks{margin-top:2px;}
@@ -378,17 +380,20 @@
 <div class="wrap">
   <header>
     <div class="brand">
-      <h1>SKYWAVE</h1><span class="sub">Shortwave Band Guide</span>
+      <div class="brandcol">
+        <h1>SKYWAVE</h1>
+        <span class="hdrver" id="hdrVer"></span>
+      </div>
+      <span class="sub">Shortwave Band Guide</span>
       <div class="hdr-controls">
         <button class="tgl-btn theme-btn" id="themeToggle" title="Switch to light theme">☾&#xFE0E;</button>
         <button class="kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode">⛶ Kiosk</button>
       </div>
     </div>
-    <div class="hdrver" id="hdrVer"></div>
     <div class="ident"><span id="hdrGrid" class="ident-grid"></span></div>
     <div class="clocks">
-      <div class="clock"><span class="lbl">UTC · Zulu</span><span class="val" id="utc">--:--:--</span></div>
-      <div class="clock local"><span class="lbl" id="locLbl">Local</span><span class="val" id="loc">--:--</span></div>
+      <div class="clock"><span class="lbl">Zulu</span><span class="val" id="utc">--:--:--</span></div>
+      <div class="clock local"><span class="lbl" id="locLbl">Local</span><span class="val" id="loc">--:--:--</span></div>
       <div class="dbstat" id="dbstat"></div>
     </div>
   </header>
@@ -752,7 +757,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.017";
+const VERSION="2026.07.17.018";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1577,9 +1582,12 @@ function tableHTML(head,rows,four){return'<table><tr>'+head.map(h=>'<th>'+h+'</t
 function tick(){const d=new Date(),p=n=>String(n).padStart(2,"0");
   document.getElementById("utc").textContent=p(d.getUTCHours())+":"+p(d.getUTCMinutes())+":"+p(d.getUTCSeconds());
   const locStr=PREFS.hr24===false
-    ?d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit",hour12:true})
-    :p(d.getHours())+":"+p(d.getMinutes());
-  document.getElementById("loc").textContent=locStr;}
+    ?d.toLocaleTimeString([],{hour:"numeric",minute:"2-digit",second:"2-digit",hour12:true})
+    :p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds());
+  document.getElementById("loc").textContent=locStr;
+  const tz=new Intl.DateTimeFormat("en-US",{timeZoneName:"short"}).formatToParts(d)
+    .find(pp=>pp.type==="timeZoneName");
+  document.getElementById("locLbl").textContent=(tz&&tz.value)||"Local";}
 function updateDbStat(){const el=document.getElementById("dbstat");
   if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries<br>EiBi '+(META?META.code.toUpperCase():"")+' · offline ready';
   else el.innerHTML='Reference data loaded.<br>Update / load EiBi (Ref tab).';}
@@ -1865,7 +1873,6 @@ if(PREFS.setup===false)showWizard();
 openNets(false);   // Nets is the default Listen view — render directory + fetch live list
 document.getElementById("verFoot").textContent="SKYWAVE v"+VERSION+" · CalVer";
 document.getElementById("hdrVer").textContent="v"+VERSION;
-document.getElementById("locLbl").textContent="Local "+TZ;
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-nets").hidden)renderNets();

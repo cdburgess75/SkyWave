@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.018] — 2026-07-17
+
+### Changed
+- **Header & clocks now mirror PileUp exactly.** Version stacked directly under the wordmark in a `brandcol` (amber-dim). UTC clock labeled **Zulu**; the local clock now runs at the same size with seconds (`HH:MM:SS`) and a live short-timezone label (CDT / PST / GMT+1…) updated each tick, matching PileUp's shack-clock behavior. Clock gap tightened to `18px`.
+
+---
+
 ## [2026.07.17.017] — 2026-07-17
 
 ### Changed
