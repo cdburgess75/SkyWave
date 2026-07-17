@@ -8,24 +8,24 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0c0b09",
-  "theme_color": "#0c0b09",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "categories": ["utilities", "news", "education"],
   "icons": [
     {
-      "src": "icons/icon.svg?v=7",
+      "src": "icons/icon.svg?v=8",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png?v=7",
+      "src": "icons/icon-512.png?v=8",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/apple-touch-icon.png?v=7",
+      "src": "icons/apple-touch-icon.png?v=8",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"

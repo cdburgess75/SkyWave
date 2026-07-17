@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.017] — 2026-07-17
+
+### Changed
+- **Unified visual identity with the companion app PileUp.** SkyWave now shares PileUp's exact design language so the two read as a set:
+  - **New logo:** a flat amber tile (`#f0923c`) with the real Natural Earth continents as an amber "porthole" globe on a dark disc — PileUp's flat, minimalist icon family. SVG + 512/180px PNGs regenerated; icon URLs bumped to `?v=8`.
+  - **Color tokens synced** for both light and dark themes — accent greens/blues, ink tones, and PileUp's cleaner light background (`#F9FBFF`). Pure-black `#000000` theme-color/manifest to match.
+  - **Shack-clock treatment:** UTC clock now neon-green, local clock neon-blue (glowing in dark, flat in light), matching PileUp.
+
+---
+
 ## [2026.07.17.016] — 2026-07-17
 
 ### Changed

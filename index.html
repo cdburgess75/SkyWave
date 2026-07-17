@@ -6,48 +6,52 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SkyWave">
-<meta name="theme-color" content="#0c0b09">
+<meta name="theme-color" content="#000000">
 <meta name="description" content="A TV-Guide for shortwave — browse what's on the air right now, search by language or frequency, and plan grayline and propagation windows. Offline-first, no account.">
 <meta property="og:title" content="SKYWAVE — Shortwave Band Guide">
 <meta property="og:description" content="Browse what's on the air now, search by frequency, and plan propagation. Offline-first PWA, no dependencies.">
 <meta property="og:type" content="website">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg?v=7">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=7">
+<link rel="icon" href="icons/icon.svg?v=8">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=8">
 <title>SKYWAVE · Shortwave Band Guide</title>
 <style>
   :root{
-    /* LED dark — pure black + neon palette */
+    /* LED dark — pure black + neon palette (unified with PileUp) */
     --bg:#000000;--nav-bg:#080808;--panel:#0e0e0e;--panel2:#181818;--line:#282828;
-    --amber:#f0923c;--amber-dim:#a06020;
-    --green:#7de87a;--green-dim:#3a9438;
-    --blue:#7dd5f5;--blue-dim:#3a88b0;
+    --amber:#f0923c;--amber-dim:#c9772a;
+    --green:#AED8CA;--green-dim:#2E8B7A;
+    --blue:#8bb4e8;--blue-dim:#5a8fd0;
     --red:#e8635a;
-    --ink:#f0f0f0;--ink-dim:#8a8a8a;
+    --ink:#f4f4f6;--ink-dim:#9aa8c2;
+    --clk-green:#4be08a;--clk-blue:#38cfff;
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
     --header-bg:#000000;
   }
   /* LED dark — neon glows on key elements */
   .brand h1{text-shadow:0 0 14px rgba(240,146,60,.9),0 0 32px rgba(240,146,60,.5),0 0 64px rgba(240,146,60,.25);}
-  .clock .val{text-shadow:0 0 12px rgba(240,146,60,.85),0 0 28px rgba(240,146,60,.45);}
-  .ident-grid{text-shadow:0 0 10px rgba(125,213,245,.75),0 0 22px rgba(125,213,245,.35);}
-  .tag.live{box-shadow:0 0 10px rgba(125,232,122,.8),0 0 20px rgba(125,232,122,.4);}
-  .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green),0 0 14px rgba(125,232,122,.18);}
-  .netdot.on{box-shadow:0 0 8px var(--green),0 0 16px rgba(125,232,122,.5);}
+  .clock .val{text-shadow:0 0 12px rgba(75,224,138,.9),0 0 28px rgba(75,224,138,.5);}
+  .clock.local .val{text-shadow:0 0 12px rgba(56,207,255,.9),0 0 28px rgba(56,207,255,.5);}
+  .ident-grid{text-shadow:0 0 10px rgba(139,180,232,.75),0 0 22px rgba(139,180,232,.35);}
+  .tag.live{box-shadow:0 0 10px rgba(174,216,202,.8),0 0 20px rgba(174,216,202,.4);}
+  .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green),0 0 14px rgba(174,216,202,.18);}
+  .netdot.on{box-shadow:0 0 8px var(--green),0 0 16px rgba(174,216,202,.5);}
 
   /* LED light — same palette on white, no aggressive glows */
   [data-theme="light"]{
-    --bg:#ffffff;--nav-bg:#f2f2f2;--panel:#ffffff;--panel2:#f5f5f5;--line:#e0e0e0;
-    --amber:#c07020;--amber-dim:#e8a060;
-    --green:#2a8a28;--green-dim:#7de87a;
-    --blue:#2888b8;--blue-dim:#7dd5f5;
-    --red:#c83430;
-    --ink:#0a0a0a;--ink-dim:#505050;
-    --header-bg:linear-gradient(180deg,#f2f2f2,#f8f8f8);
+    --bg:#F9FBFF;--nav-bg:#F7F7F7;--panel:#FFFFFF;--panel2:#F7F7F7;--line:#E4E4E4;
+    --amber:#c8600f;--amber-dim:#e0872f;
+    --green:#2E8B7A;--green-dim:#AED8CA;
+    --blue:#1f5fb0;--blue-dim:#9cc0e8;
+    --red:#C83430;
+    --ink:#12202f;--ink-dim:#3a4655;
+    --clk-green:#1c8a55;--clk-blue:#0e7e9c;
+    --header-bg:linear-gradient(180deg,#F7F7F7,#FFFFFF);
   }
   [data-theme="light"] body{background-image:none;}
   [data-theme="light"] .brand h1,
   [data-theme="light"] .clock .val,
+  [data-theme="light"] .clock.local .val,
   [data-theme="light"] .ident-grid,
   [data-theme="light"] .tag.live,
   [data-theme="light"] .row.now,
@@ -79,8 +83,8 @@
   .clocks{display:flex;gap:12px 18px;align-items:flex-end;margin-top:9px;flex-wrap:wrap;}
   .clock{display:flex;flex-direction:column;gap:1px;}
   .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
-  .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--amber);}
-  .clock.local .val{font-size:16px;color:var(--ink);text-shadow:none;}
+  .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--clk-green);}
+  .clock.local .val{font-size:16px;color:var(--clk-blue);}
   .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);
     max-width:46%;min-width:0;overflow-wrap:anywhere;}
   .dbstat b{color:var(--green);font-weight:600;}
@@ -748,7 +752,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.016";
+const VERSION="2026.07.17.017";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1374,7 +1378,7 @@ function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
   const tc=document.querySelector('meta[name="theme-color"]');
-  if(tc)tc.setAttribute("content",t==="light"?"#f2f2f2":"#0c0b09");
+  if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#000000");
   const b=document.getElementById("themeToggle");
   if(b){b.textContent=t==="light"?"☀︎":"☾︎";
     b.title=t==="light"?"Switch to dark theme":"Switch to light theme";
