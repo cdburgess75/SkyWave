@@ -6,7 +6,7 @@
 
 **A "TV Guide for shortwave." One HTML file that tells you what's on the air right now — broadcast stations, ham nets, and propagation — and keeps working with no signal bars and no build step.**
 
-[![Version](https://img.shields.io/badge/version-2026.07.11-f0923c)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2026.07.17-f0923c)](CHANGELOG.md)
 [![PWA](https://img.shields.io/badge/PWA-offline--first-7de87a)](#getting-started)
 [![Dependencies](https://img.shields.io/badge/runtime%20dependencies-0-7dd5f5)](#architecture)
 [![App](https://img.shields.io/badge/app-single%20HTML%20file-f0923c)](index.html)

@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.016] — 2026-07-17
+
+### Changed
+- **Icon: "Sand" — lighter tile background.** The Mono Gold globe (single-hue gold land on a dark gold-brown ocean, amber grayline) now sits on a light sand/cream tile instead of near-black, so the dark globe reads as a crisp silhouette. Icon URLs bumped to `?v=7`; SVG + 512px and 180px PNGs regenerated.
+
+---
+
 ## [2026.07.13.015] — 2026-07-13
 
 ### Changed
