@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.023] — 2026-07-17
+
+### Changed
+- **New app icon: "Midnight" — US-centered Earth.** Gold continents on a blue ocean globe over a midnight-navy tile, spun to an orthographic view centered on the United States (Americas front and center). Coastlines re-projected on the fly from the Natural Earth data with proper hemisphere clipping, so edges stay crisp to the limb. SVG + 512/180px PNGs regenerated; icon URLs bumped to `?v=9`.
+
+---
+
 ## [2026.07.17.022] — 2026-07-17
 
 ### Added
