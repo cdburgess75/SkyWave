@@ -268,7 +268,7 @@
   .brand,.ident{transition:max-height .28s ease,opacity .2s,margin .25s ease;max-height:80px;overflow:hidden;}
   header.min .brand{max-height:0;opacity:0;margin:0;}
   header.min .ident{max-height:0;opacity:0;margin:0;}
-  header.min .clock.local,header.min .dbstat{display:none;}
+  header.min .dbstat{display:none;}
   header.min .clock .lbl{display:none;}
   header.min .clocks{margin-top:2px;}
   header{transition:padding .25s ease;}
@@ -757,7 +757,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.018";
+const VERSION="2026.07.17.019";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */

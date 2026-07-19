@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.019] — 2026-07-17
+
+### Fixed
+- **Both clocks now stay pinned when the header minimizes on scroll** (matching PileUp). Previously the local clock was hidden in the collapsed sticky header, leaving only Zulu; now the collapsed header keeps both the Zulu and local clocks side by side (labels drop, only the database-status line hides).
+
+---
+
 ## [2026.07.17.018] — 2026-07-17
 
 ### Changed
