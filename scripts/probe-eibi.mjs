@@ -20,10 +20,7 @@ console.log(`min ${freqs[0]} kHz   max ${freqs[n - 1]} kHz`);
 console.log(`long wave  (<530):     ${lw}`);
 console.log(`medium wave (530-1700): ${mw}`);
 console.log(`shortwave  (>=1700):    ${sw}`);
-console.log("lowest 12:", freqs.slice(0, 12).join(", "));
-// a few sample low-band station lines
-console.log("\nsample sub-1700 lines:");
-for (const l of lines) {
-  const f = parseFloat(l.split(";")[0]);
-  if (f < 1700) { console.log("  " + l.slice(0, 90)); }
-}
+console.log("lowest 25:", freqs.slice(0, 25).join(", "));
+// sample the lowest-frequency stations (long/medium wave broadcasters)
+console.log("\nlowest 20 station lines:");
+for (const l of lines.slice(0, 20)) console.log("  " + l.slice(0, 80));
