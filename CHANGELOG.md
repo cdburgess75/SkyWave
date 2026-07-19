@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.024] — 2026-07-17
+
+### Changed
+- **Dark theme recolored to match the Midnight icon.** The pure-black background and panels become deep navy (`#0b1626` bg, navy cards with blue borders), and the amber accent is nudged to the icon's gold — so the app and its icon read as one piece. Green/blue shack clocks and the green LIVE/ON-AIR badges carry over unchanged. Light theme is untouched. Navy `theme-color` + manifest to match.
+
+---
+
 ## [2026.07.17.023] — 2026-07-17
 
 ### Changed

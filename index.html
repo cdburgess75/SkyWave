@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SkyWave">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0b1626">
 <meta name="description" content="A TV-Guide for shortwave — browse what's on the air right now, search by language or frequency, and plan grayline and propagation windows. Offline-first, no account.">
 <meta property="og:title" content="SKYWAVE — Shortwave Band Guide">
 <meta property="og:description" content="Browse what's on the air now, search by frequency, and plan propagation. Offline-first PWA, no dependencies.">
@@ -18,15 +18,15 @@
 <style>
   :root{
     /* LED dark — pure black + neon palette (unified with PileUp) */
-    --bg:#000000;--nav-bg:#080808;--panel:#0e0e0e;--panel2:#181818;--line:#282828;
-    --amber:#f0923c;--amber-dim:#c9772a;
+    --bg:#0b1626;--nav-bg:#0a1322;--panel:#12233f;--panel2:#17294a;--line:#263a5e;
+    --amber:#f0a83c;--amber-dim:#c98a2e;
     --green:#AED8CA;--green-dim:#2E8B7A;
     --blue:#8bb4e8;--blue-dim:#5a8fd0;
     --red:#e8635a;
     --ink:#f4f4f6;--ink-dim:#9aa8c2;
     --clk-green:#4be08a;--clk-blue:#38cfff;
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
-    --header-bg:#000000;
+    --header-bg:linear-gradient(180deg,#14264a,#0b1626);
   }
   /* LED dark — neon glows on key elements */
   .brand h1{text-shadow:0 0 14px rgba(240,146,60,.9),0 0 32px rgba(240,146,60,.5),0 0 64px rgba(240,146,60,.25);}
@@ -779,7 +779,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.023";
+const VERSION="2026.07.17.024";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1469,7 +1469,7 @@ function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
   const tc=document.querySelector('meta[name="theme-color"]');
-  if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#000000");
+  if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#0b1626");
   const b=document.getElementById("themeToggle");
   if(b){b.textContent=t==="light"?"☀︎":"☾︎";
     b.title=t==="light"?"Switch to dark theme":"Switch to light theme";
