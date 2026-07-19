@@ -1,73 +1,47 @@
-// One-off investigation: does NetLogger expose a per-net check-in roster we can
-// scrape server-side (from an Action) to fold into our own mirror?
-// Prints findings to the Action log. Commits nothing.
+// Investigation round 2: /api/GetCheckins.php is live (XML). It needs ServerName
+// + NetName. The homepage table gives us both per active net. Confirm we get a
+// real roster of checked-in callsigns.
 
 const UA = { headers: { "User-Agent": "Mozilla/5.0 SkyWave-probe" } };
-
-async function get(url, opts = {}) {
+async function get(url) {
   const t0 = Date.now();
   try {
-    const r = await fetch(url, { ...UA, ...opts, redirect: "follow" });
+    const r = await fetch(url, { ...UA, redirect: "follow" });
     const body = await r.text();
-    return { ok: r.ok, status: r.status, ct: r.headers.get("content-type") || "", body, ms: Date.now() - t0 };
-  } catch (e) {
-    return { ok: false, status: 0, ct: "", body: "ERR " + e.message, ms: Date.now() - t0 };
-  }
+    return { status: r.status, ct: r.headers.get("content-type") || "", body, ms: Date.now() - t0 };
+  } catch (e) { return { status: 0, ct: "", body: "ERR " + e.message, ms: Date.now() - t0 }; }
+}
+function show(label, r, n = 2500) {
+  console.log(`\n### ${label}\n   status=${r.status} ct=${r.ct} bytes=${r.body.length} ms=${r.ms}`);
+  console.log(r.body.replace(/\s+/g, " ").slice(0, n));
 }
 
-function show(label, r, n = 500) {
-  console.log(`\n### ${label}`);
-  console.log(`   status=${r.status} ct=${r.ct} bytes=${r.body.length} ms=${r.ms}`);
-  const snip = r.body.replace(/\s+/g, " ").slice(0, n);
-  console.log("   " + snip);
-}
-
-const HOSTS = ["https://www.netlogger.org", "https://netlogger.org"];
-
-// 1) Homepage — pull the active-nets table and inspect its raw markup for any
-//    per-net link / anchor that would lead to a roster view.
+// active nets + servers from the homepage table
 const home = await get("https://www.netlogger.org/");
-console.log(`HOMEPAGE status=${home.status} bytes=${home.body.length}`);
 const seg = /<!--\s*Begin Currently Active Nets\s*-->([\s\S]*?)<!--\s*End Currently Active Nets\s*-->/i.exec(home.body);
-let netName = "", server = "";
+const nets = [];
 if (seg) {
-  const firstRow = (seg[1].match(/<tr>\s*<td>[\s\S]*?<\/tr>/i) || [])[0] || "";
-  console.log("\n### FIRST ACTIVE-NET ROW (raw markup)\n" + firstRow.slice(0, 1200));
-  const cells = [...firstRow.matchAll(/<td>([\s\S]*?)<\/td>/gi)].map(c =>
-    c[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim());
-  netName = (cells[0] || "").replace(/\s*\(www\)\s*$/i, "").trim();
-  server = cells[4] || "";
-  console.log(`\n   parsed netName="${netName}"  server="${server}"`);
-  // any hrefs/onclicks inside the name cell?
-  const links = firstRow.match(/href="[^"]*"|onclick="[^"]*"|NetName=[^"&<]*/gi) || [];
-  console.log("   links/handlers in row: " + (links.slice(0, 10).join(" | ") || "(none)"));
-} else {
-  console.log("!! could not locate Currently Active Nets markers");
-}
-
-if (!netName) netName = "Test";
-const enc = encodeURIComponent(netName);
-
-// 2) Battery of candidate roster endpoints (NetLogger client-protocol style + guesses)
-const paths = [
-  `/cgi-bin/NetLogger/GetCheckList20.php?NetName=${enc}&ProtocolVersion=2.3`,
-  `/cgi-bin/NetLogger/GetCheckins20.php?NetName=${enc}&ProtocolVersion=2.3`,
-  `/cgi-bin/NetLogger/GetMonitorData20.php?NetName=${enc}&ProtocolVersion=2.3`,
-  `/cgi-bin/NetLogger/GetUpdate3.php?NetName=${enc}&ProtocolVersion=2.3`,
-  `/cgi-bin/NetLogger/GetCheckinList.php?NetName=${enc}`,
-  `/api/GetCheckinList.php?NetName=${enc}`,
-  `/api/GetCheckins.php?NetName=${enc}`,
-  `/api/GetMonitorData.php?NetName=${enc}`,
-  `/?NetName=${enc}`,
-  `/monitor/?NetName=${enc}`,
-  `/monitor.php?NetName=${enc}`,
-];
-for (const host of HOSTS) {
-  for (const p of paths) {
-    const r = await get(host + p);
-    // only surface anything that isn't an obvious 404/empty
-    const interesting = r.status !== 404 && r.body.length > 0;
-    show(`${host}${p} ${interesting ? "  <-- LOOK" : ""}`, r, interesting ? 700 : 160);
+  for (const row of seg[1].match(/<tr>\s*<td>[\s\S]*?<\/tr>/gi) || []) {
+    const c = [...row.matchAll(/<td>([\s\S]*?)<\/td>/gi)].map(x =>
+      x[1].replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim());
+    if (c.length < 6) continue;
+    nets.push({ name: (c[0] || "").replace(/\s*\(www\)\s*$/i, "").trim(), server: c[4] || "", subs: c[7] || "" });
   }
 }
-console.log("\nPROBE DONE");
+console.log(`active nets: ${nets.length}`);
+console.log(nets.slice(0, 8).map(n => `  "${n.name}" @ ${n.server} (subs ${n.subs})`).join("\n"));
+
+// Try GetCheckins with ServerName+NetName for the first few nets, and a couple of
+// param-name variants, to lock the exact contract.
+const target = nets.find(n => (+n.subs) > 0) || nets[0];
+if (target) {
+  const nm = encodeURIComponent(target.name), sv = encodeURIComponent(target.server);
+  console.log(`\n=== probing roster for "${target.name}" @ "${target.server}" (subs ${target.subs}) ===`);
+  for (const url of [
+    `https://www.netlogger.org/api/GetCheckins.php?ServerName=${sv}&NetName=${nm}`,
+    `https://www.netlogger.org/api/GetCheckins.php?Servername=${sv}&NetName=${nm}`,
+    `https://www.netlogger.org/api/GetCheckins.php?ServerName=${sv}&NetName=${nm}&Callsign=SKYWAVE`,
+    `https://www.netlogger.org/api/GetNetsInProgress.php`,
+  ]) show(url, await get(url));
+}
+console.log("\nPROBE2 DONE");
