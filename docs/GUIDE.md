@@ -62,9 +62,9 @@ Four views, switched with the buttons at the top:
 - Tap **⟳ Refresh** to pull the latest live list; use the filter box to search by
   name, mode, or callsign.
 - **Tap any net to expand it** for details — frequency, band, mode, net control,
-  how long it's been running, and how many stations are checked in. (The live
-  roster of callsigns isn't in the offline feed; the panel links out to NetLogger
-  for that.)
+  how long it's been running, and the **live roster of who's checked in** (each
+  station's callsign, name, location, and grid, with the net control marked
+  **NC**).
 
 **On Air** — every shortwave broadcast transmitting **this minute**, from the
 EiBi schedule. Filter with the chips (Favorites, English, Spanish, French), the

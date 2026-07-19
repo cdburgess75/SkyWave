@@ -66,6 +66,17 @@ relay chain.
 Servers: `www.netlogger.org`, `www.netlogger1.org`, `www.netlogger2.org`,
 `www.netlogger3.org` (canonical list at `netlogger.org/downloads/ServerList.txt`).
 **Used for:** the live half of the Listen → Nets sub-tab.
+
+**Per-net check-in roster:** for each active net the mirror also calls
+`GET https://www.netlogger.org/api/GetCheckins.php?ServerName={server}&NetName={name}`
+(NetLogger public API v1.3.1; `ServerName` is case-sensitive and comes from the
+homepage table). The XML `<Checkin>` records are trimmed to ham-public fields
+only — callsign, first name, city/state, grid, and a net-control flag — and
+folded into `nets.json` as a `roster` array per net. The street address, ZIP,
+county, and member id the API also returns are deliberately dropped. Because
+the Action fetches this server-side, the app reads rosters from our own mirror
+and never calls NetLogger directly. Powers the "who's checked in" list in the
+expanded net panel.
 **Verified against:** open-source consumers
 [ham2k/nets](https://github.com/ham2k/nets) and
 [seven1m/ragchew.site](https://github.com/seven1m/ragchew.site), whose test

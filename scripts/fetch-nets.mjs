@@ -13,7 +13,51 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 
 const SOURCE = "https://www.netlogger.org/";
+// Live per-net check-in roster (XML). NetLogger's public API v1.3.1; needs the
+// exact (case-sensitive) ServerName + NetName from the homepage table. Fetched
+// here server-side so the app reads rosters from our own mirror, never calling
+// a third party itself.
+const ROSTER_API = "https://www.netlogger.org/api/GetCheckins.php";
 const UA = { "User-Agent": "SkyWave-nets-mirror/1.0 (+https://github.com/cdburgess75/SkyWave)" };
+
+function xmlTag(block, tag) {
+  const m = new RegExp("<" + tag + ">([\\s\\S]*?)</" + tag + ">", "i").exec(block);
+  return m ? cellText(m[1]) : "";
+}
+
+// Fetch one net's roster, keeping only ham-public fields (callsign, first name,
+// city/state, grid, net-control flag). Deliberately drops the street address,
+// ZIP, county, and member id the API also returns.
+async function fetchRoster(net) {
+  if (!net.server || !net.name) return null;
+  const url = `${ROSTER_API}?ServerName=${encodeURIComponent(net.server)}&NetName=${encodeURIComponent(net.name)}`;
+  try {
+    const r = await fetch(url, { headers: UA, signal: AbortSignal.timeout(10000) });
+    if (!r.ok) return null;
+    const xml = await r.text();
+    if (!/<CheckinList>/i.test(xml)) return null; // error payloads carry <Error> instead
+    const count = parseInt(xmlTag(xml, "CheckinCount"), 10) || 0;
+    const roster = [];
+    for (const blk of xml.match(/<Checkin>[\s\S]*?<\/Checkin>/gi) || []) {
+      const call = xmlTag(blk, "Callsign").toUpperCase();
+      if (!call) continue;
+      const name = (xmlTag(blk, "PreferredName") || xmlTag(blk, "FirstName").split(" ")[0] || "").trim();
+      const qth = [xmlTag(blk, "CityCountry"), xmlTag(blk, "State")].filter(Boolean).join(", ");
+      const grid = xmlTag(blk, "Grid");
+      const nc = call === net.ncs || /\bNC\b/i.test(xmlTag(blk, "QSLInfo"));
+      const e = { call };
+      if (name) e.name = name;
+      if (qth) e.qth = qth;
+      if (grid) e.grid = grid;
+      if (nc) e.nc = 1;
+      roster.push(e);
+      if (roster.length >= 120) break; // safety cap on file size
+    }
+    return { count, roster };
+  } catch {
+    return null;
+  }
+}
 
 function netFreqKhz(v) {
   const n = parseFloat(String(v).replace(/[^\d.]/g, ""));
@@ -66,7 +110,16 @@ if (declared && +declared[1] > 0 && nets.length === 0) {
   process.exit(1);
 }
 
+// Attach each net's live roster (sequential — only a handful of nets, and it
+// keeps us polite to NetLogger). A failed roster fetch just leaves the net
+// without one; the app falls back to showing the subscriber count.
+let withRoster = 0;
+for (const net of nets) {
+  const r = await fetchRoster(net);
+  if (r) { net.checkins = r.count; net.roster = r.roster; withRoster++; }
+}
+
 nets.sort((a, b) => a.freq - b.freq);
 mkdirSync("out", { recursive: true });
 writeFileSync("out/nets.json", JSON.stringify({ ts: Date.now(), nets }, null, 1));
-console.log(`Wrote out/nets.json — ${nets.length} nets (page declared ${declared ? declared[1] : "?"}).`);
+console.log(`Wrote out/nets.json — ${nets.length} nets (${withRoster} with rosters; page declared ${declared ? declared[1] : "?"}).`);

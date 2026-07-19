@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.022] — 2026-07-17
+
+### Added
+- **Live check-in roster in the expanded net panel.** Tapping a net in session now shows exactly who's checked in — each station's callsign, first name, city/state, and grid, with the net control marked **NC**. Pulled from NetLogger's public check-in API (`GetCheckins.php`) **server-side by the mirror Action** and folded into `nets.json`, so the app reads rosters from our own feed and never calls a third party directly — still dependency-free and offline-capable.
+- Privacy: only ham-public fields are mirrored (callsign, first name, city/state, grid, net-control flag). The street address, ZIP, county, and member id the API also returns are deliberately dropped.
+
+---
+
 ## [2026.07.17.021] — 2026-07-17
 
 ### Added
