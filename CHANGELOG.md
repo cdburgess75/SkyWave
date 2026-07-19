@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.020] — 2026-07-17
+
+### Changed
+- **Live-net tag reworked for readability.** The glowing pale "IN SESSION" pill (hard to read, over-bright) is now a compact solid-green **● LIVE** badge with a fixed color that stays legible on both light and dark backgrounds — no bloom.
+
+---
+
 ## [2026.07.17.019] — 2026-07-17
 
 ### Fixed

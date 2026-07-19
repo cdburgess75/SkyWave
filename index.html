@@ -33,7 +33,7 @@
   .clock .val{text-shadow:0 0 12px rgba(75,224,138,.9),0 0 28px rgba(75,224,138,.5);}
   .clock.local .val{text-shadow:0 0 12px rgba(56,207,255,.9),0 0 28px rgba(56,207,255,.5);}
   .ident-grid{text-shadow:0 0 10px rgba(139,180,232,.75),0 0 22px rgba(139,180,232,.35);}
-  .tag.live{box-shadow:0 0 10px rgba(174,216,202,.8),0 0 20px rgba(174,216,202,.4);}
+  .tag.live .dot{box-shadow:0 0 5px rgba(59,191,133,.9);}
   .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green),0 0 14px rgba(174,216,202,.18);}
   .netdot.on{box-shadow:0 0 8px var(--green),0 0 16px rgba(174,216,202,.5);}
 
@@ -53,7 +53,7 @@
   [data-theme="light"] .clock .val,
   [data-theme="light"] .clock.local .val,
   [data-theme="light"] .ident-grid,
-  [data-theme="light"] .tag.live,
+  [data-theme="light"] .tag.live .dot,
   [data-theme="light"] .row.now,
   [data-theme="light"] .netdot.on{text-shadow:none;box-shadow:none;}
   [data-theme="light"] .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green);}
@@ -157,7 +157,8 @@
   .right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
   .time{font-size:11px;color:var(--ink);font-variant-numeric:tabular-nums;opacity:.75;}
   .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
-  .tag.live{color:#06170c;background:var(--green);border-color:var(--green);font-weight:700;}
+  .tag.live{color:#062012;background:#3bbf85;border-color:#3bbf85;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+  .tag.live .dot{width:5px;height:5px;border-radius:50%;background:#062012;flex:none;}
   .tag.soon{color:var(--amber);border-color:var(--amber);font-weight:700;}
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
   .acts{display:flex;gap:8px;margin-top:2px;}
@@ -757,7 +758,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.019";
+const VERSION="2026.07.17.020";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1301,7 +1302,7 @@ function renderNets(){
       return '<div class="row now">'+
         '<div class="freq">'+fmtFreq(n.freq)+'<span class="u">'+freqUnit(n.freq)+'</span></div>'+
         '<div class="mid"><div class="st">'+esc(n.name)+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
-        '<div class="right"><span class="tag live">IN SESSION</span></div></div>';
+        '<div class="right"><span class="tag live"><i class="dot"></i>LIVE</span></div></div>';
     }).join("");
   } else {
     cnt.innerHTML="";
