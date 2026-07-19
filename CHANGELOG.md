@@ -2,6 +2,17 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.021] — 2026-07-17
+
+### Added
+- **Tap a net to expand it for details.** Live (in-session) nets expand to a panel with frequency, band, mode, net control, start time, running time (computed live), server, and how many stations are checked in. Built-in scheduled nets expand to show frequency, mode, the UTC schedule window, coverage area, on-air status, and the schedule note. A chevron marks expandable rows and open panels persist across the auto-refresh.
+- The live-net parser (app + mirror) now also captures **server**, **elapsed**, and **subscriber count** from the NetLogger feed.
+
+### Notes
+- The individual roster of checked-in callsigns isn't part of the offline feed (it lives on NetLogger's per-net page, which would require a per-net third-party call). The expansion shows the **count** and links out to NetLogger for the live roster.
+
+---
+
 ## [2026.07.17.020] — 2026-07-17
 
 ### Changed

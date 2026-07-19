@@ -153,6 +153,20 @@
   .mid .st{font-size:13.5px;color:var(--ink);line-height:1.25;}
   .mid .meta{font-size:10px;color:var(--ink-dim);margin-top:3px;letter-spacing:.03em;}
   .mid .meta .lang{color:var(--green);}
+  /* tap-to-expand net rows */
+  .netrow{cursor:pointer;position:relative;}
+  .netrow .chev{position:absolute;right:11px;bottom:7px;font-size:12px;line-height:1;color:var(--ink-dim);transition:transform .2s ease,color .2s;}
+  .netrow.exp{border-color:var(--amber-dim);}
+  .netrow.exp .chev{transform:rotate(90deg);color:var(--amber);}
+  .netx{margin:-4px 2px 10px;padding:12px 14px 13px;border:1px solid var(--line);border-top:none;
+    border-radius:0 0 10px 10px;background:var(--panel2);}
+  .netx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 16px;}
+  .netx-grid>div{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .netx .k{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);}
+  .netx .v{font-size:12.5px;color:var(--ink);overflow-wrap:anywhere;}
+  .netx .v.hi{color:var(--green);font-weight:700;}
+  .netx-note{margin-top:11px;font-size:10.5px;color:var(--ink-dim);line-height:1.45;}
+  .netx-note a{color:var(--amber);white-space:nowrap;}
   .badge{display:inline-block;font-size:7.5px;letter-spacing:.1em;padding:1px 4px;border-radius:3px;border:1px solid var(--amber-dim);color:var(--amber);margin-left:5px;vertical-align:middle;}
   .right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
   .time{font-size:11px;color:var(--ink);font-variant-numeric:tabular-nums;opacity:.75;}
@@ -758,7 +772,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.020";
+const VERSION="2026.07.17.021";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -997,19 +1011,23 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 function attr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;");}
 
 /* ============ row rendering ============ */
-function rowHTML(e,tagOverride){
+function rowHTML(e,tagOverride,expandable){
   const live=onAir(e),isRef=e.src==="ref",isMine=e.src==="mine";
-  const tag=tagOverride||(isRef?'<span class="tag ref">REF</span>':live?'<span class="tag live">ON AIR</span>':'<span class="tag">'+esc(e.time.slice(0,4))+'</span>');
+  const isNet=expandable&&e.src==="net";
+  const id=isNet?dirNetId(e):"",exp=isNet&&netOpen.has(id);
+  const tag=tagOverride||(isRef?'<span class="tag ref">REF</span>':live?'<span class="tag live"><i class="dot"></i>ON AIR</span>':'<span class="tag">'+esc(e.time.slice(0,4))+'</span>');
   const md=modeOf(e),badge=md?'<span class="badge">'+md+'</span>':'';
   const meta=[langName(e.lang)?'<span class="lang">'+esc(langName(e.lang))+'</span>':'',tgtName(e.target),e.itu,e.notes].filter(Boolean).join(" · ");
   const k=keyOf(e),fav=favSet.has(k)?" on":"";
   const da="data-f=\""+attr(e.freq)+"\" data-st=\""+attr(e.station)+"\" data-tm=\""+attr(e.time)+"\" data-lg=\""+attr(e.lang)+"\" data-tg=\""+attr(e.target)+"\" data-it=\""+attr(e.itu)+"\" data-md=\""+attr(md)+"\"";
-  return '<div class="row'+(live&&!isRef?' now':'')+(isMine?' mine':'')+'">'+
+  const cls='row'+(live&&!isRef?' now':'')+(isMine?' mine':'')+(isNet?' netrow'+(exp?' exp':''):'');
+  const rowAttrs=isNet?(' data-act="netx" data-nid="'+attr(id)+'" role="button" tabindex="0" aria-expanded="'+(exp?"true":"false")+'"'):'';
+  return '<div class="'+cls+'"'+rowAttrs+'>'+
     '<div class="freq">'+fmtFreq(e.freq)+'<span class="u">'+freqUnit(e.freq)+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(e.station||"(unknown)")+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
     '<div class="right">'+tag+'<span class="time">'+esc(e.time)+(e.days?' '+esc(e.days):'')+'</span>'+
       '<span class="acts"><span class="act fav'+fav+'" data-act="fav" role="button" tabindex="0" aria-label="Toggle favorite" aria-pressed="'+(fav?"true":"false")+'" '+da+'>★</span></span>'+
-    '</div></div>';
+    '</div>'+(isNet?'<span class="chev">›</span>':'')+'</div>'+(exp?dirNetPanel(e):'');
 }
 function renderRows(elId,list,countId,label){
   const el=document.getElementById(elId);
@@ -1151,6 +1169,53 @@ function renderMine(){
 const NETS_SOURCE="https://www.netlogger.org/";
 let NETS=loadJSON(K.nets,{list:[],ts:0});
 let netsFetching=false;
+const netOpen=new Set();   // ids of expanded net rows (kept across re-renders)
+const liveNetId=n=>"L|"+n.freq+"|"+(n.name||"");
+const dirNetId=e=>"D|"+e.freq+"|"+(e.station||"");
+// running time from a net's HH:MM start (UTC), midnight-safe
+function netDurStr(n){
+  const m=/(\d{1,2}):(\d{2})/.exec(n.start||"");
+  if(!m)return n.dur||"";
+  const now=new Date();let mins=(now.getUTCHours()*60+now.getUTCMinutes())-(+m[1]*60+ +m[2]);
+  if(mins<0)mins+=1440;
+  const h=Math.floor(mins/60),mm=mins%60;
+  return h?(h+"h "+mm+"m"):(mm+"m");
+}
+function netxRows(rows){
+  return '<div class="netx-grid">'+rows.filter(r=>r[1]!==""&&r[1]!=null)
+    .map(r=>'<div><span class="k">'+r[0]+'</span><span class="v'+(r[2]?' hi':'')+'">'+esc(String(r[1]))+'</span></div>').join("")+'</div>';
+}
+// expansion panel for a live (in-session) net
+function liveNetPanel(n){
+  const dur=netDurStr(n);
+  const rows=[
+    ["Frequency",fmtFreq(n.freq)+" "+freqUnit(n.freq)],
+    ["Band",n.band||""],
+    ["Mode",n.mode||""],
+    ["Net control",n.ncs||""],
+    ["Started",netsStartStr(n.start)],
+    ["Running",dur],
+    ["Server",n.server||""],
+    ["Checked in",n.subs?(n.subs+" station"+(n.subs===1?"":"s")):"",true]
+  ];
+  const note=(n.subs?('<b>'+n.subs+'</b> station'+(n.subs===1?"":"s")+' checked in — '):"")+
+    "the live roster of callsigns isn't part of the offline feed. "+
+    '<a href="'+esc(NETS_SOURCE)+'" target="_blank" rel="noopener">Open roster on NetLogger ↗</a>';
+  return '<div class="netx">'+netxRows(rows)+'<div class="netx-note">'+note+'</div></div>';
+}
+// expansion panel for a built-in scheduled (directory) net
+function dirNetPanel(e){
+  const win=e.time&&e.time.length>=9?(e.time.slice(0,4)+"–"+e.time.slice(5,9)+"Z"):(e.time||"");
+  const rows=[
+    ["Frequency",fmtFreq(e.freq)+" "+freqUnit(e.freq)],
+    ["Mode",modeOf(e)||""],
+    ["Schedule",win],
+    ["Coverage",tgtName(e.target)||""],
+    ["Status",onAir(e)?"On air now":"Not in session",onAir(e)]
+  ];
+  const note=e.notes?('<div class="netx-note">'+esc(e.notes)+'</div>'):"";
+  return '<div class="netx">'+netxRows(rows)+note+'</div>';
+}
 function netFreqKhz(v){
   const n=parseFloat(String(v).replace(/[^\d.]/g,""));
   if(!isFinite(n))return NaN;
@@ -1217,7 +1282,8 @@ function parseNetsHomepage(text){
     if(!name||!isFinite(freq))continue;
     const sm=/\d{4}-\d{2}-\d{2} (\d{2}:\d{2})/.exec(c[5]||"");
     const ncs=((c[8]||"").split(/[\s-]/)[0]||"").toUpperCase();
-    out.push({freq,name,mode:(c[3]||"").toUpperCase(),band:c[2]||"",ncs,start:sm?sm[1]:""});
+    const subs=parseInt((c[7]||"").replace(/\D/g,""),10)||0;
+    out.push({freq,name,mode:(c[3]||"").toUpperCase(),band:c[2]||"",ncs,start:sm?sm[1]:"",server:c[4]||"",dur:c[6]||"",subs});
   }
   return out;                               // [] = valid page, zero nets
 }
@@ -1299,10 +1365,12 @@ function renderNets(){
     html=list.map(n=>{
       const badge=n.mode?'<span class="badge">'+esc(n.mode)+'</span>':'';
       const meta=[n.ncs?'<span class="lang">NCS '+esc(n.ncs)+'</span>':'',n.band,netsStartStr(n.start)?("since "+netsStartStr(n.start)):""].filter(Boolean).join(" · ");
-      return '<div class="row now">'+
+      const id=liveNetId(n),exp=netOpen.has(id);
+      return '<div class="row now netrow'+(exp?' exp':'')+'" data-act="netx" data-nid="'+attr(id)+'" role="button" tabindex="0" aria-expanded="'+(exp?"true":"false")+'">'+
         '<div class="freq">'+fmtFreq(n.freq)+'<span class="u">'+freqUnit(n.freq)+'</span></div>'+
         '<div class="mid"><div class="st">'+esc(n.name)+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
-        '<div class="right"><span class="tag live"><i class="dot"></i>LIVE</span></div></div>';
+        '<div class="right"><span class="tag live"><i class="dot"></i>LIVE</span></div>'+
+        '<span class="chev">›</span></div>'+(exp?liveNetPanel(n):"");
     }).join("");
   } else {
     cnt.innerHTML="";
@@ -1320,13 +1388,13 @@ function renderNets(){
   soon.sort((a,b)=>a[0]-b[0]);
   if(soon.length){
     html+='<div class="count" style="margin-top:16px"><b>'+soon.length+'</b> starting within the hour</div>'+
-      soon.map(([m,e])=>rowHTML(e,'<span class="tag soon">'+(m<=1?"ANY MIN":"IN "+m+" MIN")+'</span>')).join("");
+      soon.map(([m,e])=>rowHTML(e,'<span class="tag soon">'+(m<=1?"ANY MIN":"IN "+m+" MIN")+'</span>',true)).join("");
   }
   // built-in directory of major scheduled nets (offline, on-air aware, star-able)
   let dir=DATA.filter(e=>e.src==="net"&&!soonSet.has(e));
   if(f)dir=dir.filter(e=>blob(e).includes(f));
   dir.sort((a,b)=>(onAir(b)-onAir(a))||a.freq-b.freq);
-  if(dir.length)html+='<div class="count" style="margin-top:16px">Major scheduled HF nets · built-in</div>'+dir.map(e=>rowHTML(e)).join("");
+  if(dir.length)html+='<div class="count" style="margin-top:16px">Major scheduled HF nets · built-in</div>'+dir.map(e=>rowHTML(e,null,true)).join("");
   el.innerHTML=html;
 }
 function netsMsg(t){document.getElementById("netsMsg").textContent=t;}
@@ -1770,6 +1838,7 @@ function handleAct(t){
     toggleFav(o);
   } else if(a==="heard"){toggleHeard(t.dataset.k);}
   else if(a==="delmine"){delMine(+t.dataset.i);}
+  else if(a==="netx"){const id=t.dataset.nid;netOpen.has(id)?netOpen.delete(id):netOpen.add(id);renderNets();}
 }
 document.addEventListener("click",ev=>{
   const t=ev.target.closest("[data-act]");if(t)handleAct(t);

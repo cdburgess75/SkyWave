@@ -43,7 +43,9 @@ export function parseHomepage(html) {
     if (!name || !isFinite(freq)) continue;
     const start = /\d{4}-\d{2}-\d{2} (\d{2}:\d{2})/.exec(cells[5] || "")?.[1] || "";
     const ncs = ((cells[8] || "").split(/[\s-]/)[0] || "").toUpperCase();
-    out.push({ name, freq, mode: (cells[3] || "").toUpperCase(), band: cells[2] || "", ncs, start });
+    const subs = parseInt((cells[7] || "").replace(/\D/g, ""), 10) || 0;
+    out.push({ name, freq, mode: (cells[3] || "").toUpperCase(), band: cells[2] || "", ncs, start,
+      server: cells[4] || "", dur: cells[6] || "", subs });
   }
   return out;
 }
