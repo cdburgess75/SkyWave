@@ -2,7 +2,7 @@
   "id": "./",
   "name": "SkyWave",
   "short_name": "SkyWave",
-  "description": "Shortwave band guide for offline listening — EiBi schedule, ham nets, grayline, and propagation.",
+  "description": "World band radio guide — longwave, mediumwave & shortwave schedules (EiBi), live HF ham nets with check-ins, grayline, and propagation. Offline-first.",
   "lang": "en",
   "start_url": "./",
   "scope": "./",

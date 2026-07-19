@@ -7,14 +7,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SkyWave">
 <meta name="theme-color" content="#0b1626">
-<meta name="description" content="A TV-Guide for shortwave — browse what's on the air right now, search by language or frequency, and plan grayline and propagation windows. Offline-first, no account.">
-<meta property="og:title" content="SKYWAVE — Shortwave Band Guide">
-<meta property="og:description" content="Browse what's on the air now, search by frequency, and plan propagation. Offline-first PWA, no dependencies.">
+<meta name="description" content="A TV-Guide for the radio bands — see what is on the air right now across longwave, mediumwave, and shortwave (9,000+ broadcasts), plus live HF ham nets with who is checked in, grayline, and propagation. Offline-first PWA, no account.">
+<meta property="og:title" content="SKYWAVE — World Band Radio & Ham Nets">
+<meta property="og:description" content="What is on the air now across LW/MW/SW, live amateur-radio HF nets with check-in rosters, and propagation. Offline-first PWA, no dependencies.">
 <meta property="og:type" content="website">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg?v=9">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=9">
-<title>SKYWAVE · Shortwave Band Guide</title>
+<title>SKYWAVE · World Band Radio + Ham Nets</title>
 <style>
   :root{
     /* LED dark — pure black + neon palette (unified with PileUp) */
@@ -406,7 +406,7 @@
         <h1>SKYWAVE</h1>
         <span class="hdrver" id="hdrVer"></span>
       </div>
-      <span class="sub">Shortwave Band Guide</span>
+      <span class="sub">World Band + Ham Nets</span>
       <div class="hdr-controls">
         <button class="tgl-btn theme-btn" id="themeToggle" title="Switch to light theme">☾&#xFE0E;</button>
         <button class="kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode">⛶ Kiosk</button>
@@ -779,7 +779,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.024";
+const VERSION="2026.07.17.025";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */

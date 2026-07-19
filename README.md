@@ -4,7 +4,7 @@
 
 # SKYWAVE
 
-**A "TV Guide for shortwave." One HTML file that tells you what's on the air right now — broadcast stations, ham nets, and propagation — and keeps working with no signal bars and no build step.**
+**A "TV Guide for the radio bands." One HTML file that tells you what's on the air right now — 9,000+ broadcasts across longwave, mediumwave & shortwave, plus live amateur-radio HF nets with who's checked in, and propagation — and keeps working with no signal bars and no build step.**
 
 [![Version](https://img.shields.io/badge/version-2026.07.17-f0923c)](CHANGELOG.md)
 [![PWA](https://img.shields.io/badge/PWA-offline--first-7de87a)](#getting-started)
@@ -14,11 +14,11 @@
 
 ### → **[Live app: cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)** ←
 
-<img src="docs/screenshot-desktop.png" width="900" alt="SKYWAVE on desktop — Nets view, sidebar navigation, grayline and band-condition rail">
+<img src="docs/screenshot-desktop.png" width="900" alt="SKYWAVE on desktop — live ham nets in session and scheduled HF nets, sidebar navigation">
 
 <br><br>
 
-<img src="docs/screenshot-mobile.png" width="330" alt="Ham nets — the default view, mobile">&nbsp;&nbsp;<img src="docs/screenshot-onair.png" width="330" alt="On Air Now — mobile">
+<img src="docs/screenshot-mobile.png" width="330" alt="Ham nets — a live net expanded to show who's checked in (callsign, name, grid, net control)">&nbsp;&nbsp;<img src="docs/screenshot-onair.png" width="330" alt="On Air Now — mediumwave and shortwave broadcasts transmitting this minute">
 
 </div>
 
@@ -26,13 +26,13 @@
 
 ## Overview
 
-Shortwave listening has a discovery problem: thousands of broadcasts rotate through the day on schedules buried in a 12,000-row CSV, and the usual answer is desktop software or a stack of printed guides. SKYWAVE turns that schedule into a live, filterable "what's on right now" view that runs on the device already in your pocket — including in the field, with no connectivity.
+Radio listening has a discovery problem: thousands of broadcasts rotate through the day on schedules buried in a 9,000-row CSV, and the usual answer is desktop software or a stack of printed guides. SKYWAVE turns that schedule into a live, filterable "what's on right now" view — the whole broadcast spectrum, **longwave through shortwave** — and pairs it with **live amateur-radio HF nets**, all on the device already in your pocket, including in the field with no connectivity.
 
 **Problems it solves**
 
-- *"What can I hear at this hour?"* — the On Air view filters the full EiBi schedule down to broadcasts transmitting this minute, day-of-week aware, sorted by frequency.
+- *"What can I hear at this hour?"* — the On Air view filters the full EiBi schedule (longwave, mediumwave & shortwave, ~16 kHz to 26 MHz) down to broadcasts transmitting this minute, day-of-week aware, sorted by frequency.
 - *"Who is that on 9.420?"* — type a dial frequency, get every scheduled match within ± tolerance, on-air entries first.
-- *"Is anyone running a net?"* — live ham nets in session via NetLogger, plus the major scheduled HF nets built in.
+- *"Is anyone running a net?"* — **live ham HF nets in session**, and you can tap one to see exactly who's checked in (callsign, name, location, grid, net control) — plus the major scheduled HF nets built in.
 - *"Which band should I try?"* — grayline timing and band-by-band advice computed on-device from your coordinates, plus live K-index.
 
 **Why it stands out**
@@ -49,9 +49,9 @@ Shortwave listening has a discovery problem: thousands of broadcasts rotate thro
 
 | Feature | Detail |
 |---------|--------|
-| 📻 On Air Now | Live view of the EiBi schedule; chips for favorites/language, band + free-text filters, 30 s auto-refresh |
-| 🔍 Search / By Freq | Full-text search across 12k+ entries; dial-frequency identification with ±2/5/10 kHz tolerance |
-| 📡 Nets *(default view)* | Live nets in session (NetLogger API) + 15 built-in national & Southeast-US HF nets (traffic nets for LA/MS/AL/GA/TN/SC/FL, SouthCARS, Waterway, Maritime Mobile, Hurricane Watch…) — offline and on-air aware |
+| 📻 On Air Now | Every broadcast transmitting **this minute** across longwave, mediumwave & shortwave (the full 9,000+ entry EiBi schedule, ~16 kHz–26 MHz); chips for favorites/language, band + free-text filters, 30 s auto-refresh |
+| 🔍 Search / By Freq | Full-text search across 9,000+ entries; dial-frequency identification with ±2/5/10 kHz tolerance |
+| 📡 Live HF Ham Nets *(default view)* | Amateur-radio nets **in session right now** — tap any to expand a live **check-in roster** (callsign, name, city/state, grid, net control marked NC) — plus 15 built-in national & Southeast-US HF nets (traffic nets for LA/MS/AL/GA/TN/SC/FL, SouthCARS, Waterway, Maritime Mobile, Hurricane Watch…), offline and on-air aware. Roster and net list are mirrored from NetLogger through this project's own GitHub Action — the app never calls a third party directly |
 | ★ Favorites | Star any listing; ✓ "heard today" strikethrough that clears at 0000 UTC |
 | 📝 My Frequencies | Your own nets/channels merged into every view |
 | 🌅 Grayline planner | Sunrise/sunset/solar-noon + band advice from an on-device solar algorithm — no network |
@@ -156,7 +156,7 @@ Operating-side features (QSO logging, POTA/SOTA spots, ADIF export) are out of s
 | Source | Used for | Terms |
 |--------|----------|-------|
 | [EiBi](http://www.eibispace.de) © Eike Bierwirth | Broadcast schedule | Free to copy & distribute, attribute EiBi |
-| [NetLogger](https://www.netlogger.org) | Live nets in session | Fetched only on demand |
+| [NetLogger](https://www.netlogger.org) | Live ham nets in session + check-in rosters | Mirrored server-side by this repo's own GitHub Action |
 | [NOAA SWPC](https://www.swpc.noaa.gov) | Planetary K-index | Public API |
 | [HamQSL](https://www.hamqsl.com) N0NBH/K4HG | Solar conditions | Linked & credited |
 

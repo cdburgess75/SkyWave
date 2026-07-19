@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.025] — 2026-07-17
+
+### Changed
+- **Accurate positioning: it's more than shortwave.** Verified against the live EiBi schedule that SkyWave covers **9,246 broadcasts from ~16 kHz to 26 MHz** — 51 longwave/VLF, 719 mediumwave (AM band), and 8,476 shortwave. Header tagline, `<title>`, social/meta descriptions, and the manifest now read **"World Band + Ham Nets"** (longwave · mediumwave · shortwave + live amateur-radio HF nets) instead of "Shortwave Band Guide."
+- **README refreshed** with new navy-theme screenshots (live ham nets with an expanded check-in roster; On Air showing mediumwave + shortwave), rewritten overview and feature copy, and prominent billing for the live HF ham nets and check-in rosters.
+
+---
+
 ## [2026.07.17.024] — 2026-07-17
 
 ### Changed
