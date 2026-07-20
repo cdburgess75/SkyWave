@@ -1,24 +1,21 @@
 <div align="center">
 
-<img src="icons/icon.svg" width="88" alt="SKYWAVE icon">
+<img src="icons/icon.svg" width="96" alt="SkyWave icon">
 
-# SKYWAVE
+# SkyWave
 
-**A "TV Guide for the radio bands." One HTML file that tells you what's on the air right now — 9,000+ broadcasts across longwave, mediumwave & shortwave, plus live amateur-radio HF nets with who's checked in, and propagation — and keeps working with no signal bars and no build step.**
+**A "TV Guide" for the radio bands — what's on the air right now across longwave, mediumwave & shortwave, plus live amateur-radio HF nets with who's checked in. One HTML file, works offline.**
 
-[![Version](https://img.shields.io/badge/version-2026.07.17-f0923c)](CHANGELOG.md)
-[![PWA](https://img.shields.io/badge/PWA-offline--first-7de87a)](#getting-started)
-[![Dependencies](https://img.shields.io/badge/runtime%20dependencies-0-7dd5f5)](#architecture)
-[![App](https://img.shields.io/badge/app-single%20HTML%20file-f0923c)](index.html)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Live app](https://img.shields.io/badge/live%20app-open-f0a83c?style=flat)](https://cdburgess75.github.io/SkyWave/)
+[![Version](https://img.shields.io/badge/version-2026.07.17-f0a83c)](CHANGELOG.md)
+[![PWA](https://img.shields.io/badge/PWA-offline--first-4be08a)](#install-it-as-an-app)
+[![Dependencies](https://img.shields.io/badge/runtime%20dependencies-0-38cfff)](#how-it-works)
+[![Single file](https://img.shields.io/badge/app-single%20HTML%20file-f0a83c)](index.html)
+[![License: MIT](https://img.shields.io/badge/license-MIT-4be08a)](LICENSE)
 
-### → **[Live app: cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)** ←
+### → **[Open the live app](https://cdburgess75.github.io/SkyWave/)** ←
 
-<img src="docs/screenshot-desktop.png" width="900" alt="SKYWAVE on desktop — live ham nets in session and scheduled HF nets, sidebar navigation">
-
-<br><br>
-
-<img src="docs/screenshot-mobile.png" width="330" alt="Ham nets — a live net expanded to show who's checked in (callsign, name, grid, net control)">&nbsp;&nbsp;<img src="docs/screenshot-onair.png" width="330" alt="On Air Now — mediumwave and shortwave broadcasts transmitting this minute">
+<img src="docs/images/desktop.png" width="900" alt="SkyWave on desktop — live ham nets in session, scheduled HF nets, and a propagation/grayline rail">
 
 </div>
 
@@ -26,142 +23,122 @@
 
 ## Overview
 
-Radio listening has a discovery problem: thousands of broadcasts rotate through the day on schedules buried in a 9,000-row CSV, and the usual answer is desktop software or a stack of printed guides. SKYWAVE turns that schedule into a live, filterable "what's on right now" view — the whole broadcast spectrum, **longwave through shortwave** — and pairs it with **live amateur-radio HF nets**, all on the device already in your pocket, including in the field with no connectivity.
+Radio listening has a discovery problem. Thousands of broadcasts move through the bands over the course of a day on schedules buried in a 9,000-row CSV, and the amateur-radio nets that come and go are scattered across a live logging site. The usual answer is desktop software or a stack of printed guides.
 
-**Problems it solves**
+SkyWave turns all of that into a single "what's on right now" view that runs on the device already in your pocket — including in the field, with no signal. It covers the **entire broadcast spectrum** (longwave, mediumwave, and shortwave — about 16 kHz to 26 MHz), shows the **amateur-radio HF nets in session** with their live check-in rosters, and computes **grayline and band conditions** on-device from your coordinates.
 
-- *"What can I hear at this hour?"* — the On Air view filters the full EiBi schedule (longwave, mediumwave & shortwave, ~16 kHz to 26 MHz) down to broadcasts transmitting this minute, day-of-week aware, sorted by frequency.
-- *"Who is that on 9.420?"* — type a dial frequency, get every scheduled match within ± tolerance, on-air entries first.
-- *"Is anyone running a net?"* — **live ham HF nets in session**, and you can tap one to see exactly who's checked in (callsign, name, location, grid, net control) — plus the major scheduled HF nets built in.
-- *"Which band should I try?"* — grayline timing and band-by-band advice computed on-device from your coordinates, plus live K-index.
+It's one static HTML file. No account, no tracking, no server, no build step.
 
-**Why it stands out**
+## Features
 
-| | SKYWAVE | Typical alternatives |
+- **Live HF ham nets** — amateur-radio nets in session right now, refreshed automatically. Tap any net to expand a live **check-in roster** — callsign, name, city/state, grid square, with the net control station marked **NC**. Plus a built-in directory of major national and Southeast-US HF nets (traffic nets, SouthCARS, Maritime Mobile, Hurricane Watch, and more) that stays available offline.
+- **On Air now** — every shortwave, mediumwave, and longwave broadcast transmitting *this minute*, filtered from the full EiBi schedule (9,000+ entries), day-of-week aware and sorted by frequency. Filter by favorites, language, band, or free text.
+- **Identify a signal** — heard something on the dial? Type the frequency (e.g. `9420`) and get every scheduled station near it within a ± tolerance you choose, on-air entries first.
+- **Grayline & band planner** — sunrise, sunset, solar noon, day length, and plain-language band-by-band advice, all computed on your device from your location. No network needed.
+- **Propagation** — live NOAA planetary K-index with an 8-period trend, plus quick links to solar data, VOACAP/Proppy, WebSDR receivers, and DX clusters.
+- **Field tools** — antenna calculator (dipole / vertical / loop, feet & meters), band-card export, a printable reference sheet, and a kiosk / shack-monitor mode that keeps the screen awake.
+- **Yours to keep** — star any station or net into Favorites, mark catches as "heard today," and add your own frequencies so they appear alongside everything else.
+- **Installs like an app** — add it to your home screen and it runs full-screen and offline; the schedule is cached locally and the app updates itself.
+- **Light & dark, any text size** — a neon "shack" dark theme and a clean light theme, with a built-in text-size control.
+
+## Screens
+
+| Live nets + check-in roster | On Air (LW / MW / SW) | Identify by frequency |
 |---|---|---|
-| Install | Open a URL, add to home screen | Desktop app or paper guide |
-| Offline | Everything except live feeds works in airplane mode | Usually online-only |
-| Footprint | One ~90 KB HTML file, zero runtime dependencies | Multi-megabyte apps |
-| Privacy | No account, no tracking, no server — data stays on-device | Varies |
-| Build step | None. `index.html` is the app | Bundlers, frameworks |
+| <img src="docs/images/nets-roster.png" width="260" alt="A live net expanded to show who's checked in"> | <img src="docs/images/on-air.png" width="260" alt="Mediumwave and shortwave broadcasts on the air now"> | <img src="docs/images/by-freq.png" width="260" alt="Type a dial frequency to identify a signal"> |
 
-## Key Features
+| Field tools (antenna + grayline) | Light theme |
+|---|---|
+| <img src="docs/images/tools.png" width="260" alt="Antenna calculator and grayline band planner"> | <img src="docs/images/light-mode.png" width="260" alt="SkyWave in light theme"> |
 
-| Feature | Detail |
-|---------|--------|
-| 📻 On Air Now | Every broadcast transmitting **this minute** across longwave, mediumwave & shortwave (the full 9,000+ entry EiBi schedule, ~16 kHz–26 MHz); chips for favorites/language, band + free-text filters, 30 s auto-refresh |
-| 🔍 Search / By Freq | Full-text search across 9,000+ entries; dial-frequency identification with ±2/5/10 kHz tolerance |
-| 📡 Live HF Ham Nets *(default view)* | Amateur-radio nets **in session right now** — tap any to expand a live **check-in roster** (callsign, name, city/state, grid, net control marked NC) — plus 15 built-in national & Southeast-US HF nets (traffic nets for LA/MS/AL/GA/TN/SC/FL, SouthCARS, Waterway, Maritime Mobile, Hurricane Watch…), offline and on-air aware. Roster and net list are mirrored from NetLogger through this project's own GitHub Action — the app never calls a third party directly |
-| ★ Favorites | Star any listing; ✓ "heard today" strikethrough that clears at 0000 UTC |
-| 📝 My Frequencies | Your own nets/channels merged into every view |
-| 🌅 Grayline planner | Sunrise/sunset/solar-noon + band advice from an on-device solar algorithm — no network |
-| 📶 Propagation | HamQSL solar widget, live NOAA K-index with 8-period trend |
-| 🛠 Field tools | Antenna calculator (dipole/vertical/loop), band-card export, print sheet, kiosk mode with wake-lock |
-| 🎛 UX | LED dark/light themes, font scaling, Maidenhead grid in header, first-run location wizard, UTC + local clocks |
-| 📴 PWA | Service worker + manifest; installs standalone, updates itself, EiBi schedule cached in localStorage |
+## Getting started
 
-## Architecture
+### Just use it
 
-```
-SkyWave/
-├── index.html              ← the entire application (HTML + CSS + JS, "use strict")
-├── sw.js                   ← service worker: cache-first shell, background refresh
-├── manifest.webmanifest    ← PWA install manifest
-├── icons/                  ← SVG + PNG app icons
-├── test/
-│   └── smoke.mjs           ← Node + jsdom smoke harness (3 checks)
-├── docs/
-│   ├── GUIDE.md            ← user guide: install + every tab, plain English
-│   ├── ARCHITECTURE.md     ← data pipeline, rendering model, algorithms
-│   ├── DATA_SOURCES.md     ← external API contracts (EiBi, NetLogger, NOAA, HamQSL)
-│   └── screenshot-*.png
-├── HANDOFF.md              ← full engineering handoff: conventions, storage schema, roadmap
-└── CHANGELOG.md            ← CalVer (YYYY.MM.DD) history
-```
+Open **[cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)** in any modern browser. No account, no setup.
 
-Core data flow — one array, one renderer:
+### Install it as an app
 
-```
-buildBase()  =  TIME stations + built-in nets + user frequencies      (always present)
-EIBI[]       =  parsed EiBi CSV                                       (cached / fetched)
-DATA         =  buildBase().concat(EIBI)     ← single source of truth
-```
+1. Open the live link in **Safari** (iOS) or **Chrome** (Android/desktop) — not an in-app webview, which blocks live data.
+2. **Share → Add to Home Screen** (iOS) or **⋮ → Install app** (Chrome).
+3. On first launch a short wizard asks for your location (GPS or manual) to power the grayline and grid-square features. You can skip it and set it later from the **Ref** tab.
+4. While online, tap **Ref → ⟳ Update now** once to pull the full EiBi schedule — it's stored offline from then on and refreshes itself when it gets stale.
 
-Design rules enforced throughout: no runtime dependencies, every `localStorage` access wrapped in `try/catch`, all dynamic rows use event delegation via `data-act` attributes, all network features cache their last result and render an explicit offline state. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+New here? The **[full User Guide](docs/GUIDE.md)** walks through every tab in plain English.
 
-## Getting Started
-
-### Prerequisites
-
-- **Users:** any modern browser. That's it — no account, no API keys.
-- **Developers:** Node ≥ 18 (only for the test harness) and any static file server.
-
-### Install as an app (recommended)
-
-1. Open **[cdburgess75.github.io/SkyWave](https://cdburgess75.github.io/SkyWave/)** in Safari (iOS) or Chrome (Android/desktop) — not an in-app webview, which blocks `fetch`
-2. **Share → Add to Home Screen** (iOS) or **Install app** (Chrome)
-3. Launch from the home screen; on first run a 3-step wizard asks for your location (GPS or manual) to power grayline and grid-square features
-4. Tap **⟳ Update now** on the Ref tab once while online to pull the full EiBi schedule — it's stored offline from then on
-
-### Run locally
+### Run it locally
 
 ```bash
 git clone https://github.com/cdburgess75/SkyWave.git
 cd SkyWave
-python3 -m http.server 8000    # any static server works
+python3 -m http.server 8000   # any static file server works
 # open http://localhost:8000
 ```
 
-Opening `index.html` directly from disk also works for everything except the service worker.
+Opening `index.html` straight from disk works for everything except the service worker.
 
-## Usage
+## How it works
 
-> **New here?** The **[full User Guide](docs/GUIDE.md)** walks through install and
-> every tab in plain English. The table below is the quick reference.
+SkyWave is a single `index.html` — HTML, CSS, and vanilla JavaScript (`"use strict"`), with a service worker for offline support. There is **no framework and no build step**; the file you open is the app.
 
-| I want to… | Do this |
-|------------|---------|
-| See what's broadcasting now | **Listen → On Air** — filter by band, language, or text |
-| Identify a signal on the dial | **Listen → By Freq** — type `9420` or `9.420` |
-| Find active ham nets | Open the app — **Nets is the default view**: live list on top, scheduled majors below |
-| Keep a station | Tap **★** on any row; find it under **Saved** |
-| Mark a catch | Tap **✓** on a favorite — struck through until 0000 UTC |
-| Plan a band opening | **Tools → Grayline** — band advice for your location |
-| Cut an antenna | **Tools → Antenna calculator** — enter MHz or kHz |
-| Update the schedule | **Ref → ⟳ Update now** (auto-updates on launch when stale) |
+```
+SkyWave/
+├── index.html              ← the entire application (HTML + CSS + JS)
+├── sw.js                   ← service worker: cache-first shell, self-update
+├── manifest.webmanifest    ← PWA install manifest
+├── icons/                  ← SVG + PNG app icons
+├── scripts/
+│   └── fetch-nets.mjs      ← builds the live-nets + roster mirror (see below)
+├── .github/workflows/      ← CI (tests) + the nets-mirror and Pages deploys
+├── test/                   ← Node smoke test + nets-parser unit tests
+└── docs/                   ← user guide, architecture notes, data sources, images
+```
 
-### Run the test suite
+**Data flow.** One array is the single source of truth: built-in time stations and net directory + your own frequencies + the parsed EiBi schedule. Every view is a filter over that array, rendered through event delegation.
+
+**Staying dependency-free.** The app never calls a third-party API directly. Live ham-net data (including the check-in rosters) is fetched **server-side by a scheduled GitHub Action** in this repo, which mirrors it to a data branch the app reads over CORS-open `raw.githubusercontent.com`. Everything else — grayline, band advice, antenna math — is computed on-device.
+
+Design rules held throughout: no runtime dependencies, every `localStorage` access wrapped in `try/catch`, all rendered data escaped, and every network feature caches its last result and renders an explicit offline state. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
+
+### Tests
 
 ```bash
 npm install -D jsdom   # one-time
-node test/smoke.mjs
+node test/smoke.mjs    # script syntax, id coverage, full jsdom boot
+node test/nets-parser.mjs
 ```
 
-Three checks must pass: script syntax, `getElementById` ↔ HTML id coverage, and a full jsdom boot.
+## Tech stack
+
+- **Vanilla JavaScript** (ES modules for tooling), HTML, CSS — no runtime dependencies
+- **PWA**: service worker (cache-first) + web app manifest
+- **GitHub Actions** for CI and as a server-side data mirror (keeps the app third-party-free)
+- **GitHub Pages** for hosting
+- **Node + jsdom** for the test harness
+
+## Data sources & credits
+
+| Source | Used for | Terms |
+|--------|----------|-------|
+| [EiBi](http://www.eibispace.de) © Eike Bierwirth | Longwave / mediumwave / shortwave broadcast schedule | Free to copy & distribute, attribute EiBi |
+| [NetLogger](https://www.netlogger.org) | Live ham nets in session + check-in rosters | Mirrored server-side by this repo's GitHub Action |
+| [NOAA SWPC](https://www.swpc.noaa.gov) | Planetary K-index | Public API |
+| [HamQSL](https://www.hamqsl.com) N0NBH/K4HG | Solar conditions | Linked & credited |
 
 ## Contributing
 
 Small, focused PRs are welcome. Ground rules (full detail in [`HANDOFF.md`](HANDOFF.md)):
 
 - **Keep it one file.** No frameworks, no build step, no runtime dependencies.
-- **Offline-first is the contract.** A network feature must cache its last result and render a sensible offline/failed state.
-- **Escape everything** rendered from data (`esc()` for text, `attr()` for attributes).
-- **Run `node test/smoke.mjs`** before pushing — all three checks green.
-- Version bumps are CalVer (`YYYY.MM.DD`) in `index.html` **and** `sw.js` cache name, with a [`CHANGELOG.md`](CHANGELOG.md) entry.
+- **Offline-first is the contract.** A network feature must cache its last result and render a sensible offline state.
+- **Escape everything** rendered from data.
+- **Run the tests** before pushing (`node test/smoke.mjs`).
+- Version bumps are CalVer (`YYYY.MM.DD`) in `index.html` **and** the `sw.js` cache name, with a [`CHANGELOG.md`](CHANGELOG.md) entry.
 
-Operating-side features (QSO logging, POTA/SOTA spots, ADIF export) are out of scope — SKYWAVE is a listening guide, not a logger.
-
-## Data Sources & Credits
-
-| Source | Used for | Terms |
-|--------|----------|-------|
-| [EiBi](http://www.eibispace.de) © Eike Bierwirth | Broadcast schedule | Free to copy & distribute, attribute EiBi |
-| [NetLogger](https://www.netlogger.org) | Live ham nets in session + check-in rosters | Mirrored server-side by this repo's own GitHub Action |
-| [NOAA SWPC](https://www.swpc.noaa.gov) | Planetary K-index | Public API |
-| [HamQSL](https://www.hamqsl.com) N0NBH/K4HG | Solar conditions | Linked & credited |
+SkyWave is a listening guide, not a logger — operating-side features (QSO logging, POTA/SOTA spotting, ADIF) are out of scope.
 
 ## License
 
-Code is [MIT](LICENSE). Schedule data remains © EiBi under its own terms — do not relicense the data.
+Code is [MIT](LICENSE). Schedule data remains © EiBi under its own terms — please don't relicense the data.
 
-<div align="center"><sub>Built for offline field use · All times UTC · 73</sub></div>
+<div align="center"><sub>Built for offline field use · all times UTC · 73</sub></div>
