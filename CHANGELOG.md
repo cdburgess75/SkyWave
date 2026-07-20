@@ -2,6 +2,15 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.026] — 2026-07-17
+
+### Changed
+- **Cleaner header controls + a text-size button.** The header's top-right controls are now a unified set of rounded pill buttons: a new **A A** text-size toggle (cycles Normal → Large → Larger, highlights when enlarged), the light/dark toggle, and Kiosk — much easier to tell apart.
+- **Themed sun/moon icons.** The theme toggle is now a crisp SVG: an **orange sun** in light mode and a **blue moon** in dark mode.
+- **Bigger bottom-nav labels.** The Listen / Saved / Tools / More labels went from 7.5px to 10.5px (icons 16→19px) so they're comfortably readable.
+
+---
+
 ## [2026.07.17.025] — 2026-07-17
 
 ### Changed

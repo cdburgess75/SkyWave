@@ -74,14 +74,21 @@
   .brandcol{display:flex;flex-direction:column;gap:3px;}
   .brandcol h1{line-height:1;}
   .brand .sub{font-size:9.5px;letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;}
-  .hdr-controls{display:flex;gap:5px;align-items:center;margin-left:auto;flex-shrink:0;}
-  .tgl-btn{background:none;border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
-    font-size:9px;letter-spacing:.08em;padding:4px 9px;border-radius:5px;cursor:pointer;
-    transition:.15s;white-space:nowrap;}
-  .tgl-btn:hover{color:var(--ink);}
-  .tgl-btn.on{color:var(--amber);border-color:var(--amber-dim);}
-  .theme-btn{font-size:15px;line-height:1;padding:4px 11px;color:var(--ink);border-radius:8px;}
-  .theme-btn:hover{color:var(--amber);border-color:var(--amber-dim);}
+  .hdr-controls{display:flex;gap:7px;align-items:center;margin-left:auto;flex-shrink:0;}
+  /* unified pill buttons: text-size, theme, kiosk */
+  .hdrbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);
+    height:34px;min-width:36px;padding:0 10px;border-radius:10px;cursor:pointer;line-height:1;
+    display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    transition:border-color .15s,color .15s,background .15s;}
+  .hdrbtn:hover{border-color:var(--amber-dim);background:var(--panel);}
+  .hdrbtn.on{border-color:var(--amber);color:var(--amber);}
+  .hdrbtn svg{display:block;}
+  .font-btn{color:var(--ink-dim);}
+  .font-btn:hover,.font-btn.on{color:var(--amber);}
+  .font-btn .fa-s{font-size:11px;font-weight:700;}
+  .font-btn .fa-b{font-size:16px;font-weight:700;margin-left:1px;}
+  .theme-btn{padding:0 9px;}
+  .kiosk-lbl{font-size:11px;letter-spacing:.05em;}
   .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;flex-wrap:wrap;}
   .clock{display:flex;flex-direction:column;gap:1px;}
   .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
@@ -94,10 +101,10 @@
   .bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:stretch;
     width:100%;max-width:760px;background:var(--nav-bg);border-top:1px solid var(--line);
     padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 14px rgba(0,0,0,.45);}
-  .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-    background:none;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:7.5px;
-    letter-spacing:.1em;padding:10px 4px 8px;cursor:pointer;text-transform:uppercase;transition:.15s;min-width:0;}
-  .bnav-btn .bicon{font-size:16px;line-height:1;}
+  .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    background:none;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.06em;padding:9px 4px 7px;cursor:pointer;text-transform:uppercase;transition:.15s;min-width:0;}
+  .bnav-btn .bicon{font-size:19px;line-height:1;}
   .bnav-btn.on{color:var(--amber);}
   .bnav-btn.on .bicon{opacity:.9;}
   .morescrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);
@@ -335,11 +342,8 @@
   }
 
   /* kiosk button */
-  .kiosk-btn{background:none;border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
-    font-size:9px;letter-spacing:.08em;padding:4px 8px;border-radius:5px;cursor:pointer;margin-left:auto;
-    white-space:nowrap;transition:.15s;}
-  .kiosk-btn:hover{color:var(--amber);border-color:var(--amber-dim);}
-  .kiosk-btn.on{color:var(--amber);border-color:var(--amber);}
+  .kiosk-btn{white-space:nowrap;}
+  .kiosk-btn.on{color:var(--amber);border-color:var(--amber);background:var(--panel);}
 
   /* display settings card */
   .scale-btns{display:flex;gap:5px;margin-bottom:10px;}
@@ -408,8 +412,9 @@
       </div>
       <span class="sub">World Band + Ham Nets</span>
       <div class="hdr-controls">
-        <button class="tgl-btn theme-btn" id="themeToggle" title="Switch to light theme">☾&#xFE0E;</button>
-        <button class="kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode">⛶ Kiosk</button>
+        <button class="hdrbtn font-btn" id="fontToggle" title="Text size" aria-label="Change text size"><span class="fa-s">A</span><span class="fa-b">A</span></button>
+        <button class="hdrbtn theme-btn" id="themeToggle" title="Switch to light theme" aria-label="Switch to light theme"></button>
+        <button class="hdrbtn kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode"><span class="kiosk-ico">⛶</span><span class="kiosk-lbl">Kiosk</span></button>
       </div>
     </div>
     <div class="ident"><span id="hdrGrid" class="ident-grid"></span></div>
@@ -779,7 +784,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.025";
+const VERSION="2026.07.17.026";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1471,7 +1476,10 @@ function applyTheme(t){
   const tc=document.querySelector('meta[name="theme-color"]');
   if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#0b1626");
   const b=document.getElementById("themeToggle");
-  if(b){b.textContent=t==="light"?"☀︎":"☾︎";
+  if(b){
+    const sun='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f5a623" stroke="none"/><line x1="12" y1="2.6" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.4"/><line x1="4.3" y1="4.3" x2="6" y2="6"/><line x1="18" y1="18" x2="19.7" y2="19.7"/><line x1="2.6" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.4" y2="12"/><line x1="4.3" y1="19.7" x2="6" y2="18"/><line x1="18" y1="6" x2="19.7" y2="4.3"/></svg>';
+    const moon='<svg viewBox="0 0 24 24" width="18" height="18"><path fill="#5aa0f0" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.91-.1-1.35A5.5 5.5 0 0 1 13.35 3.1 9.05 9.05 0 0 0 12 3z"/></svg>';
+    b.innerHTML=t==="light"?sun:moon;
     b.title=t==="light"?"Switch to dark theme":"Switch to light theme";
     b.setAttribute("aria-label",b.title);}
 }
@@ -1481,6 +1489,15 @@ function applyZoom(z){
   else if(CSS.supports("zoom","1")){document.body.style.zoom=String(z);document.body.style.transform="";}
   else{document.body.style.zoom="";document.body.style.transform="scale("+z+")";document.body.style.transformOrigin="0 0";}
   document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.classList.toggle("on",b.dataset.zoomBtn===String(z)));
+  const fb=document.getElementById("fontToggle");
+  if(fb){fb.classList.toggle("on",z>1);fb.title="Text size: "+(z===1?"Normal":z===1.15?"Large":"Larger");}
+}
+const FONT_STEPS=[1,1.15,1.3];
+function cycleFont(){
+  const i=FONT_STEPS.indexOf(PREFS.zoom||1);
+  const z=FONT_STEPS[(i+1)%FONT_STEPS.length];
+  applyZoom(z);
+  toast("Text size: "+(z===1?"Normal":z===1.15?"Large":"Larger"));
 }
 async function toggleKiosk(){
   const btn=document.getElementById("kioskBtn");
@@ -1786,6 +1803,7 @@ function showSub(group,sub){
 /* ============ wire up ============ */
 // display controls
 document.getElementById("themeToggle").addEventListener("click",()=>applyTheme(PREFS.theme==="light"?"":"light"));
+document.getElementById("fontToggle").addEventListener("click",cycleFont);
 document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.addEventListener("click",()=>applyZoom(parseFloat(b.dataset.zoomBtn))));
 document.getElementById("hr24Toggle").addEventListener("change",e=>{PREFS.hr24=e.target.checked;saveJSON(K.prefs,PREFS);tick();});
 document.getElementById("kioskBtn").addEventListener("click",toggleKiosk);
