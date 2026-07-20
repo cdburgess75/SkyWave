@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.029] — 2026-07-17
+
+### Fixed
+- **Header no longer balloons / clips at the largest text size.** Rebalanced the header to minimize its height: the database-status line was pulled out of the clock row (it was stealing width and forcing the two clocks to stack into two rows), the clocks are slightly smaller (26→22px) and now stay side-by-side, and the grid + database status share one compact line. Tightened header padding and raised the collapse `max-height` so content can't get cut off. Much shorter header → more room for content, especially at Large/Larger font sizes.
+
+---
+
 ## [2026.07.17.028] — 2026-07-17
 
 ### Changed

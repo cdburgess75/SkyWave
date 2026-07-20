@@ -65,8 +65,8 @@
     padding-bottom:env(safe-area-inset-bottom);}
   .wrap{max-width:760px;margin:0 auto;padding:0 14px 96px;}
 
-  header{position:sticky;top:0;z-index:30;margin:0 -14px 12px;padding:14px 16px 10px;
-    padding-top:max(14px,env(safe-area-inset-top));
+  header{position:sticky;top:0;z-index:30;margin:0 -14px 10px;padding:12px 16px 8px;
+    padding-top:max(12px,env(safe-area-inset-top));
     background:var(--header-bg);border-bottom:1px solid var(--line);
     box-shadow:0 6px 18px rgba(0,0,0,.5);}
   .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
@@ -88,13 +88,12 @@
   .font-btn .fa-s{font-size:9.5px;font-weight:700;}
   .font-btn .fa-b{font-size:13px;font-weight:700;margin-left:1px;}
   .theme-btn{padding:0 7px;}
-  .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;flex-wrap:wrap;}
-  .clock{display:flex;flex-direction:column;gap:1px;}
-  .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
-  .clock .val{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1;color:var(--clk-green);}
+  .clocks{display:flex;gap:16px;align-items:flex-end;margin-top:6px;flex-wrap:nowrap;}
+  .clock{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .clock .lbl{font-size:8.5px;letter-spacing:.22em;color:var(--ink-dim);text-transform:uppercase;}
+  .clock .val{font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1;color:var(--clk-green);}
   .clock.local .val{color:var(--clk-blue);}
-  .dbstat{margin-left:auto;text-align:right;font-size:9px;letter-spacing:.1em;color:var(--ink-dim);
-    max-width:46%;min-width:0;overflow-wrap:anywhere;}
+  .dbstat{text-align:right;font-size:8.5px;letter-spacing:.06em;color:var(--ink-dim);min-width:0;overflow-wrap:anywhere;}
   .dbstat b{color:var(--green);font-weight:600;}
 
   .bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:stretch;
@@ -261,7 +260,7 @@
   .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--green);color:#06170c;
     font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:.25s;pointer-events:none;text-transform:uppercase;}
   .toast.show{opacity:1;}
-  .ident{display:flex;gap:14px;align-items:baseline;margin-top:4px;min-height:14px;}
+  .ident{display:flex;gap:12px;align-items:baseline;justify-content:space-between;margin-top:5px;flex-wrap:wrap;}
   .ident-grid{font-size:11px;letter-spacing:.16em;color:var(--blue);}
 
   /* setup wizard */
@@ -293,7 +292,7 @@
   .hdrver{font-size:8px;letter-spacing:.14em;color:var(--amber-dim);line-height:1;white-space:nowrap;}
 
   /* scroll-minimized header */
-  .brand,.ident{transition:max-height .28s ease,opacity .2s,margin .25s ease;max-height:80px;overflow:hidden;}
+  .brand,.ident{transition:max-height .28s ease,opacity .2s,margin .25s ease;max-height:220px;overflow:hidden;}
   header.min .brand{max-height:0;opacity:0;margin:0;}
   header.min .ident{max-height:0;opacity:0;margin:0;}
   header.min .dbstat{display:none;}
@@ -415,12 +414,11 @@
         <button class="hdrbtn theme-btn" id="themeToggle" title="Switch to light theme" aria-label="Switch to light theme"></button>
       </div>
     </div>
-    <div class="ident"><span id="hdrGrid" class="ident-grid"></span></div>
     <div class="clocks">
       <div class="clock"><span class="lbl">Zulu</span><span class="val" id="utc">--:--:--</span></div>
       <div class="clock local"><span class="lbl" id="locLbl">Local</span><span class="val" id="loc">--:--:--</span></div>
-      <div class="dbstat" id="dbstat"></div>
     </div>
+    <div class="ident"><span id="hdrGrid" class="ident-grid"></span><span class="dbstat" id="dbstat"></span></div>
   </header>
 
   <!-- ============ LISTEN ============ -->
@@ -784,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.028";
+const VERSION="2026.07.17.029";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1692,8 +1690,8 @@ function tick(){const d=new Date(),p=n=>String(n).padStart(2,"0");
     .find(pp=>pp.type==="timeZoneName");
   document.getElementById("locLbl").textContent=(tz&&tz.value)||"Local";}
 function updateDbStat(){const el=document.getElementById("dbstat");
-  if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries<br>EiBi '+(META?META.code.toUpperCase():"")+' · offline ready';
-  else el.innerHTML='Reference data loaded.<br>Update / load EiBi (Ref tab).';}
+  if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries · EiBi '+(META?META.code.toUpperCase():"")+' · offline';
+  else el.innerHTML='Reference only · load EiBi in Ref';}
 function showClear(){document.getElementById("clearBtn").hidden=!haveEibi;}
 
 /* ============ setup wizard ============ */
