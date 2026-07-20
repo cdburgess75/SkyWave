@@ -34,7 +34,7 @@
   .clock.local .val{text-shadow:0 0 12px rgba(56,207,255,.9),0 0 28px rgba(56,207,255,.5);}
   .ident-grid{text-shadow:0 0 10px rgba(139,180,232,.75),0 0 22px rgba(139,180,232,.35);}
   .tag.live .dot{box-shadow:0 0 5px rgba(59,191,133,.9);}
-  .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green),0 0 14px rgba(174,216,202,.18);}
+  .row.now{border-color:var(--amber-dim);box-shadow:inset 3px 0 0 var(--amber),0 0 14px rgba(240,168,60,.16);}
   .netdot.on{box-shadow:0 0 8px var(--green),0 0 16px rgba(174,216,202,.5);}
 
   /* LED light — same palette on white, no aggressive glows */
@@ -56,7 +56,7 @@
   [data-theme="light"] .tag.live .dot,
   [data-theme="light"] .row.now,
   [data-theme="light"] .netdot.on{text-shadow:none;box-shadow:none;}
-  [data-theme="light"] .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green);}
+  [data-theme="light"] .row.now{border-color:var(--amber-dim);box-shadow:inset 3px 0 0 var(--amber);}
   [data-theme="light"] .netdot.on{box-shadow:none;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--mono);}
@@ -151,7 +151,7 @@
   .rows{display:flex;flex-direction:column;gap:6px;}
   .row{display:grid;grid-template-columns:84px 1fr auto;gap:10px;align-items:center;
     background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 11px;}
-  .row.now{border-color:var(--green-dim);box-shadow:inset 3px 0 0 var(--green);}
+  .row.now{border-color:var(--amber-dim);box-shadow:inset 3px 0 0 var(--amber);}
   .row.mine{box-shadow:inset 3px 0 0 var(--amber);}
   .row.stale{opacity:.45;}
   .freq{font-size:18px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums;line-height:1.05;}
@@ -396,7 +396,7 @@
 <div id="layout">
 <nav class="sidenav" id="sideNav">
   <div class="snav-brand">SKY<br>WAVE</div>
-  <button class="snav-btn on" data-tab="listen"><span class="bicon">▶</span>Listen</button>
+  <button class="snav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
   <button class="snav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
   <button class="snav-btn" data-tab="tools"><span class="bicon">⚙</span>Tools</button>
   <button class="snav-btn" data-tab="ref"><span class="bicon">◆</span>Ref</button>
@@ -704,7 +704,7 @@
 
 <!-- ============ BOTTOM NAV ============ -->
 <nav class="bottomnav" id="bottomNav">
-  <button class="bnav-btn on" data-tab="listen"><span class="bicon">▶</span>Listen</button>
+  <button class="bnav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
   <button class="bnav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
   <button class="bnav-btn" data-tab="tools"><span class="bicon">⚙</span>Tools</button>
   <button class="bnav-btn" id="moreBtn" aria-expanded="false" aria-haspopup="true"><span class="bicon">⋯</span>More</button>
@@ -784,7 +784,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.027";
+const VERSION="2026.07.17.028";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */

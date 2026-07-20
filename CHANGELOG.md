@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.028] — 2026-07-17
+
+### Changed
+- **Amber row highlight instead of green.** The box (border + left accent) around an on-air station/net now uses the golden amber accent rather than green — better looking and coordinated with the rest of the UI. The green **LIVE** / **ON AIR** badges are unchanged.
+- **"Listen" → "Stations"** in the bottom (and side) navigation.
+
+---
+
 ## [2026.07.17.027] — 2026-07-17
 
 ### Changed
