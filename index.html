@@ -74,21 +74,20 @@
   .brandcol{display:flex;flex-direction:column;gap:3px;}
   .brandcol h1{line-height:1;}
   .brand .sub{font-size:9.5px;letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;}
-  .hdr-controls{display:flex;gap:7px;align-items:center;margin-left:auto;flex-shrink:0;}
-  /* unified pill buttons: text-size, theme, kiosk */
+  .hdr-controls{display:flex;gap:6px;align-items:center;margin-left:auto;flex-shrink:0;}
+  /* compact pill buttons: text-size + theme */
   .hdrbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);
-    height:34px;min-width:36px;padding:0 10px;border-radius:10px;cursor:pointer;line-height:1;
-    display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    height:28px;min-width:30px;padding:0 7px;border-radius:8px;cursor:pointer;line-height:1;
+    display:inline-flex;align-items:center;justify-content:center;gap:4px;
     transition:border-color .15s,color .15s,background .15s;}
   .hdrbtn:hover{border-color:var(--amber-dim);background:var(--panel);}
   .hdrbtn.on{border-color:var(--amber);color:var(--amber);}
   .hdrbtn svg{display:block;}
   .font-btn{color:var(--ink-dim);}
   .font-btn:hover,.font-btn.on{color:var(--amber);}
-  .font-btn .fa-s{font-size:11px;font-weight:700;}
-  .font-btn .fa-b{font-size:16px;font-weight:700;margin-left:1px;}
-  .theme-btn{padding:0 9px;}
-  .kiosk-lbl{font-size:11px;letter-spacing:.05em;}
+  .font-btn .fa-s{font-size:9.5px;font-weight:700;}
+  .font-btn .fa-b{font-size:13px;font-weight:700;margin-left:1px;}
+  .theme-btn{padding:0 7px;}
   .clocks{display:flex;gap:18px;align-items:flex-end;margin-top:9px;flex-wrap:wrap;}
   .clock{display:flex;flex-direction:column;gap:1px;}
   .clock .lbl{font-size:8.5px;letter-spacing:.25em;color:var(--ink-dim);text-transform:uppercase;}
@@ -414,7 +413,6 @@
       <div class="hdr-controls">
         <button class="hdrbtn font-btn" id="fontToggle" title="Text size" aria-label="Change text size"><span class="fa-s">A</span><span class="fa-b">A</span></button>
         <button class="hdrbtn theme-btn" id="themeToggle" title="Switch to light theme" aria-label="Switch to light theme"></button>
-        <button class="hdrbtn kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode"><span class="kiosk-ico">⛶</span><span class="kiosk-lbl">Kiosk</span></button>
       </div>
     </div>
     <div class="ident"><span id="hdrGrid" class="ident-grid"></span></div>
@@ -568,6 +566,8 @@
         <input type="checkbox" id="hr24Toggle" checked style="accent-color:var(--amber);width:15px;height:15px">
         24-hour local clock
       </label>
+      <button class="btn ghost kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode" style="margin-top:12px">⛶&nbsp;Kiosk / shack-monitor mode</button>
+      <div class="hint" style="margin-top:6px">Full-screen clock &amp; on-air view that keeps the screen awake — ideal for a shack monitor.</div>
     </div>
     <div class="loadbox">
       <h3>◆ Full EiBi schedule <span id="netDot" class="netdot off"></span></h3>
@@ -784,7 +784,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.026";
+const VERSION="2026.07.17.027";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1477,8 +1477,8 @@ function applyTheme(t){
   if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#0b1626");
   const b=document.getElementById("themeToggle");
   if(b){
-    const sun='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f5a623" stroke="none"/><line x1="12" y1="2.6" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.4"/><line x1="4.3" y1="4.3" x2="6" y2="6"/><line x1="18" y1="18" x2="19.7" y2="19.7"/><line x1="2.6" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.4" y2="12"/><line x1="4.3" y1="19.7" x2="6" y2="18"/><line x1="18" y1="6" x2="19.7" y2="4.3"/></svg>';
-    const moon='<svg viewBox="0 0 24 24" width="18" height="18"><path fill="#5aa0f0" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.91-.1-1.35A5.5 5.5 0 0 1 13.35 3.1 9.05 9.05 0 0 0 12 3z"/></svg>';
+    const sun='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f5a623" stroke="none"/><line x1="12" y1="2.6" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.4"/><line x1="4.3" y1="4.3" x2="6" y2="6"/><line x1="18" y1="18" x2="19.7" y2="19.7"/><line x1="2.6" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.4" y2="12"/><line x1="4.3" y1="19.7" x2="6" y2="18"/><line x1="18" y1="6" x2="19.7" y2="4.3"/></svg>';
+    const moon='<svg viewBox="0 0 24 24" width="16" height="16"><path fill="#5aa0f0" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.91-.1-1.35A5.5 5.5 0 0 1 13.35 3.1 9.05 9.05 0 0 0 12 3z"/></svg>';
     b.innerHTML=t==="light"?sun:moon;
     b.title=t==="light"?"Switch to dark theme":"Switch to light theme";
     b.setAttribute("aria-label",b.title);}

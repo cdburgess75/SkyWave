@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.027] — 2026-07-17
+
+### Changed
+- **Leaner header.** Removed the Kiosk button from the header's top-right (it was overflowing/clipping on narrow screens, especially at larger text sizes) and shrank the text-size and theme buttons — the header now stays compact so more content shows. Kiosk / shack-monitor mode moved to **Ref → Display** with a short description; it works exactly as before.
+
+---
+
 ## [2026.07.17.026] — 2026-07-17
 
 ### Changed
