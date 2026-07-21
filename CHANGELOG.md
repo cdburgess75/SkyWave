@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.030] — 2026-07-17
+
+### Fixed
+- **No more stale "nets in session" after reopening.** When the app is reopened after a long time, it used to paint the last-saved live-net list (potentially hours old) for 10–15 s while the background fetch ran. Now, if the saved list is stale (> 10 min), the live section shows a clear **"↻ Refreshing live nets in session…"** placeholder instead of the outdated data until fresh results arrive (the always-valid "starting soon" and scheduled-net sections stay visible; if the refresh fails, it falls back to the old list with a note).
+- **Refresh on resume.** iOS often restores a PWA from memory rather than reloading it, so the old frame lingered. SkyWave now listens for the app returning to the foreground and immediately resyncs the clocks and refreshes whatever view is showing.
+
+---
+
 ## [2026.07.17.029] — 2026-07-17
 
 ### Fixed

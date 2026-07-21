@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.029";
+const VERSION="2026.07.17.030";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1179,6 +1179,8 @@ function renderMine(){
 const NETS_SOURCE="https://www.netlogger.org/";
 let NETS=loadJSON(K.nets,{list:[],ts:0});
 let netsFetching=false;
+let netsRefreshing=false;                 // true while replacing a stale live list
+const NETS_STALE_MS=10*60000;             // older than this → don't show the old "in session" list
 const netOpen=new Set();   // ids of expanded net rows (kept across re-renders)
 const liveNetId=n=>"L|"+n.freq+"|"+(n.name||"");
 const dirNetId=e=>"D|"+e.freq+"|"+(e.station||"");
@@ -1380,7 +1382,10 @@ function renderNets(){
   if(f)list=list.filter(n=>(n.name+" "+n.mode+" "+n.ncs).toLowerCase().includes(f));
   list.sort((a,b)=>a.freq-b.freq);
   let html="";
-  if(list.length){
+  if(netsRefreshing&&navigator.onLine){
+    cnt.innerHTML="";
+    html='<div class="empty">↻ Refreshing live nets in session…</div>';
+  } else if(list.length){
     cnt.innerHTML='<b>'+list.length+'</b> nets in session';
     html=list.map(n=>{
       const badge=n.mode?'<span class="badge">'+esc(n.mode)+'</span>':'';
@@ -1419,19 +1424,26 @@ function renderNets(){
 }
 function netsMsg(t){document.getElementById("netsMsg").textContent=t;}
 async function openNets(force){
+  const online=navigator.onLine;
+  const willFetch=online&&!netsFetching&&(force||!NETS.ts||Date.now()-NETS.ts>=60000);
+  const stale=!NETS.ts||Date.now()-NETS.ts>NETS_STALE_MS;
+  // If we're about to refresh and the stored list is stale, hide it rather than
+  // flash hours-old "in session" data while the live fetch runs.
+  netsRefreshing=willFetch&&stale;
   renderNets();
-  if(!navigator.onLine){
+  if(!online){
+    netsRefreshing=false;renderNets();
     netsMsg(NETS.ts?"Offline — showing the list fetched "+ageMin(NETS.ts)+" ago.":"Offline — connect to fetch live nets.");
     return;
   }
   if(netsFetching)return;
-  if(!force&&NETS.ts&&Date.now()-NETS.ts<60000)return;   // fresh enough
-  netsFetching=true;netsMsg("Fetching nets in session…");
+  if(!willFetch)return;   // fresh enough
+  netsFetching=true;netsMsg(NETS.ts?"Refreshing nets in session…":"Fetching nets in session…");
   let r=null;
   try{r=await getNets();}catch(e){r=null;}
-  finally{netsFetching=false;}   // never let a throw wedge the flag
+  finally{netsFetching=false;netsRefreshing=false;}   // never let a throw wedge the flags
   if(r){NETS={list:r.list,ts:r.ts};saveJSON(K.nets,NETS);netsMsg("Updated "+new Date(NETS.ts).toUTCString().slice(17,22)+"Z");renderNets();}
-  else netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger — its public relays may be busy; tap ⟳ to retry in a minute. (In an in-app preview? Open in Safari.)");
+  else{renderNets();netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger — its public relays may be busy; tap ⟳ to retry in a minute. (In an in-app preview? Open in Safari.)");}
 }
 function ageMin(ts){const m=Math.max(1,Math.round((Date.now()-ts)/60000));return m<60?m+" min":Math.round(m/60)+" h";}
 
@@ -1980,6 +1992,18 @@ tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-nets").hidden)renderNets();
   if(!document.getElementById("tab-tools").hidden)renderGray();renderRail();},30000);
+// Reopened after a while (iOS often restores the app from memory rather than
+// reloading): resync the clock and refresh whatever view is showing so the
+// stale frame is replaced right away.
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="visible")return;
+  tick();
+  const onListen=!document.getElementById("tab-listen").hidden;
+  if(onListen&&!document.getElementById("sub-nets").hidden)openNets(false);
+  else if(onListen&&!document.getElementById("sub-now").hidden)refreshNow();
+  if(!document.getElementById("tab-prop").hidden)renderProp();
+  renderRail();
+});
 window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
   if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
 function showUpdateBanner(){
