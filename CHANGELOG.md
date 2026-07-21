@@ -2,6 +2,14 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.032] — 2026-07-17
+
+### Changed
+- **App icon retinted to the obsidian tactical palette** (home-screen / apple-touch, favicon/bookmark, and PWA icons): US-centered Earth with neon-amber (`#FF9F1C`) continents on a blue ocean over an obsidian (`#0B1325`) tile, ringed with an electric-cyan (`#00E5FF`) limb. SVG + 512/180px PNGs regenerated; icon URLs bumped to `?v=10`.
+- **Fixed the PWA manifest screenshots** — they pointed at the old `docs/screenshot-*.png` (removed when screenshots moved to `docs/images/`). Now reference the current images with correct dimensions and fresh labels.
+
+---
+
 ## [2026.07.17.031] — 2026-07-17
 
 ### Changed

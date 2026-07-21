@@ -13,19 +13,19 @@
   "categories": ["utilities", "news", "education"],
   "icons": [
     {
-      "src": "icons/icon.svg?v=9",
+      "src": "icons/icon.svg?v=10",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png?v=9",
+      "src": "icons/icon-512.png?v=10",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/apple-touch-icon.png?v=9",
+      "src": "icons/apple-touch-icon.png?v=10",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
@@ -33,25 +33,25 @@
   ],
   "screenshots": [
     {
-      "src": "docs/screenshot-mobile.png",
-      "sizes": "860x1720",
+      "src": "docs/images/nets-roster.png",
+      "sizes": "860x1800",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Ham nets — live + scheduled (default view)"
+      "label": "Live ham nets with an expanded check-in roster"
     },
     {
-      "src": "docs/screenshot-onair.png",
-      "sizes": "860x1720",
+      "src": "docs/images/on-air.png",
+      "sizes": "860x1520",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "On Air Now — live shortwave schedule"
+      "label": "On Air now — longwave, mediumwave & shortwave"
     },
     {
-      "src": "docs/screenshot-desktop.png",
-      "sizes": "1340x800",
+      "src": "docs/images/desktop.png",
+      "sizes": "2560x1720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Desktop layout with grayline and band rail"
+      "label": "Desktop — live nets, scheduled HF nets, grayline & bands"
     }
   ]
 }
