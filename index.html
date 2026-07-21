@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SkyWave">
-<meta name="theme-color" content="#0b1626">
+<meta name="theme-color" content="#0B1325">
 <meta name="description" content="A TV-Guide for the radio bands — see what is on the air right now across longwave, mediumwave, and shortwave (9,000+ broadcasts), plus live HF ham nets with who is checked in, grayline, and propagation. Offline-first PWA, no account.">
 <meta property="og:title" content="SKYWAVE — World Band Radio & Ham Nets">
 <meta property="og:description" content="What is on the air now across LW/MW/SW, live amateur-radio HF nets with check-in rosters, and propagation. Offline-first PWA, no dependencies.">
@@ -18,22 +18,22 @@
 <style>
   :root{
     /* LED dark — pure black + neon palette (unified with PileUp) */
-    --bg:#0b1626;--nav-bg:#0a1322;--panel:#12233f;--panel2:#17294a;--line:#263a5e;
-    --amber:#f0a83c;--amber-dim:#c98a2e;
-    --green:#AED8CA;--green-dim:#2E8B7A;
-    --blue:#8bb4e8;--blue-dim:#5a8fd0;
+    --bg:#0B1325;--nav-bg:#0a1020;--panel:#152238;--panel2:#1b2c48;--line:#203354;
+    --amber:#FF9F1C;--amber-dim:#c47d16;
+    --green:#39FF14;--green-dim:#1f9e3a;
+    --blue:#00E5FF;--blue-dim:#2a9db0;
     --red:#e8635a;
-    --ink:#f4f4f6;--ink-dim:#9aa8c2;
-    --clk-green:#4be08a;--clk-blue:#38cfff;
+    --ink:#eaf0fa;--ink-dim:#8F9BB3;
+    --clk-green:#39FF14;--clk-blue:#00E5FF;
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
-    --header-bg:linear-gradient(180deg,#14264a,#0b1626);
+    --header-bg:linear-gradient(180deg,#152238,#0B1325);
   }
   /* LED dark — neon glows on key elements */
   .brand h1{text-shadow:0 0 14px rgba(240,146,60,.9),0 0 32px rgba(240,146,60,.5),0 0 64px rgba(240,146,60,.25);}
-  .clock .val{text-shadow:0 0 12px rgba(75,224,138,.9),0 0 28px rgba(75,224,138,.5);}
-  .clock.local .val{text-shadow:0 0 12px rgba(56,207,255,.9),0 0 28px rgba(56,207,255,.5);}
-  .ident-grid{text-shadow:0 0 10px rgba(139,180,232,.75),0 0 22px rgba(139,180,232,.35);}
-  .tag.live .dot{box-shadow:0 0 5px rgba(59,191,133,.9);}
+  .clock .val{text-shadow:0 0 12px rgba(57,255,20,.9),0 0 26px rgba(57,255,20,.45);}
+  .clock.local .val{text-shadow:0 0 12px rgba(0,229,255,.9),0 0 26px rgba(0,229,255,.45);}
+  .ident-grid{text-shadow:0 0 10px rgba(0,229,255,.7),0 0 22px rgba(0,229,255,.3);}
+  .tag.live .dot{box-shadow:0 0 5px rgba(57,255,20,.9);}
   .row.now{border-color:var(--amber-dim);box-shadow:inset 3px 0 0 var(--amber),0 0 14px rgba(240,168,60,.16);}
   .netdot.on{box-shadow:0 0 8px var(--green),0 0 16px rgba(174,216,202,.5);}
 
@@ -157,7 +157,7 @@
   .freq .u{display:block;font-size:8px;letter-spacing:.18em;color:var(--ink-dim);font-weight:500;margin-top:2px;}
   .mid .st{font-size:13.5px;color:var(--ink);line-height:1.25;}
   .mid .meta{font-size:10px;color:var(--ink-dim);margin-top:3px;letter-spacing:.03em;}
-  .mid .meta .lang{color:var(--green);}
+  .mid .meta .lang{color:var(--ink-dim);}
   /* tap-to-expand net rows */
   .netrow{cursor:pointer;position:relative;}
   .netrow .chev{position:absolute;right:11px;bottom:7px;font-size:12px;line-height:1;color:var(--ink-dim);transition:transform .2s ease,color .2s;}
@@ -183,8 +183,8 @@
   .right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
   .time{font-size:11px;color:var(--ink);font-variant-numeric:tabular-nums;opacity:.75;}
   .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
-  .tag.live{color:#062012;background:#3bbf85;border-color:#3bbf85;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
-  .tag.live .dot{width:5px;height:5px;border-radius:50%;background:#062012;flex:none;}
+  .tag.live{color:#04220a;background:#39FF14;border-color:#39FF14;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+  .tag.live .dot{width:5px;height:5px;border-radius:50%;background:#04220a;flex:none;}
   .tag.soon{color:var(--amber);border-color:var(--amber);font-weight:700;}
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
   .acts{display:flex;gap:8px;margin-top:2px;}
@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.030";
+const VERSION="2026.07.17.031";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1484,7 +1484,7 @@ function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
   const tc=document.querySelector('meta[name="theme-color"]');
-  if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#0b1626");
+  if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#0B1325");
   const b=document.getElementById("themeToggle");
   if(b){
     const sun='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f5a623" stroke="none"/><line x1="12" y1="2.6" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.4"/><line x1="4.3" y1="4.3" x2="6" y2="6"/><line x1="18" y1="18" x2="19.7" y2="19.7"/><line x1="2.6" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.4" y2="12"/><line x1="4.3" y1="19.7" x2="6" y2="18"/><line x1="18" y1="6" x2="19.7" y2="4.3"/></svg>';

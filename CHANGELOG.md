@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.031] — 2026-07-17
+
+### Changed
+- **New dark-theme palette — "obsidian tactical."** Deeper obsidian background (`#0B1325`) with cobalt-slate cards (`#152238` / `#203354` borders), brighter neon-amber (`#FF9F1C`) for frequencies and titles, an electric-cyan (`#00E5FF`) local clock / grid / accent, and a toxic-neon-green (`#39FF14`) reserved strictly for live status — the Zulu clock and the LIVE / ON-AIR pills. Secondary metadata (net control, language, times) moves to a muted gray-blue (`#8F9BB3`) so the neon reads as signal, not decoration. Obsidian `theme-color` + manifest to match. Light theme unchanged apart from the same muted-metadata treatment.
+
+---
+
 ## [2026.07.17.030] — 2026-07-17
 
 ### Fixed
