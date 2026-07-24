@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.033] — 2026-07-17
+
+### Changed
+- **App icon: "chasing the grayline."** Bigger globe filling the tile, with a soft curved twilight terminator sweeping across it and the night side easing into shadow — the grayline DXers chase — over the obsidian tile with the electric-cyan limb ring. Updates every slot (home-screen / apple-touch, favicon/bookmark, PWA icons); icon URLs bumped to `?v=11`.
+
+---
+
 ## [2026.07.17.032] — 2026-07-17
 
 ### Changed
