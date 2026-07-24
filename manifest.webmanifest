@@ -13,19 +13,19 @@
   "categories": ["utilities", "news", "education"],
   "icons": [
     {
-      "src": "icons/icon.svg?v=11",
+      "src": "icons/icon.svg?v=12",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png?v=11",
+      "src": "icons/icon-512.png?v=12",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/apple-touch-icon.png?v=11",
+      "src": "icons/apple-touch-icon.png?v=12",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"

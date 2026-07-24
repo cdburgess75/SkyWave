@@ -2,6 +2,13 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.17.034] — 2026-07-17
+
+### Changed
+- **App icon: grayline globe, ringless.** Same "chasing the grayline" globe (curved twilight terminator, shadowed night side) but with the globe running edge-to-edge on the obsidian tile — the electric-cyan limb ring removed. Updates every slot (home-screen / apple-touch, favicon/bookmark, PWA icons); icon URLs bumped to `?v=12`.
+
+---
+
 ## [2026.07.17.033] — 2026-07-17
 
 ### Changed
