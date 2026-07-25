@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.034";
+const VERSION="2026.07.17.035";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -928,7 +928,10 @@ async function fetchSchedule(code){
   for(const t of targets)for(const url of relays(t)){
     if(url===t&&t.startsWith("http:"))continue; // direct http fetch is mixed-content-blocked on https; relays still reach it
     try{const res=await fetchWithTimeout(url,{cache:"no-store",redirect:"follow"});if(!res||!res.ok)continue;
-      const text=await res.text();if((text.match(/;/g)||[]).length>200)return text;}catch(e){}
+      // EiBi's CSV is ISO-8859-1 (Latin-1); decode it as such so accented names
+      // (Coruña, Educación, Rádio…) don't turn into replacement characters.
+      const text=new TextDecoder("iso-8859-1").decode(await res.arrayBuffer());
+      if((text.match(/;/g)||[]).length>200)return text;}catch(e){}
   }
   return null;
 }
@@ -1346,7 +1349,7 @@ function parseNets(text){
 async function relayFetch(ep){
   for(const url of relays(ep)){
     if(url===ep&&ep.startsWith("http:"))continue; // direct http = mixed-content-blocked; relays reach it
-    try{const res=await fetchWithTimeout(url,{cache:"no-store"},7000);if(res&&res.ok)return await res.text();}catch(e){}
+    try{const res=await fetchWithTimeout(url,{cache:"no-store"},7000);if(res&&res.ok)return new TextDecoder("iso-8859-1").decode(await res.arrayBuffer());}catch(e){}
   }
   return null;
 }
@@ -1940,7 +1943,7 @@ document.getElementById("autoUpd").addEventListener("change",e=>{PREFS.autoUpd=e
 document.getElementById("loadBtn").addEventListener("click",()=>document.getElementById("fileIn").click());
 document.getElementById("fileIn").addEventListener("change",ev=>{const file=ev.target.files[0];if(!file)return;
   msg("Reading "+file.name+"…",false);const r=new FileReader();r.onload=()=>loadText(r.result,{code:selectedSeason()});
-  r.onerror=()=>msg("Could not read the file.",true);r.readAsText(file);});
+  r.onerror=()=>msg("Could not read the file.",true);r.readAsText(file,"ISO-8859-1");});
 document.getElementById("relaySave").addEventListener("click",()=>{
   const v=document.getElementById("relayIn").value.trim();
   if(v&&!/^https:\/\/[a-z0-9.-]+/i.test(v)){document.getElementById("relayMsg").textContent="Must be an https:// URL (or blank to disable).";return;}

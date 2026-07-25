@@ -2,7 +2,10 @@
 
 All notable changes to SKYWAVE are documented here.
 
-## [2026.07.17.034] — 2026-07-17
+## [2026.07.17.035] — 2026-07-17
+
+### Fixed
+- **Accented station/net names no longer show as replacement characters (�).** The EiBi schedule and NetLogger feeds are ISO-8859-1 (Latin-1), but were being decoded as UTF-8 — so names like "Coruña Radio", "Educación", and "Rádio Nacional" came out garbled. All feed decoding (EiBi CSV fetch + manual file load in the app, and the NetLogger homepage + check-in-roster API in the mirror) now decodes Latin-1 correctly. Re-run **Ref → ⟳ Update now** once to refresh the stored schedule with corrected names.
 
 ### Changed
 - **App icon: grayline globe, ringless.** Same "chasing the grayline" globe (curved twilight terminator, shadowed night side) but with the globe running edge-to-edge on the obsidian tile — the electric-cyan limb ring removed. Updates every slot (home-screen / apple-touch, favicon/bookmark, PWA icons); icon URLs bumped to `?v=12`.

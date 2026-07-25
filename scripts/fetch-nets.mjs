@@ -34,7 +34,8 @@ async function fetchRoster(net) {
   try {
     const r = await fetch(url, { headers: UA, signal: AbortSignal.timeout(10000) });
     if (!r.ok) return null;
-    const xml = await r.text();
+    // NetLogger's API is ISO-8859-1; decode as Latin-1 so accented names/cities survive.
+    const xml = new TextDecoder("iso-8859-1").decode(await r.arrayBuffer());
     if (!/<CheckinList>/i.test(xml)) return null; // error payloads carry <Error> instead
     const count = parseInt(xmlTag(xml, "CheckinCount"), 10) || 0;
     const roster = [];
@@ -99,7 +100,7 @@ if (!res.ok) {
   console.error(`${SOURCE}: HTTP ${res.status} — keeping previous data.`);
   process.exit(1);
 }
-const html = await res.text();
+const html = new TextDecoder("iso-8859-1").decode(await res.arrayBuffer());
 const nets = parseHomepage(html);
 
 // sanity: the page states its own count — never publish a wrongly-empty file
