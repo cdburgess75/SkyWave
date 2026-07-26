@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.26.036";
+const VERSION="2026.07.26.037";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -822,6 +822,55 @@ const STALE_DAYS=21;
 function loadJSON(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function debounce(fn,ms){let t;return function(){clearTimeout(t);t=setTimeout(fn,ms);};}
 function saveJSON(k,o){try{localStorage.setItem(k,JSON.stringify(o));}catch(e){}}
+
+/* ---- schedule storage: IndexedDB, not localStorage ----------------------
+   The EiBi CSV is ~1 MB. localStorage is synchronous (the read blocks first
+   paint) and capped near 5 MB per origin — shared with favorites, prefs and
+   cached nets — so a large season could silently fail to save while the app
+   still told the user it was "stored on-device for offline use". IndexedDB is
+   async and quota-generous, and it reports failures we can pass on honestly.
+   Small values (prefs, favorites, meta) stay in localStorage: they're tiny and
+   wanted synchronously at boot. */
+const IDB_NAME="skywave",IDB_STORE="kv";
+let _idb=null;
+function idb(){
+  if(_idb)return _idb;
+  _idb=new Promise((res,rej)=>{
+    let rq;
+    try{rq=indexedDB.open(IDB_NAME,1);}catch(e){rej(e);return;}
+    rq.onupgradeneeded=()=>{const db=rq.result;if(!db.objectStoreNames.contains(IDB_STORE))db.createObjectStore(IDB_STORE);};
+    rq.onsuccess=()=>res(rq.result);
+    rq.onerror=()=>rej(rq.error||new Error("IndexedDB unavailable"));
+    rq.onblocked=()=>rej(new Error("IndexedDB blocked"));
+  }).catch(e=>{_idb=null;throw e;});   // don't cache a failed open — private mode may relent
+  return _idb;
+}
+function idbReq(mode,fn){
+  return idb().then(db=>new Promise((res,rej)=>{
+    let rq;
+    try{const tx=db.transaction(IDB_STORE,mode);rq=fn(tx.objectStore(IDB_STORE));
+      tx.onabort=tx.onerror=()=>rej(tx.error||new Error("IndexedDB transaction failed"));
+      tx.oncomplete=()=>res(rq?rq.result:undefined);
+    }catch(e){rej(e);}
+  }));
+}
+const idbGet=k=>idbReq("readonly",s=>s.get(k));
+const idbSet=(k,v)=>idbReq("readwrite",s=>s.put(v,k));
+const idbDel=k=>idbReq("readwrite",s=>s.delete(k));
+/* Persist the schedule. Resolves {ok:true} or {ok:false,why} — never throws, so
+   the caller can tell the user what actually happened. */
+async function storeSchedule(text,meta){
+  try{
+    await idbSet(K.raw,text);
+    if(meta)saveJSON(K.meta,meta);
+    return{ok:true};
+  }catch(e){
+    const n=(e&&e.name)||"",m=(e&&e.message)||"";
+    return{ok:false,why:n==="QuotaExceededError"?"device storage is full":
+      /unavailable|blocked|SecurityError/i.test(n+m)?"this browser blocks offline storage (private browsing?)":
+      "the browser refused the write"};
+  }
+}
 let FAVS=loadJSON(K.favs,[]), MINE=loadJSON(K.mine,[]);
 let HEARD=loadJSON(K.heard,{});
 (function(){const td=new Date().toISOString().slice(0,10);let ch=false;
@@ -864,7 +913,7 @@ const NETDIR=[
 function buildBase(){const a=[];TIME.forEach(r=>a.push(entry(r[0],"0000-2400","",r[1],r[2],r[3],r[4],"time/freq standard","ref")));
   NETDIR.forEach(r=>{const e=entry(r[0],r[1],"","",r[2],"E",r[4],"ham net","net");e.mode=r[3];e.notes=r[5];a.push(e);});
   MINE.forEach(o=>a.push(makeMine(o)));return a;}
-function rebuildData(){DATA=buildBase().concat(EIBI);DATA.forEach(e=>{e._blob=(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();});rebuildFilters();refreshAll();}
+function rebuildData(){DATA=buildBase().concat(EIBI);rebuildFilters();refreshAll();}
 
 /* ============ EiBi parsing ============ */
 function parseEibi(text){
@@ -886,15 +935,24 @@ function parseEibi(text){
   }
   return out;
 }
-function loadText(text,info){
+/* Parse, activate and persist a schedule. Resolves {ok, stored, why} — callers
+   report the storage outcome themselves rather than assuming the write landed.
+   Pass info.stored when the text came *from* storage (boot restore). */
+async function loadText(text,info){
   const eibi=parseEibi(text);
-  if(eibi.length<20){msg("Couldn't read that file — expecting the EiBi sked-XXX.csv (semicolon) file.",true);return false;}
+  if(eibi.length<20){msg("Couldn't read that file — expecting the EiBi sked-XXX.csv (semicolon) file.",true);return{ok:false};}
   EIBI=eibi;haveEibi=true;
   META={code:(info&&info.code)||(META&&META.code)||seasonCode(),ts:(info&&info.ts)||Date.now(),count:eibi.length};
-  try{if(text.length<4500000){localStorage.setItem(K.raw,text);localStorage.setItem(K.meta,JSON.stringify(META));}}catch(e){}
   rebuildData();updateDbStat();showClear();renderLastUpd();
-  msg("Loaded "+eibi.length.toLocaleString()+" entries. Stored on-device for offline use.",false);
-  return true;
+  if(info&&info.stored)return{ok:true,stored:true};
+  const r=await storeSchedule(text,META);
+  return{ok:true,stored:r.ok,why:r.why};
+}
+// Wording shared by the manual-load and update paths so a failed save always
+// reads the same way: what you have, and what you don't.
+function storedNote(stored,why){
+  return stored?" Stored on-device for offline use."
+    :" ⚠ It could NOT be saved on-device ("+why+"), so it's active for this session only — it won't be here offline.";
 }
 function msg(t,err){const el=document.getElementById("loadMsg");el.textContent=t;el.style.color=err?"var(--red)":"var(--green)";}
 function umsg(t,kind){const el=document.getElementById("updMsg");el.textContent=t;el.style.color=kind==="err"?"var(--red)":kind==="warn"?"var(--amber-dim)":"var(--green)";}
@@ -959,7 +1017,9 @@ async function doUpdate(opts){opts=opts||{};if(updating)return;
   if(!navigator.onLine){umsg(haveEibi?"Offline — keeping your stored "+(META?META.code.toUpperCase():"")+" copy.":"Offline — connect to fetch the schedule. Reference data still works.","warn");return;}
   updating=true;setSpin(true);if(!opts.silent)umsg("Fetching "+code.toUpperCase()+" schedule…","");
   const text=await fetchSchedule(code);updating=false;setSpin(false);
-  if(text){loadText(text,{code});umsg("Updated to "+code.toUpperCase()+" — "+META.count.toLocaleString()+" entries, saved offline.","");}
+  if(text){const r=await loadText(text,{code});
+    if(!r.ok)umsg("Downloaded a file, but it didn't parse as an EiBi schedule. Your stored copy is unchanged.","err");
+    else umsg("Updated to "+code.toUpperCase()+" — "+META.count.toLocaleString()+" entries."+storedNote(r.stored,r.why),r.stored?"":"warn");}
   else if(!opts.silent)umsg("Couldn't reach the schedule server. If you're in an in-app preview, open this in Safari (Share → Open in Safari) and retry. "+(haveEibi?"Your stored copy is still active. ":"")+"Or use Manual load below.","err");
 }
 function setSpin(on){const b=document.getElementById("updBtn");b.innerHTML=on?'<span class="upd-spin">⟳</span>&nbsp;Updating…':'⟳&nbsp;Update&nbsp;now';b.disabled=on;}
@@ -1105,7 +1165,10 @@ function refreshFreq(){
   list.sort((a,b)=>(onAir(b)-onAir(a))||Math.abs(a.freq-k)-Math.abs(b.freq-k));
   renderRows("freqRows",list,"freqCount","near "+fmtFreq(k)+" kHz (±"+tol+")");
 }
-function blob(e){return e._blob||(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase();}
+/* Search haystack, built on first use and cached on the row. Building it for
+   all ~9,000 rows during rebuildData() cost ~30 ms of cold-boot main thread
+   (plus the memory) for data most sessions never search. */
+function blob(e){return e._blob||(e._blob=(e.freq+" "+e.station+" "+e.lang+" "+langName(e.lang)+" "+e.target+" "+tgtName(e.target)+" "+e.itu+" "+e.notes).toLowerCase());}
 function refreshAll(){refreshNow();refreshSearch();refreshFreq();renderStars();renderMine();renderNets();}
 
 /* ============ filters ============ */
@@ -1959,7 +2022,9 @@ document.getElementById("seasonSel").addEventListener("change",syncEibiLink);
 document.getElementById("autoUpd").addEventListener("change",e=>{PREFS.autoUpd=e.target.checked;saveJSON(K.prefs,PREFS);});
 document.getElementById("loadBtn").addEventListener("click",()=>document.getElementById("fileIn").click());
 document.getElementById("fileIn").addEventListener("change",ev=>{const file=ev.target.files[0];if(!file)return;
-  msg("Reading "+file.name+"…",false);const r=new FileReader();r.onload=()=>loadText(r.result,{code:selectedSeason()});
+  msg("Reading "+file.name+"…",false);const r=new FileReader();
+  r.onload=()=>{loadText(r.result,{code:selectedSeason()}).then(res=>{
+    if(res.ok)msg("Loaded "+META.count.toLocaleString()+" entries."+storedNote(res.stored,res.why),!res.stored);});};
   r.onerror=()=>msg("Could not read the file.",true);r.readAsText(file,"ISO-8859-1");});
 document.getElementById("relaySave").addEventListener("click",()=>{
   const v=document.getElementById("relayIn").value.trim();
@@ -1970,6 +2035,7 @@ document.getElementById("relaySave").addEventListener("click",()=>{
 });
 document.getElementById("clearBtn").addEventListener("click",()=>{
   try{localStorage.removeItem(K.raw);localStorage.removeItem(K.meta);}catch(e){}
+  idbDel(K.raw).catch(()=>{});
   EIBI=[];haveEibi=false;META=null;rebuildData();updateDbStat();showClear();renderLastUpd();umsg("Cleared. Reference data still available offline.","warn");});
 function selectedSeason(){const s=document.getElementById("seasonSel");return(s.value&&s.value!=="auto")?s.value:seasonCode();}
 function syncEibiLink(){const a=document.getElementById("eibiLink"),c=selectedSeason();a.href="http://www.eibispace.de/dx/sked-"+c+".csv";a.textContent="sked-"+c+".csv";}
@@ -1996,8 +2062,23 @@ document.getElementById("autoUpd").checked=PREFS.autoUpd!==false;
 document.getElementById("relayIn").value=PREFS.relay||"";
 syncEibiLink();setNetDot();renderRef();
 EIBI=[];
-try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);
-  const cached=localStorage.getItem(K.raw);if(cached)loadText(cached,META?{code:META.code,ts:META.ts}:null);else rebuildData();}catch(e){rebuildData();}
+try{const meta=localStorage.getItem(K.meta);if(meta)META=JSON.parse(meta);}catch(e){}
+rebuildData();          // paint the built-in reference data immediately…
+/* …then restore the stored schedule off the critical path. Reading ~1 MB is
+   asynchronous now, so first paint no longer waits on it. */
+const scheduleReady=(async function(){
+  let raw=null;
+  try{raw=await idbGet(K.raw);}catch(e){}
+  if(raw==null){
+    // Migrate anyone still carrying the CSV in localStorage (≤ 2026.07.17.035):
+    // move it to IDB and hand ~1 MB of the localStorage quota back.
+    let old=null;try{old=localStorage.getItem(K.raw);}catch(e){}
+    if(old){raw=old;
+      try{await idbSet(K.raw,old);localStorage.removeItem(K.raw);}catch(e){}}
+  }
+  if(raw)await loadText(raw,{code:META&&META.code,ts:META&&META.ts,stored:true});
+  else{renderLastUpd();updateDbStat();}
+})();
 renderLastUpd();updateDbStat();calcAnt();renderGray();renderIdent();
 if(!document.fullscreenEnabled)document.getElementById("kioskBtn").hidden=true;
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
@@ -2024,8 +2105,11 @@ document.addEventListener("visibilitychange",()=>{
   if(!document.getElementById("tab-prop").hidden)renderProp();
   renderRail();
 });
-window.addEventListener("load",()=>{const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
-  if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});});
+// Wait for the stored schedule to come back from IDB before deciding whether an
+// auto-update is needed — otherwise every launch would look like "no schedule".
+window.addEventListener("load",()=>{scheduleReady.then(()=>{
+  const stale=!META||(Date.now()-META.ts>STALE_DAYS*dayMs);
+  if(navigator.onLine&&PREFS.autoUpd!==false&&(!haveEibi||stale))doUpdate({silent:true});}).catch(()=>{});});
 function showUpdateBanner(){
   const bar=document.getElementById("updBar");
   bar.classList.add("show");

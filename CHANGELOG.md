@@ -2,6 +2,18 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.26.037] — 2026-07-26
+
+### Fixed
+- **The app no longer claims a schedule was saved offline when it wasn't.** The store was wrapped in a silent `try/catch` (and skipped entirely above 4.5 MB), but the "Stored on-device for offline use" message printed either way — so a device that was out of storage, or a browser in private mode, would tell you the schedule was safe and then have nothing when you went off-grid. Both the manual-load and **Ref → ⟳ Update now** paths now report what actually happened, and say plainly when a schedule is active for this session only.
+
+### Changed
+- **The schedule moved from localStorage to IndexedDB.** The EiBi CSV is ~500 KB–1 MB; localStorage is synchronous (the read blocked first paint) and capped near 5 MB per origin shared with favorites, prefs and cached nets. IndexedDB is async and quota-generous, and it reports write failures instead of swallowing them. Existing installs migrate automatically on first launch — the CSV is copied to IndexedDB and the old copy is removed, handing ~1 MB of localStorage quota back. Favorites, prefs, location and heard-today stay in localStorage (small, and wanted synchronously at boot).
+- **First paint no longer waits on the stored schedule.** Built-in reference data renders immediately and the schedule loads in behind it.
+- **Search index is built on demand.** The lowercase search haystack for all ~9,000 rows was built during every data rebuild (~30 ms of cold-boot main thread, plus the memory) even though most sessions never search. It's now built on first search and cached per row.
+
+---
+
 ## [2026.07.26.036] — 2026-07-26
 
 ### Changed
