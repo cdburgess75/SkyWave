@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.26.037";
+const VERSION="2026.07.26.038";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1329,47 +1329,33 @@ function netFreqKhz(v){
 }
 const NET_MODE_RE=/^(SSB|USB|LSB|CW|AM|FM|DIGITAL|FT8|FT4|RTTY|PSK31|D-?STAR|DMR|C4FM|YSF|FUSION|ECHOLINK|ALLSTAR|P25|NXDN|MIXED)$/i;
 const NET_CALL_RE=/^[A-Z]{1,2}\d[A-Z0-9]{1,4}(\/[A-Z0-9]+)?$/i;
+/* Normalise one net from any live shape. Everything the mirror publishes has to
+   be carried through here: until 2026.07.26.038 this returned only the six
+   basic fields, so the check-in roster, checkin count, subscriber count, server
+   and elapsed time were silently dropped on the way in and every expanded net
+   fell back to "roster appears here once the live feed updates". */
 function normNetObj(o){
   const low={};Object.keys(o).forEach(k=>low[k.toLowerCase()]=o[k]);
   const freq=netFreqKhz(low.frequency||low.freq||"");
   const name=String(low.netname||low.name||"").trim();
   if(!name||!isFinite(freq))return null;
-  return{freq,name,mode:String(low.mode||"").toUpperCase(),ncs:String(low.netcontrol||low.ncs||"").toUpperCase(),
+  const n={freq,name,mode:String(low.mode||"").toUpperCase(),ncs:String(low.netcontrol||low.ncs||"").toUpperCase(),
     band:String(low.band||""),start:String(low.starttime||low.start||low.date||low.started||"")};
-}
-function xmlUnescape(s){return String(s).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"')
-  .replace(/&#39;|&apos;/g,"'").replace(/&amp;/g,"&");}
-/* NetLogger XML Data Service: <NetLoggerXML>…<Net>…</Net>… — per spec, parse
-   tolerantly and ignore unknown nodes/attributes. Accepts both child-element
-   (<NetName>x</NetName>) and attribute (<Net NetName="x"…>) styles. */
-function parseNetsXML(text){
-  const out=[];
-  const chunks=text.match(/<Net\b[^>]*\/>|<Net[\s>][\s\S]*?<\/Net>/g)||[];
-  for(const chunk of chunks){
-    const o={};
-    const open=/<Net\b([^>]*?)\/?>/.exec(chunk);
-    if(open)for(const m of open[1].matchAll(/([A-Za-z_]+)\s*=\s*"([^"]*)"/g))o[m[1]]=xmlUnescape(m[2]);
-    for(const m of chunk.matchAll(/<([A-Za-z_]+)>([^<]*)<\/\1>/g))o[m[1]]=xmlUnescape(m[2]);
-    const n=normNetObj(o);if(n)out.push(n);
+  const subs=parseInt(low.subs||low.subscribers,10);if(isFinite(subs))n.subs=subs;
+  const ck=parseInt(low.checkins||low.checkincount,10);if(isFinite(ck))n.checkins=ck;
+  if(low.server)n.server=String(low.server);
+  if(low.dur)n.dur=String(low.dur);
+  if(Array.isArray(low.roster)){
+    const r=low.roster.filter(c=>c&&c.call).slice(0,200).map(c=>{
+      const e={call:String(c.call).toUpperCase()};
+      if(c.name)e.name=String(c.name);
+      if(c.qth)e.qth=String(c.qth);
+      if(c.grid)e.grid=String(c.grid);
+      if(c.nc)e.nc=1;
+      return e;});
+    if(r.length)n.roster=r;
   }
-  return out;
-}
-/* The real production format: payload between HTML-comment markers, fixed
-   pipe-separated field order, records terminated by "|~". */
-function parseNetsAIM(text){
-  const m=/<!--\s*NetLogger Start Data\s*-->([\s\S]*?)<!--\s*NetLogger End Data\s*-->/.exec(text);
-  if(!m)return null;                       // markers absent → not this format
-  const out=[];
-  for(let rec of m[1].split("|~")){
-    rec=rec.trim();if(!rec)continue;
-    const f=rec.split("|").map(x=>x.trim());
-    if(f.length<7)continue;
-    const freq=netFreqKhz(f[1]);if(!isFinite(freq))continue;
-    const st=f[4]||"";                     // compact UTC timestamp YYYYMMDDHHMMSS
-    const start=/^\d{12,14}$/.test(st)?st.slice(8,10)+":"+st.slice(10,12):st;
-    out.push({freq,name:f[0],mode:(f[5]||"").toUpperCase(),ncs:(f[3]||"").toUpperCase(),band:f[6]||"",start});
-  }
-  return out;                              // [] = valid response, zero nets
+  return n;
 }
 /* The netlogger.org homepage table (the live format). Cell order verified
    2026-07-13: Name(+www link) | Freq MHz | Band | Mode | Server | Start
@@ -1392,39 +1378,21 @@ function parseNetsHomepage(text){
   }
   return out;                               // [] = valid page, zero nets
 }
+/* Two live shapes reach this: the netlogger.org homepage table (the relay
+   fallback) and JSON (our own mirror, and hand-pasted feeds). The old cgi-bin
+   XML/AIM and pipe-delimited parsers were removed in 2026.07.26 — those
+   endpoints 404 on every NetLogger server and had not served data since. */
 function parseNets(text){
   text=String(text||"").trim();
   if(!text)return[];
   const hp=parseNetsHomepage(text);
   if(hp!==null)return hp;
-  const aim=parseNetsAIM(text);
-  if(aim!==null)return aim;
-  if(/<NetLoggerXML|<Net[\s>]/i.test(text)){
-    const x=parseNetsXML(text);
-    if(x.length)return x;
-  }
   try{const j=JSON.parse(text);
     const arr=Array.isArray(j)?j:(j&&typeof j==="object"?(j.nets||j.data||null):null);
     if(Array.isArray(arr)){const out=arr.map(o=>o&&typeof o==="object"?normNetObj(o):null).filter(Boolean);
       if(out.length)return out;}
   }catch(e){}
-  // NetLogger delimited fallback: records separated by "~", fields by "|"
-  const out=[];
-  for(let rec of text.split("~")){
-    rec=rec.trim();if(!rec||rec.indexOf("|")<0)continue;
-    const f=rec.split("|").map(x=>x.trim());
-    const name=f[0];if(!name||/^\*/.test(name))continue;
-    let freq=NaN,fi=-1;
-    for(let i=1;i<f.length;i++){const k=netFreqKhz(f[i]);if(isFinite(k)){freq=k;fi=i;break;}}
-    if(!isFinite(freq))continue;
-    const rest=f.filter((_,i)=>i!==0&&i!==fi);
-    const mode=(rest.find(x=>NET_MODE_RE.test(x))||"").toUpperCase();
-    const ncs=(rest.find(x=>NET_CALL_RE.test(x))||"").toUpperCase();
-    const start=rest.find(x=>/\d{1,2}:\d{2}/.test(x))||"";
-    const band=rest.find(x=>/^\d+(\.\d+)?\s*(m|cm)$/i.test(x))||"";
-    out.push({freq,name,mode,ncs,band,start});
-  }
-  return out;
+  return[];
 }
 async function relayFetch(ep){
   for(const url of relays(ep)){

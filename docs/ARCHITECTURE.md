@@ -43,11 +43,11 @@ buildBase()
   ├─ NETDIR major scheduled nets    ← hard-coded, offline, on-air aware
   └─ MINE (user custom freqs)       ← from localStorage
 
-EIBI[]  ← parseEibi(raw CSV)        ← from localStorage or fetched on demand
+EIBI[]  ← parseEibi(raw CSV)        ← from IndexedDB or fetched on demand
 
 DATA = buildBase().concat(EIBI)     ← single source of truth for Listen tab
 
-rebuildData()                       ← recomputes DATA + pre-computed search blobs
+rebuildData()                       ← recomputes DATA (search blobs built lazily)
                                       + filter dropdowns + re-renders everything
 ```
 
@@ -56,8 +56,8 @@ transient “in session” state, not schedule entries:
 
 ```
 openNets(force)
-  └─ getNets()                      ← NetLogger API × relay chain
-  └─ parseNets()                    ← tolerant: JSON or ~/| delimited
+  └─ getNets()                      ← own-repo mirror (data branch); relay fallback
+  └─ parseNets()                    ← homepage table or JSON
   └─ NETS = {list, ts}              ← cached to localStorage (skywave_nets_v1)
   └─ renderNets()                   ← live rows + built-in NETDIR rows below
 ```
@@ -123,16 +123,24 @@ Inputs are validated by `validGeo()` (±90 / ±180) before they reach it.
 
 ### `fetchSchedule(code)` / `getNets()` — resilient fetch
 
-Iterates candidate base URLs × relay wrappers (`relays()`); first response
-passing a sanity check (EiBi: >200 `;`; nets: ≥1 parsed entry) wins. Returns
-`null` on total failure so callers keep cached data.
+Both read this repo's own mirror on the `data` branch first, straight from
+CORS-open `raw.githubusercontent.com`: `sked-<code>.csv` for the schedule,
+`nets.json` for live nets. Only if that fails (or the nets mirror is >30 min
+stale) do they fall back to upstream through `relays()` — which since
+2026.07.26 means the user's own Cloudflare Worker, if they configured one, and
+a direct hit. No public CORS proxies. A schedule must pass
+`looksLikeSchedule()` (>50 KB, thousands of delimited rows) before it can
+replace a stored copy; both return `null` on total failure so callers keep
+cached data.
 
 ### `parseNets(text)` — tolerant nets parser
 
-Tries JSON first (array or `{nets:[…]}`), then the NetLogger delimited form
-(`~` records, `|` fields), locating the frequency field heuristically and
-sanity-checking it into a 1.5 MHz – 1.3 GHz window. Unparseable input yields
-`[]` — the UI falls back to the cached list.
+Handles the two shapes that actually arrive: the netlogger.org homepage table
+(delimited by `<!-- Begin/End Currently Active Nets -->`) and JSON (array or
+`{nets:[…]}`), with frequencies sanity-checked into a 1.5 MHz – 1.3 GHz
+window. `normNetObj()` carries the mirror's richer fields — check-in roster,
+counts, server, elapsed — through untouched. Unparseable input yields `[]` —
+the UI falls back to the cached list.
 
 ## Adding a new feature — checklist
 

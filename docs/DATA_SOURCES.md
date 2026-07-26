@@ -35,12 +35,25 @@ heuristic — CSV is the supported path.
 
 ### Fetch URL
 
+**Primary path — own-repo mirror (no third party):** a scheduled GitHub Action
+(`.github/workflows/eibi.yml`, daily) runs `scripts/fetch-eibi.mjs`, which
+fetches every season the app's dropdown can offer from
+
 ```
-http://www.eibispace.de/dx/sked-<code>.csv
+https://www.eibispace.de/dx/sked-<code>.csv
 ```
 
-Fetched through the CORS relay chain (see below) because the EiBi server does
-not send CORS headers.
+server-side and force-pushes the CSVs (bytes unmodified, still ISO-8859-1) to
+the single-commit `data` branch. The app reads
+
+```
+https://raw.githubusercontent.com/cdburgess75/SkyWave/data/sked-<code>.csv
+```
+
+directly — `raw.githubusercontent.com` sends `Access-Control-Allow-Origin: *`,
+which eibispace.de does not. **Fallback:** upstream via the user's own relay,
+if they configured one. A response must pass `looksLikeSchedule()` (>50 KB,
+thousands of delimited rows) before it can replace a stored copy.
 
 ### Courtesy
 
@@ -61,10 +74,11 @@ branch. The app fetches
 directly (raw.githubusercontent.com sends `Access-Control-Allow-Origin: *`).
 Mirror older than 30 min → fall back to querying the servers live via the
 relay chain.
-**Live API (per server, fallback path):**
-`GET http://{server}/cgi-bin/NetLogger/GetNetsInProgress20.php?ProtocolVersion=2.3`
-Servers: `www.netlogger.org`, `www.netlogger1.org`, `www.netlogger2.org`,
-`www.netlogger3.org` (canonical list at `netlogger.org/downloads/ServerList.txt`).
+**Fallback path:** the server-rendered "Currently Active Nets" table on
+`https://www.netlogger.org/` itself, scraped by `parseNetsHomepage()`, reached
+through the user's own relay if configured. (The old cgi-bin
+`GetNetsInProgress20.php` XML/AIM API 404s on every server as of July 2026;
+its parsers were removed in 2026.07.26.)
 **Used for:** the live half of the Listen → Nets sub-tab.
 
 **Per-net check-in roster:** for each active net the mirror also calls
@@ -111,7 +125,7 @@ Anything unparseable yields `[]` and the UI keeps the cached list
 
 - Fetches only when the Nets sub-tab is opened (60 s freshness window) or on
   manual refresh — never on a timer.
-- Requires the CORS relay chain (the API does not send CORS headers).
+- Reads this repo's mirror, so NetLogger sees one polite request per interval from the Action rather than one per user.
 
 ### Built-in scheduled nets
 
@@ -146,22 +160,24 @@ Updates ~every 5 minutes on their side; the app never polls.
 
 ---
 
-## CORS Relay Chain
+## Reaching CORS-blocked sources
 
-Because browser `fetch` enforces CORS and neither EiBi nor NetLogger send
-permissive headers, requests are routed through public relays as a fallback:
+Neither EiBi nor NetLogger sends permissive CORS headers, so a browser cannot
+fetch either one directly. Rather than route users through someone else's
+proxy, both feeds are mirrored server-side by scheduled Actions in this repo
+and served from the CORS-open `data` branch:
 
-| Priority | Relay                                      | Notes                        |
-|----------|--------------------------------------------|------------------------------|
-| 0        | Direct (no relay)                          | Works for NOAA; rarely for EiBi/NetLogger |
-| 1        | `https://api.allorigins.win/raw?url=…`     | Most reliable public relay   |
-| 2        | `https://corsproxy.io/?url=…`              | Fallback                     |
-| 3        | `https://api.codetabs.com/v1/proxy?quest=…` | Last resort                 |
+| Feed        | Workflow    | Cadence   | Published as                |
+|-------------|-------------|-----------|-----------------------------|
+| EiBi        | `eibi.yml`  | daily     | `sked-<code>.csv`, `eibi.json` |
+| Live nets   | `nets.yml`  | ~10 min   | `nets.json` (incl. rosters) |
 
-**This is the single biggest reliability risk** (Compromise C1 in
-`HANDOFF.md`). Public relays can be rate-limited or disappear without notice.
-Data passing through them is public broadcast schedules and public net
-information, so privacy impact is minimal.
+`relays(rawUrl)` remains as a fallback only, and contains just two candidates:
+the user's own Cloudflare Worker (`workers/relay.js`, pasted into the Ref tab)
+if configured, then a direct hit.
 
-**Roadmap R6** is a self-hosted Cloudflare Worker relay that would replace the
-public chain while retaining the public relays as a fallback.
+**The public relay chain — `api.allorigins.win`, `corsproxy.io`,
+`api.codetabs.com` — was removed in 2026.07.26.** Each could see every user's
+IP address and could have returned arbitrary content in place of the schedule;
+the only check on the response was a semicolon count. Their removal closes
+compromise C1 in `HANDOFF.md`.

@@ -103,7 +103,7 @@ DATA        = buildBase().concat(EIBI)        ← single source the Listen tab r
 rebuildData() recomputes DATA + filters + re-renders
 
 Live nets (transient, not schedule entries):
-openNets() → getNets() (NetLogger XML API × relays) → parseNets() → NETS{list,ts} → renderNets()
+openNets() → getNets() (own-repo mirror, relay fallback) → parseNets() → NETS{list,ts} → renderNets()
 ```
 
 - `entry(freq,time,days,itu,station,lang,target,tx,src)` is the normalized record. `parseTime()` precomputes integer `start`/`end` HHMM; `_days` precomputes the day-of-week set.
@@ -119,7 +119,7 @@ Intentional for portability. Refactor-to-modules is roadmap R4.
 
 ### 4.1 Listen
 
-- **Nets** (default sub-tab, `openNets`/`renderNets`): live nets in session (NetLogger XML API via relays, cached in `skywave_nets_v1`) above the built-in `NETDIR` directory of 15 scheduled national + Southeast-US nets. Fetches at boot when online and on sub-tab open (60 s freshness) or ⟳.
+- **Nets** (default sub-tab, `openNets`/`renderNets`): live nets in session (own-repo mirror of NetLogger, with check-in rosters, cached in `skywave_nets_v1`) above the built-in `NETDIR` directory of 15 scheduled national + Southeast-US nets. Fetches at boot when online and on sub-tab open (60 s freshness) or ⟳.
 - **On Air** (`refreshNow`): filters `DATA` by `onAir(e)`; sorts by frequency; shows live UTC. Quick chips (All / ★ Favorites / English / Spanish / French) + free-text filter + meter-band dropdown. Auto-re-renders every 30 s while visible.
 - **Search** (`refreshSearch`): full-text over station/lang/country/target + band/lang/target dropdowns. Capped at 1200 results.
 - **By Freq** (`refreshFreq`): enter kHz or MHz; shows entries within ±2/5/10 kHz, on-air first. The "I hear something on 9.420, who is it?" workflow.
@@ -169,12 +169,18 @@ Contains two sub-tabs rendered via the same `#tab-log` section:
 - **Season code** (`seasonCode`): `a` = summer (≈ last Sun Mar → last Sun Oct), `b` = winter; 2-digit year. e.g. `a26`, `b26`.
 - **CSV format** (semicolon, ≥11 fields). `parseEibi` maps:
   `[0]=freq(kHz) [1]=time"HHMM-HHMM" [2]=days [3]=ITU [4]=station [5]=lang [6]=target [7]=tx`.
-- `loadText` rejects files with <20 parsed entries and caches raw text if <4.5 MB.
+- `loadText` rejects files with <20 parsed entries, stores the raw text in IndexedDB, and resolves `{ok, stored, why}` so callers can tell the user when a save actually failed.
 
-### 5.2 CORS relays — `relays(rawUrl)`
+### 5.2 Live data — own-repo mirrors, then `relays(rawUrl)`
 
-Tried in order: **direct** → `api.allorigins.win/raw` → `corsproxy.io` → `api.codetabs.com`.
-Used only for EiBi schedule updates. **This is the single biggest fragility** (see C1).
+Both live feeds are mirrored server-side by scheduled Actions in this repo and
+read from the CORS-open `data` branch: `eibi.yml` → `sked-<code>.csv` (daily),
+`nets.yml` → `nets.json` (~10 min). The app never calls a third party.
+
+`relays(rawUrl)` is the fallback when a mirror is unavailable: the user's own
+Cloudflare Worker (`workers/relay.js`, set in Ref) if configured, then a direct
+hit. The public relay chain (`allorigins` / `corsproxy` / `codetabs`) was
+removed in 2026.07.26 — see C1.
 
 ---
 
@@ -184,14 +190,14 @@ All keys defined in the `K` object. All reads/writes via `loadJSON`/`saveJSON` (
 
 | Key                    | Shape                                                                    | Notes                  |
 |------------------------|--------------------------------------------------------------------------|------------------------|
-| `skywave_eibi_raw_v1`  | string (raw CSV)                                                         | cached only if <4.5 MB |
+| `skywave_eibi_raw_v1`  | string (raw CSV)                                                         | **IndexedDB** (`skywave`/`kv`), not localStorage, since 2026.07.26; migrated automatically |
 | `skywave_eibi_meta_v1` | `{code, ts, count}`                                                      | freshness/season display |
 | `skywave_favs_v1`      | `[{freq, station, time, lang?, target?, itu?}]`                          | favorites              |
 | `skywave_mine_v1`      | `[{freq, mode, station, time, days, lang, target, notes}]`               | user custom frequencies |
 | `skywave_geo_v1`       | `{lat, lng, label}`                                                      | grayline location      |
 | `skywave_prefs_v1`     | `{autoUpd, setup, theme, zoom, hr24, relay}`                             | preferences; `setup: true` once wizard completes; `relay` = optional self-hosted Worker URL (tried first in `relays()`) |
 | `skywave_heard_v1`     | `{"<keyOf entry>": "YYYY-MM-DD", …}`                                     | favorites marked heard today; pruned to current UTC day on boot |
-| `skywave_nets_v1`      | `{list:[{freq,name,mode,ncs,band,start}], ts}`                           | last fetched NetLogger nets-in-progress |
+| `skywave_nets_v1`      | `{list:[{freq,name,mode,ncs,band,start,server?,dur?,subs?,checkins?,roster?}], ts}` | last fetched NetLogger nets-in-progress; `roster` = `[{call,name?,qth?,grid?,nc?}]` |
 
 **Not here:** logbook, POTA/SOTA spots, callsign, ADIF — operating-side data is out of scope.
 
@@ -225,7 +231,7 @@ Compact SunCalc core (Agafonkin): Julian day → solar mean anomaly → ecliptic
 
 ### Fetch strategy — `fetchSchedule(code)`
 
-Loop candidate URLs × `relays()`; first response that parses and passes a sanity check wins. Returns `null` on total failure → caller keeps cached data and shows guidance.
+Own-repo mirror first (`data` branch, `raw.githubusercontent.com`), then upstream through `relays()`. First response passing `looksLikeSchedule()` wins. Returns `null` on total failure → caller keeps cached data and shows guidance.
 
 ---
 
@@ -265,16 +271,16 @@ node test/smoke.mjs
 
 ## 10. Compromises & known limitations
 
-- **C1 — EiBi update depends on public CORS relays.** Can rate-limit or disappear. Mitigation: self-hosted relay (R6).
+- ~~**C1 — EiBi update depends on public CORS relays.**~~ **Resolved 2026.07.26:** EiBi is mirrored server-side by `eibi.yml` to the `data` branch and read CORS-open; all three public relays removed.
 - **C2 — In-app browsers block `fetch`.** EiBi auto-update only works in real Safari / a hosted PWA.
 - **C3 — Single file, no modules/build.** Great for portability; bad for diffs and testing granularity. (R4)
-- **C4 — `localStorage` only (~5 MB).** Raw EiBi cache guarded at <4.5 MB. Should move to IndexedDB. (R3)
+- ~~**C4 — `localStorage` only (~5 MB).**~~ **Resolved 2026.07.26:** the raw schedule lives in IndexedDB (async, quota-generous, real error reporting, automatic migration). Small state stays in localStorage by design.
 - **C5 — EiBi `.txt` fallback parser is heuristic.** CSV is the supported path.
 - **C6 — No schema versioning/migration.** Additive changes are safe; a breaking change needs a key bump + migration. (R5)
 - **C7 — Day-of-week parser is intentionally permissive.** Irregular codes shown, not precisely scheduled.
 - **C8 — Antenna math uses classic 468/234/1005 approximations.** Ignores height, wire diameter, velocity factor.
 - **C9 — Grayline advice is rule-of-thumb, not a propagation model.**
-- **C10 — No committed automated tests.** (R4)
+- ~~**C10 — No committed automated tests.**~~ **Resolved:** `test/smoke.mjs`, `test/domain.mjs` (on-air/day/season/sun/parse/net-field logic) and `test/nets-parser.mjs` run in CI via `npm test`.
 - **C11 — Accessibility not audited.** (R8)
 - **C12 — `tab-log` section ID means the Saved tab.** Historical artifact; rename with care.
 
@@ -289,7 +295,8 @@ node test/smoke.mjs
 - **v0.5** — First-run setup wizard (location → Maidenhead grid preview); grid square in header.
 - **v2026.06.09** — Code review pass: dead CSS/variable removal, `toggleFav` key unified via `keyOf()`, `loadText` timestamp preservation, double `rebuildData()` boot fix, `onAirText()` filter respect, stale `mineMsg` clear, re-run wizard link, K-index auto-load in wide-screen rail, Firefox zoom fallback, SW error surfacing.
 - **v2026.07.05** — Polish pass: fixed `attr()` escape order (quote-in-station-name corrupted favorite keys), PNG app icons (`apple-touch-icon.png` 180 + `icon-512.png`) so iOS home-screen icon works, favicon + `og:`/description meta tags, `theme-color` follows light/dark, lat/lng range validation (`validGeo`), `sw.js` relative paths for host portability, rail K-index error state, `fetchKIndex` timeout, TZ label computed once, My-Freq delete confirm, accurate search-result count. Also: "heard today" mark on Favorites (sage strike + pill, clears 0000 UTC, `skywave_heard_v1`). See CHANGELOG.md.
-- **v2026.07.12.006 (current)** — Nets fetch hardened: 3 candidate endpoints tried; dead thingproxy relay replaced with codetabs in the shared chain.
+- **v2026.07.26.038 (current)** — Third-party proxies eliminated: EiBi mirrored in-repo by `eibi.yml` alongside the nets mirror; public relay chain removed. Schedule storage moved to IndexedDB with honest save reporting and automatic migration. Live-net rosters fixed (`normNetObj` was dropping them). Dead cgi-bin XML/AIM/delimited parsers deleted; `test/domain.mjs` added for on-air/day/season/sun/parse logic.
+- **v2026.07.12.006** — Nets fetch hardened: 3 candidate endpoints tried; dead thingproxy relay replaced with codetabs in the shared chain.
 - **v2026.07.12.005** — Nets parser speaks the documented NetLogger XML format (was JSON/delimited only — live nets always parsed to zero). 20 parser tests.
 - **v2026.07.12.004** — NETDIR grown to 15 nets: ten verified Southeast-US nets added (state traffic nets LA/MS/AL/GA/TN/SC, FL phone + midday, SouthCARS, Waterway). UTC times are daylight-anchored; notes carry local times. Former companion-app references removed — SkyWave stands alone.
 - **v2026.07.12–.003** — WCAG AA contrast pass (`--ink-dim` #8a8a8a); moon/sun theme toggle; update-ready banner; version in Ref footer; audit remediation: CI workflow + real test exit codes, nets-parser tests in repo, `_days` precomputed per entry, debounced filters, K-index retry reset, wizard GEO commit-on-Next, keyboard/ARIA accessibility (chips are buttons, row actions focusable, Escape, wizard focus trap), `prefers-reduced-motion`, manifest id/screenshots/categories.

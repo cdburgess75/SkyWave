@@ -96,7 +96,7 @@ SkyWave/
 
 **Data flow.** One array is the single source of truth: built-in time stations and net directory + your own frequencies + the parsed EiBi schedule. Every view is a filter over that array, rendered through event delegation.
 
-**Staying dependency-free.** The app never calls a third-party API directly. Live ham-net data (including the check-in rosters) is fetched **server-side by a scheduled GitHub Action** in this repo, which mirrors it to a data branch the app reads over CORS-open `raw.githubusercontent.com`. Everything else — grayline, band advice, antenna math — is computed on-device.
+**Staying dependency-free.** The app never calls a third party — not for the schedule, not for the nets, not through anyone's CORS proxy. Both live feeds are fetched **server-side by scheduled GitHub Actions** in this repo and mirrored to a data branch the app reads over CORS-open `raw.githubusercontent.com`: the EiBi schedule daily, live ham nets (with their check-in rosters) every ~10 minutes. Everything else — grayline, band advice, antenna math — is computed on-device.
 
 Design rules held throughout: no runtime dependencies, every `localStorage` access wrapped in `try/catch`, all rendered data escaped, and every network feature caches its last result and renders an explicit offline state. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
@@ -104,8 +104,11 @@ Design rules held throughout: no runtime dependencies, every `localStorage` acce
 
 ```bash
 npm install -D jsdom   # one-time
-node test/smoke.mjs    # script syntax, id coverage, full jsdom boot
-node test/nets-parser.mjs
+npm test               # all three suites
+
+node test/smoke.mjs        # script syntax, id coverage, full jsdom boot
+node test/domain.mjs       # on-air windows, day/season rules, sun times, parsers
+node test/nets-parser.mjs  # live-net feed shapes
 ```
 
 ## Tech stack
@@ -120,8 +123,10 @@ node test/nets-parser.mjs
 
 | Source | Used for | Terms |
 |--------|----------|-------|
-| [EiBi](http://www.eibispace.de) © Eike Bierwirth | Longwave / mediumwave / shortwave broadcast schedule | Free to copy & distribute, attribute EiBi |
+| [EiBi](http://www.eibispace.de) © Eike Bierwirth | Longwave / mediumwave / shortwave broadcast schedule | Free to copy & distribute, attribute EiBi — mirrored server-side by this repo's Action |
 | [NetLogger](https://www.netlogger.org) | Live ham nets in session + check-in rosters | Mirrored server-side by this repo's GitHub Action |
+
+No third-party CORS proxy sits between you and either source.
 | [NOAA SWPC](https://www.swpc.noaa.gov) | Planetary K-index | Public API |
 | [HamQSL](https://www.hamqsl.com) N0NBH/K4HG | Solar conditions | Linked & credited |
 

@@ -1,9 +1,9 @@
 {
   "name": "skywave",
   "private": true,
-  "description": "Shortwave band guide — offline-first single-file PWA",
+  "description": "World band radio guide (LW/MW/SW) + live HF ham nets \u2014 offline-first single-file PWA",
   "scripts": {
-    "test": "node test/smoke.mjs && node test/nets-parser.mjs"
+    "test": "node test/smoke.mjs && node test/domain.mjs && node test/nets-parser.mjs"
   },
   "devDependencies": {
     "jsdom": "^29.1.1"

@@ -2,6 +2,19 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.26.038] — 2026-07-26
+
+### Fixed
+- **Live nets never showed who was checked in.** The mirror has been publishing full check-in rosters since 2026.07.17, but `normNetObj()` — which every incoming net passes through — returned only six fields and silently dropped `roster`, `checkins`, `subs`, `server` and the elapsed timer. Expanding a live net therefore always fell back to "roster appears here once the live feed updates," no matter how many stations were logged in. Rosters, check-in counts and net metadata now come through intact. (Found while removing dead code; the roster screenshots in the docs were rendered from seeded data, which is why it went unnoticed.)
+
+### Changed
+- **Removed the dead NetLogger parsers.** The cgi-bin XML and AIM parsers, and the pipe-delimited fallback, targeted endpoints that have returned 404 on every NetLogger server since July 2026. ~80 lines of parser plus 21 tests were maintaining formats nothing could send. `parseNets()` now handles exactly what arrives: the homepage table and JSON.
+- **Tests retargeted at the logic that matters.** New `test/domain.mjs` (70 checks) covers what the app's answers actually depend on and what fails silently when broken: on-air windows including the 00:00 UTC wrap, day-of-week rules (digits, two-letter codes, ranges, Sunday-as-7), EiBi season boundaries at the last Sunday of March/October, `sunTimes()` including the polar day/night branches, `parseEibi()` on both file shapes, the schedule sanity gate, and live-net field passthrough. Verified by mutation: deliberately breaking the midnight wrap, the season boundary, and the roster passthrough each produce a clean failure.
+- `icon-512.png` added to the service-worker shell so the install icon is available offline.
+- Documentation brought back in line with the code: `README`, `HANDOFF` (compromises C1, C4 and C10 now resolved), `docs/ARCHITECTURE.md` and `docs/DATA_SOURCES.md` all described the public relay chain and localStorage-only storage as current. `package.json`'s description still said "Shortwave band guide."
+
+---
+
 ## [2026.07.26.037] — 2026-07-26
 
 ### Fixed
