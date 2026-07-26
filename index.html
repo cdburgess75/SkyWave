@@ -590,7 +590,7 @@
       </details>
       <details>
         <summary>Custom relay (your own Cloudflare Worker — most reliable)</summary>
-        <div class="hint" style="margin:8px 0">Live data (EiBi, nets) is fetched through public CORS relays that can be blocked or busy. Deploying the tiny worker in <b>workers/relay.js</b> from the repo gives you a private, reliable relay — paste its URL here and it's tried first.</div>
+        <div class="hint" style="margin:8px 0">Not needed for normal use — the schedule and live nets both come from SkyWave's own mirror. This is a fallback for reaching EiBi and NetLogger <i>directly</i> if the mirror is ever unavailable: deploy the tiny worker in <b>workers/relay.js</b> from the repo and paste its URL here. No third-party proxies are used.</div>
         <div class="updrow">
           <input type="text" id="relayIn" placeholder="https://skywave-relay.you.workers.dev" autocomplete="off" style="flex:1">
           <button class="btn ghost" id="relaySave">Save</button>
@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.17.035";
+const VERSION="2026.07.26.036";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -913,25 +913,42 @@ function seasonList(){const set=new Set([seasonCode()]);const d=new Date();
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),0,15))));
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),5,15))));
   set.add(seasonCode(new Date(Date.UTC(d.getUTCFullYear(),11,15))));return[...set];}
+/* Fetch candidates for a CORS-blocked upstream, most-trusted first: the user's
+   own Cloudflare Worker (Ref tab) if they deployed one, then a direct hit.
+   Public CORS proxies (allorigins / corsproxy / codetabs) used to live in this
+   list — they saw every user's IP and could return anything. They were dropped
+   once both feeds got their own in-repo mirror. See docs/DATA_SOURCES.md. */
 function relays(raw){
   const out=[];
-  const c=(PREFS.relay||"").trim().replace(/\/+$/,"");   // user's own Cloudflare Worker (Ref tab)
+  const c=(PREFS.relay||"").trim().replace(/\/+$/,"");
   if(c)out.push(c+(c.indexOf("?")>=0?"&":"?")+"url="+encodeURIComponent(raw));
-  out.push(raw,"https://api.allorigins.win/raw?url="+encodeURIComponent(raw),
-    "https://corsproxy.io/?url="+encodeURIComponent(raw),"https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(raw));
+  out.push(raw);
   return out;
 }
 function fetchWithTimeout(url,opts,ms){const ac=new AbortController();const id=setTimeout(()=>ac.abort(),ms||7000);
   return fetch(url,{...opts,signal:ac.signal}).finally(()=>clearTimeout(id));}
+/* Own-repo mirror: a scheduled GitHub Action (.github/workflows/eibi.yml)
+   fetches eibispace.de server-side and publishes the CSVs to the `data`
+   branch. raw.githubusercontent.com is CORS-open, so the app reads them
+   directly — no third party in the critical path. */
+const EIBI_MIRROR=code=>"https://raw.githubusercontent.com/cdburgess75/SkyWave/data/sked-"+code+".csv";
+// A real schedule is thousands of semicolon-delimited rows. A short body is an
+// error page or a truncated transfer — never let it overwrite a good copy.
+function looksLikeSchedule(t){return !!t&&t.length>50000&&(t.match(/;/g)||[]).length>5000;}
+// EiBi's CSV is ISO-8859-1 (Latin-1); decode it as such so accented names
+// (Coruña, Educación, Rádio…) don't turn into replacement characters.
 async function fetchSchedule(code){
+  // 1) own mirror — direct, CORS-open, no relay
+  try{const res=await fetchWithTimeout(EIBI_MIRROR(code),{cache:"no-store"},20000);
+    if(res&&res.ok){const text=new TextDecoder("iso-8859-1").decode(await res.arrayBuffer());
+      if(looksLikeSchedule(text))return text;}}catch(e){}
+  // 2) upstream — only reachable if the user deployed their own relay
   const targets=["https://www.eibispace.de/dx/sked-"+code+".csv","http://www.eibispace.de/dx/sked-"+code+".csv"];
   for(const t of targets)for(const url of relays(t)){
-    if(url===t&&t.startsWith("http:"))continue; // direct http fetch is mixed-content-blocked on https; relays still reach it
-    try{const res=await fetchWithTimeout(url,{cache:"no-store",redirect:"follow"});if(!res||!res.ok)continue;
-      // EiBi's CSV is ISO-8859-1 (Latin-1); decode it as such so accented names
-      // (Coruña, Educación, Rádio…) don't turn into replacement characters.
+    if(url===t&&t.startsWith("http:"))continue; // direct http fetch is mixed-content-blocked on https; a relay still reaches it
+    try{const res=await fetchWithTimeout(url,{cache:"no-store",redirect:"follow"},20000);if(!res||!res.ok)continue;
       const text=new TextDecoder("iso-8859-1").decode(await res.arrayBuffer());
-      if((text.match(/;/g)||[]).length>200)return text;}catch(e){}
+      if(looksLikeSchedule(text))return text;}catch(e){}
   }
   return null;
 }
@@ -940,7 +957,7 @@ async function doUpdate(opts){opts=opts||{};if(updating)return;
   const sel=document.getElementById("seasonSel");
   const code=(sel.value&&sel.value!=="auto")?sel.value:seasonCode();
   if(!navigator.onLine){umsg(haveEibi?"Offline — keeping your stored "+(META?META.code.toUpperCase():"")+" copy.":"Offline — connect to fetch the schedule. Reference data still works.","warn");return;}
-  updating=true;setSpin(true);if(!opts.silent)umsg("Fetching "+code.toUpperCase()+" from eibispace.de…","");
+  updating=true;setSpin(true);if(!opts.silent)umsg("Fetching "+code.toUpperCase()+" schedule…","");
   const text=await fetchSchedule(code);updating=false;setSpin(false);
   if(text){loadText(text,{code});umsg("Updated to "+code.toUpperCase()+" — "+META.count.toLocaleString()+" entries, saved offline.","");}
   else if(!opts.silent)umsg("Couldn't reach the schedule server. If you're in an in-app preview, open this in Safari (Share → Open in Safari) and retry. "+(haveEibi?"Your stored copy is still active. ":"")+"Or use Manual load below.","err");

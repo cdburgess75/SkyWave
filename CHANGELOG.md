@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.26.036] — 2026-07-26
+
+### Changed
+- **The EiBi schedule now comes from SkyWave's own mirror — no third-party proxies anywhere.** Fetching the schedule used to fall through a chain of public CORS relays (`allorigins.win`, `corsproxy.io`, `codetabs.com`) because eibispace.de sends no CORS headers. Each of those saw every user's IP and could have returned anything — the only check on the response was "does it contain more than 200 semicolons." A scheduled Action (`.github/workflows/eibi.yml`, `scripts/fetch-eibi.mjs`) now mirrors the CSVs server-side to the `data` branch every day, and the app reads them straight from CORS-open `raw.githubusercontent.com` — the same pattern already used for live nets. All three public relays are removed from the app. EiBi's terms permit copying and redistribution with attribution; the mirror keeps the bytes unmodified and credits EiBi as before.
+- **Every season the app can offer is mirrored,** not just the current one, so picking a past or upcoming season in **Ref → Season** works without leaving the mirror.
+- **Stronger validation on a downloaded schedule.** A response must be > 50 KB with thousands of delimited rows before it can replace your stored copy; short error pages and truncated transfers are now rejected instead of being saved.
+- **Custom relay is now a true fallback,** not a workaround for flaky proxies — the Ref-tab text explains it's only for reaching EiBi/NetLogger directly if the mirror is ever down.
+
+---
+
 ## [2026.07.17.035] — 2026-07-17
 
 ### Fixed

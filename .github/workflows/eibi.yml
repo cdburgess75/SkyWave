@@ -1,34 +1,39 @@
-name: Mirror live nets
+name: Mirror EiBi schedule
+
+# eibispace.de sends no CORS headers, so the app can't fetch it from a browser.
+# Mirroring it here (and serving from raw.githubusercontent.com) keeps public
+# CORS proxies out of the critical path. EiBi's terms allow copying and
+# redistribution with attribution — see docs/DATA_SOURCES.md.
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # every 10 minutes (GitHub may add a few minutes of lag)
-  workflow_dispatch:          # manual run button
+    - cron: "17 4 * * *"   # daily; EiBi publishes updates through the season
+  workflow_dispatch:
 
 permissions:
   contents: write
 
-# Shared with eibi.yml: both jobs force-push the `data` branch, so they must
+# Shared with nets.yml: both jobs force-push the `data` branch, so they must
 # never run at the same time. cancel-in-progress would drop a queued publish.
 concurrency:
   group: data-branch
   cancel-in-progress: false
 
 jobs:
-  nets:
+  eibi:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Fetch nets from NetLogger servers
-        run: node scripts/fetch-nets.mjs
+      - name: Fetch schedule CSVs from eibispace.de
+        run: node scripts/fetch-eibi.mjs
       - name: Publish to single-commit data branch
         run: |
           set -euo pipefail
           REMOTE="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          # Carry over whatever the EiBi job published; we only regenerate ours.
+          # Carry over whatever the nets job published; we only regenerate ours.
           if git clone --depth 1 --branch data "$REMOTE" prev 2>/dev/null; then
             for f in prev/*; do
               b="$(basename "$f")"
@@ -37,10 +42,10 @@ jobs:
           fi
           cd out
           git init -b data
-          git config user.name "skywave-nets-mirror"
+          git config user.name "skywave-eibi-mirror"
           git config user.email "actions@users.noreply.github.com"
           git add -A
-          git commit -m "nets @ $(date -u +%FT%TZ)"
+          git commit -m "eibi @ $(date -u +%FT%TZ)"
           git push --force "$REMOTE" data
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
