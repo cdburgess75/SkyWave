@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.26.038";
+const VERSION="2026.07.28.039";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1263,7 +1263,11 @@ const NETS_SOURCE="https://www.netlogger.org/";
 let NETS=loadJSON(K.nets,{list:[],ts:0});
 let netsFetching=false;
 let netsRefreshing=false;                 // true while replacing a stale live list
-const NETS_STALE_MS=10*60000;             // older than this → don't show the old "in session" list
+/* Older than this → hide the stored "in session" list while refreshing rather
+   than flash stale data. Must stay well above the mirror's real-world refresh
+   gap (~hourly, see NETS_MIRROR_MAX_AGE) or the list gets hidden almost all the
+   time even though it's the freshest data that exists. */
+const NETS_STALE_MS=2*3600000;
 const netOpen=new Set();   // ids of expanded net rows (kept across re-renders)
 const liveNetId=n=>"L|"+n.freq+"|"+(n.name||"");
 const dirNetId=e=>"D|"+e.freq+"|"+(e.station||"");
@@ -1402,27 +1406,36 @@ async function relayFetch(ep){
   return null;
 }
 /* Own-repo mirror: a scheduled GitHub Action (.github/workflows/nets.yml)
-   fetches NetLogger server-side every ~10 min and publishes nets.json to the
-   `data` branch. raw.githubusercontent.com is CORS-open, so the app reads it
-   directly — no third-party relays in the primary path. */
+   fetches NetLogger server-side and publishes nets.json to the `data` branch.
+   raw.githubusercontent.com is CORS-open, so the app reads it directly — no
+   third-party relays in the primary path. The workflow asks for every 10 min;
+   GitHub's scheduler actually delivers roughly hourly. */
 const NETS_MIRROR="https://raw.githubusercontent.com/cdburgess75/SkyWave/data/nets.json";
-const NETS_MIRROR_MAX_AGE=30*60000;   // fall back to live servers if mirror is stale
+/* Only a sanity ceiling — NOT a freshness requirement. GitHub runs scheduled
+   workflows on a best-effort basis and routinely coalesces an every-10-minutes
+   cron down to roughly hourly, so the mirror is often 40–80 min old. Since it is the
+   primary source (and, unless you've deployed your own relay, the only one),
+   rejecting it on age just leaves the user with nothing — which is exactly what
+   happened between 2026.07.26.036 and .038. Use it whatever its age and let the
+   UI say how old it is. */
+const NETS_MIRROR_MAX_AGE=6*3600000;
 async function getNets(){
   // 1) own mirror — direct fetch, no relay
+  let mirror=null;
   try{
     const res=await fetchWithTimeout(NETS_MIRROR,{cache:"no-store"},7000);
     if(res&&res.ok){
       const j=await res.json();
-      if(j&&Array.isArray(j.nets)&&isFinite(j.ts)&&Date.now()-j.ts<NETS_MIRROR_MAX_AGE){
-        const list=j.nets.map(o=>o&&typeof o==="object"?normNetObj(o):null).filter(Boolean);
-        return{list,ts:j.ts};
-      }
+      if(j&&Array.isArray(j.nets)&&isFinite(j.ts))
+        mirror={list:j.nets.map(o=>o&&typeof o==="object"?normNetObj(o):null).filter(Boolean),ts:j.ts};
     }
   }catch(e){}
-  // 2) live homepage via relay chain (mirror unavailable or stale)
+  if(mirror&&Date.now()-mirror.ts<NETS_MIRROR_MAX_AGE)return mirror;
+  // 2) mirror missing or apparently stalled — try upstream via the user's own
+  //    relay, then fall back to the stale mirror, which still beats nothing.
   const t=await relayFetch(NETS_SOURCE);
-  if(t===null)return null;
-  let list=[];try{list=parseNets(t);}catch(e){return null;}
+  if(t===null)return mirror;
+  let list=[];try{list=parseNets(t);}catch(e){return mirror;}
   return{list,ts:Date.now()};                 // list may be [] — a valid "no nets right now"
 }
 function netsStartStr(s){const m=/(\d{1,2}:\d{2})/.exec(s);return m?m[1]+"Z":"";}
@@ -1493,8 +1506,14 @@ async function openNets(force){
   let r=null;
   try{r=await getNets();}catch(e){r=null;}
   finally{netsFetching=false;netsRefreshing=false;}   // never let a throw wedge the flags
-  if(r){NETS={list:r.list,ts:r.ts};saveJSON(K.nets,NETS);netsMsg("Updated "+new Date(NETS.ts).toUTCString().slice(17,22)+"Z");renderNets();}
-  else{renderNets();netsMsg(NETS.ts?"Couldn't reach NetLogger — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach NetLogger — its public relays may be busy; tap ⟳ to retry in a minute. (In an in-app preview? Open in Safari.)");}
+  if(r){NETS={list:r.list,ts:r.ts};saveJSON(K.nets,NETS);
+    // Always say how old the data itself is — the mirror refreshes on GitHub's
+    // schedule, not ours, so "updated just now" would often be a lie.
+    const hhmm=new Date(r.ts).toUTCString().slice(17,22)+"Z";
+    netsMsg(Date.now()-r.ts<15*60000?"Live as of "+hhmm
+      :"Live as of "+hhmm+" ("+ageMin(r.ts)+" ago) — mirror refreshes hourly-ish");
+    renderNets();}
+  else{renderNets();netsMsg(NETS.ts?"Couldn't reach the nets mirror — showing the list from "+ageMin(NETS.ts)+" ago.":"Couldn't reach the nets mirror; tap ⟳ to retry in a minute. (In an in-app preview? Open in Safari.)");}
 }
 function ageMin(ts){const m=Math.max(1,Math.round((Date.now()-ts)/60000));return m<60?m+" min":Math.round(m/60)+" h";}
 

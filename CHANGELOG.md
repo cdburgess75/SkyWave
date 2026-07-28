@@ -2,6 +2,23 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.28.039] — 2026-07-28
+
+### Fixed
+- **Live nets went blank for most of every hour.** The app rejected the nets mirror whenever it was more than 30 minutes old and fell back to fetching NetLogger live — but that fallback went through the public CORS proxies removed in `.036`, so for anyone without their own relay it could never succeed. The result: "↻ Refreshing live nets in session…" and an empty live list, even though good data was sitting in the mirror.
+
+  The 30-minute limit assumed the mirror refreshes every 10 minutes, as its workflow requests. **It doesn't** — GitHub runs scheduled workflows best-effort and in practice coalesces that cron to roughly hourly (observed gaps on 2026-07-28: 17:05, 18:22, 19:57, 21:03, 22:13 UTC). So the mirror was "too old" for most of each hour by a rule that no longer had a working fallback behind it.
+
+  The mirror is now used **whatever its age** — it's the primary source, and discarding the only data available helps nobody — with a 6-hour ceiling kept purely as a stalled-mirror sanity check. If the mirror is beyond that, the app still tries the relay and *still* falls back to the stale mirror rather than showing nothing.
+
+- **The nets list is no longer hidden while refreshing normal-age data.** `NETS_STALE_MS` (the threshold for hiding a stored list rather than flashing stale data) was 10 minutes — below the mirror's real refresh gap, so the list was hidden nearly always. Raised to 2 hours, which still suppresses genuinely hours-old data on reopen, the case it was added for.
+
+- **The nets status line now states the data's own age** — "Live as of 21:21Z (1 h ago) — mirror refreshes hourly-ish" — instead of implying it just updated. Failure text no longer refers to the public relays that were removed two releases ago.
+
+Verified against a mirror aged to 77 minutes: v2026.07.26.038 showed **0 live nets** with the refreshing placeholder stuck on "Fetching nets in session…"; this release shows all **9**, no placeholder, with the age stated.
+
+---
+
 ## [2026.07.26.038] — 2026-07-26
 
 ### Fixed

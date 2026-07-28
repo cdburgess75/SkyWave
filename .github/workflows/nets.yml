@@ -2,7 +2,9 @@ name: Mirror live nets
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # every 10 minutes (GitHub may add a few minutes of lag)
+    - cron: "*/10 * * * *"   # requested every 10 min; GitHub's scheduler is
+                             # best-effort and in practice delivers ~hourly.
+                             # The app tolerates that — see NETS_MIRROR_MAX_AGE.
   workflow_dispatch:          # manual run button
 
 permissions:
