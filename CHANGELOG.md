@@ -2,6 +2,23 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.28.040] — 2026-07-28
+
+### Fixed
+- **Kiosk mode couldn't be turned off** (More → Reference → Kiosk / shack-monitor mode). Tapping it flipped the button to "✕ Exit kiosk" and it stayed that way permanently — every further tap re-entered instead of exiting, and each one acquired another screen wake lock that was never released, so the display kept itself awake with no way to stop short of force-quitting the app.
+
+  Two mistakes compounded. The button label was set **outside** the `try/catch` around `requestFullscreen()`, so it claimed success even when full-screen was refused; and the toggle decided which direction to go by reading `document.fullscreenElement`, which in that case stayed `null` — so "exit" was unreachable. This bites exactly where the feature is most wanted: a home-screen PWA (already full-screen, so the request is refused) and iPhone Safari (no Fullscreen API at all).
+
+  Kiosk state is now tracked explicitly, so the button always toggles the way it reads. Exiting always releases the wake lock even if leaving full-screen throws, and dropping out of full-screen another way (Esc, a system gesture) exits kiosk cleanly.
+
+- **Kiosk mode is now offered on iPhone.** The button was hidden whenever the Fullscreen API was missing, which removed the feature entirely on iPhone Safari — even though Wake Lock is supported there and the keep-the-screen-awake half works fine. It's hidden only when *neither* capability exists, and the toast says which half you got.
+
+- **The screen no longer quietly starts sleeping again.** Browsers drop the wake lock whenever the page is hidden, so locking the phone once ended keep-awake for the rest of the session. It's now re-acquired when the app comes back to the foreground.
+
+Verified in headless Chromium against a simulated home-screen PWA (full-screen advertised but refused): v2026.07.28.039 leaves the button reading "✕ Exit kiosk" across four taps and leaks 4 wake locks; this release alternates correctly and finishes holding 0.
+
+---
+
 ## [2026.07.28.039] — 2026-07-28
 
 ### Fixed

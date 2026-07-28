@@ -565,7 +565,7 @@
         24-hour local clock
       </label>
       <button class="btn ghost kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode" style="margin-top:12px">⛶&nbsp;Kiosk / shack-monitor mode</button>
-      <div class="hint" style="margin-top:6px">Full-screen clock &amp; on-air view that keeps the screen awake — ideal for a shack monitor.</div>
+      <div class="hint" style="margin-top:6px">Full-screen clock &amp; on-air view that keeps the screen awake — ideal for a shack monitor. Some browsers (iPhone Safari) don't allow full-screen; the keep-awake half still works. Tap again to exit.</div>
     </div>
     <div class="loadbox">
       <h3>◆ Full EiBi schedule <span id="netDot" class="netdot off"></span></h3>
@@ -782,7 +782,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.28.039";
+const VERSION="2026.07.28.040";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1548,7 +1548,7 @@ function renderIdent(){
 function validGeo(la,ln){return isFinite(la)&&isFinite(ln)&&la>=-90&&la<=90&&ln>=-180&&ln<=180;}
 
 /* ============ theme / zoom / kiosk / right-rail ============ */
-let _wakeLock=null,_lastKp=null,_kFetched=false;
+let _wakeLock=null,_lastKp=null,_kFetched=false,_kiosk=false;
 
 function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
@@ -1579,24 +1579,47 @@ function cycleFont(){
   applyZoom(z);
   toast("Text size: "+(z===1?"Normal":z===1.15?"Large":"Larger"));
 }
-async function toggleKiosk(){
+/* Kiosk = full-screen (where supported) + screen kept awake. The two are
+   independent capabilities: iPhone Safari has no Fullscreen API but does have
+   Wake Lock, and a home-screen PWA is already full-screen so requestFullscreen()
+   can reject outright.
+
+   The old version assumed full-screen had succeeded — it set the button to
+   "Exit kiosk" outside the try/catch, then decided which way to toggle by
+   reading document.fullscreenElement, which stayed null. So the button read
+   "Exit kiosk" permanently, tapping it re-entered instead of exiting, and the
+   wake lock could never be released. Kiosk state is tracked explicitly now, so
+   the button always toggles the way it reads. */
+function setKioskUI(on){
   const btn=document.getElementById("kioskBtn");
-  if(!document.fullscreenElement){
-    try{await document.documentElement.requestFullscreen();}catch(e){}
-    if(navigator.wakeLock){try{_wakeLock=await navigator.wakeLock.request("screen");}catch(e){}}
-    if(btn){btn.classList.add("on");btn.textContent="✕ Exit kiosk";}
-  } else {
-    try{await document.exitFullscreen();}catch(e){}
-    if(_wakeLock){try{await _wakeLock.release();}catch(e){}_wakeLock=null;}
-    if(btn){btn.classList.remove("on");btn.textContent="⛶ Kiosk";}
+  if(!btn)return;
+  btn.classList.toggle("on",on);
+  btn.textContent=on?"✕ Exit kiosk mode":"⛶ Kiosk / shack-monitor mode";
+}
+async function releaseWake(){
+  if(_wakeLock){try{await _wakeLock.release();}catch(e){}_wakeLock=null;}
+}
+async function exitKiosk(){
+  _kiosk=false;                                   // cleared first: an exit must
+  if(document.fullscreenElement){try{await document.exitFullscreen();}catch(e){}}
+  await releaseWake();                            // always finish, even if a
+  setKioskUI(false);                              // step above throws
+}
+async function toggleKiosk(){
+  if(_kiosk){await exitKiosk();toast("Kiosk mode off");return;}
+  let full=false,awake=false;
+  if(document.fullscreenEnabled&&document.documentElement.requestFullscreen){
+    try{await document.documentElement.requestFullscreen();full=!!document.fullscreenElement;}catch(e){}
   }
+  if(navigator.wakeLock){try{_wakeLock=await navigator.wakeLock.request("screen");awake=!!_wakeLock;}catch(e){}}
+  if(!full&&!awake){setKioskUI(false);toast("Kiosk mode isn't available in this browser");return;}
+  _kiosk=true;setKioskUI(true);
+  toast(full?(awake?"Kiosk mode on":"Kiosk mode on — screen may still sleep")
+           :"Screen kept awake — full-screen isn't available here");
 }
 document.addEventListener("fullscreenchange",()=>{
-  if(!document.fullscreenElement){
-    if(_wakeLock){try{_wakeLock.release();}catch(e){}_wakeLock=null;}
-    const btn=document.getElementById("kioskBtn");
-    if(btn){btn.classList.remove("on");btn.textContent="⛶ Kiosk";}
-  }
+  // Left full-screen another way (Esc, system gesture) → leave kiosk cleanly.
+  if(!document.fullscreenElement&&_kiosk)exitKiosk();
 });
 function renderRail(){
   const railK=document.getElementById("railK"),railG=document.getElementById("railGray"),railB=document.getElementById("railBands");
@@ -2067,7 +2090,9 @@ const scheduleReady=(async function(){
   else{renderLastUpd();updateDbStat();}
 })();
 renderLastUpd();updateDbStat();calcAnt();renderGray();renderIdent();
-if(!document.fullscreenEnabled)document.getElementById("kioskBtn").hidden=true;
+// Hide only if neither half of kiosk mode is possible — on iPhone there's no
+// Fullscreen API but Wake Lock still keeps the shack monitor awake.
+if(!document.fullscreenEnabled&&!navigator.wakeLock)document.getElementById("kioskBtn").hidden=true;
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 renderRail();
@@ -2091,6 +2116,10 @@ document.addEventListener("visibilitychange",()=>{
   else if(onListen&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-prop").hidden)renderProp();
   renderRail();
+  // Browsers drop the wake lock whenever the page is hidden, so a phone lock
+  // silently ends "keeps the screen awake" until we ask again.
+  if(_kiosk&&!_wakeLock&&navigator.wakeLock)
+    navigator.wakeLock.request("screen").then(w=>{_wakeLock=w;}).catch(()=>{});
 });
 // Wait for the stored schedule to come back from IDB before deciding whether an
 // auto-update is needed — otherwise every launch would look like "no schedule".
