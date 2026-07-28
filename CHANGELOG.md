@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.28.041] — 2026-07-28
+
+### Fixed
+- **Kiosk mode now has an exit that can't be lost.** `.040` fixed the toggle logic, but the only way out was still the same button buried in **More → Reference**, three taps and a scroll away — which is no help once the screen is locked into a full-screen view with the browser's own chrome hidden. Kiosk mode now shows a floating **✕ EXIT KIOSK** pill, pinned top-right above everything else, for as long as kiosk is active. **Esc** also exits, and the Reference button still works.
+- **Reloading while full-screen no longer strands you.** A service-worker update (or any reload) reset the app's kiosk flag while the browser stayed full-screen, so the app believed kiosk was off and offered no way out of it. On startup the app now adopts the real full-screen state and shows the exit control.
+
+Verified in headless Chromium across three platform profiles — home-screen PWA (full-screen refused), iPhone Safari (no Fullscreen API), and desktop (full-screen granted) — that all three exit routes work and every screen wake lock is released.
+
+---
+
 ## [2026.07.28.040] — 2026-07-28
 
 ### Fixed

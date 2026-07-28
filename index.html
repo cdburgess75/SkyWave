@@ -339,6 +339,14 @@
     .bottomnav{display:none;}
   }
 
+  /* Always-reachable kiosk exit. Kiosk mode hides the browser's own chrome, so
+     the way out must never depend on finding a tab or scrolling to a button. */
+  .kiosk-exit{position:fixed;z-index:95;top:max(10px,env(safe-area-inset-top));right:12px;
+    background:var(--panel2);color:var(--amber);border:1px solid var(--amber);
+    font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    padding:9px 14px;border-radius:999px;cursor:pointer;line-height:1;
+    box-shadow:0 4px 16px rgba(0,0,0,.5);}
+  .kiosk-exit:active{background:var(--panel);}
   /* kiosk button */
   .kiosk-btn{white-space:nowrap;}
   .kiosk-btn.on{color:var(--amber);border-color:var(--amber);background:var(--panel);}
@@ -387,6 +395,8 @@
 </style>
 </head>
 <body>
+<!-- Kiosk mode hides the browser chrome; this is the guaranteed way back out. -->
+<button class="kiosk-exit" id="kioskExit" hidden>✕ Exit kiosk</button>
 <div id="errBar" hidden style="position:fixed;top:0;left:0;right:0;z-index:99;background:#3a1210;color:#f0b0a8;
   font:600 12px/1.5 ui-monospace,Menlo,monospace;padding:max(10px,env(safe-area-inset-top)) 14px 10px;text-align:center;border-bottom:1px solid #e8635a">
   ⚠ Something went wrong — <span id="errMsg"></span>.
@@ -782,7 +792,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.28.040";
+const VERSION="2026.07.28.041";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1592,9 +1602,12 @@ function cycleFont(){
    the button always toggles the way it reads. */
 function setKioskUI(on){
   const btn=document.getElementById("kioskBtn");
-  if(!btn)return;
-  btn.classList.toggle("on",on);
-  btn.textContent=on?"✕ Exit kiosk mode":"⛶ Kiosk / shack-monitor mode";
+  if(btn){btn.classList.toggle("on",on);
+    btn.textContent=on?"✕ Exit kiosk mode":"⛶ Kiosk / shack-monitor mode";}
+  // The floating pill is the escape hatch: the Ref-tab button is three taps and
+  // a scroll away, which is no use once the screen is locked to kiosk.
+  const pill=document.getElementById("kioskExit");
+  if(pill)pill.hidden=!on;
 }
 async function releaseWake(){
   if(_wakeLock){try{await _wakeLock.release();}catch(e){}_wakeLock=null;}
@@ -1910,6 +1923,7 @@ document.getElementById("fontToggle").addEventListener("click",cycleFont);
 document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.addEventListener("click",()=>applyZoom(parseFloat(b.dataset.zoomBtn))));
 document.getElementById("hr24Toggle").addEventListener("change",e=>{PREFS.hr24=e.target.checked;saveJSON(K.prefs,PREFS);tick();});
 document.getElementById("kioskBtn").addEventListener("click",toggleKiosk);
+document.getElementById("kioskExit").addEventListener("click",()=>{exitKiosk();toast("Kiosk mode off");});
 
 document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
 document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
@@ -1987,8 +2001,9 @@ document.addEventListener("keydown",ev=>{
     const t=ev.target&&ev.target.closest?ev.target.closest("[data-act]"):null;
     if(t){ev.preventDefault();handleAct(t);return;}
   }
-  // Escape closes the More sheet, then the wizard
+  // Escape leaves kiosk first, then closes the More sheet, then the wizard
   if(ev.key==="Escape"){
+    if(_kiosk){exitKiosk();toast("Kiosk mode off");return;}
     if(document.getElementById("moreSheet").classList.contains("open"))closeMore();
     else if(!document.getElementById("wizardModal").hidden)closeWizard();
     return;
@@ -2093,6 +2108,10 @@ renderLastUpd();updateDbStat();calcAnt();renderGray();renderIdent();
 // Hide only if neither half of kiosk mode is possible — on iPhone there's no
 // Fullscreen API but Wake Lock still keeps the shack monitor awake.
 if(!document.fullscreenEnabled&&!navigator.wakeLock)document.getElementById("kioskBtn").hidden=true;
+// Reloaded while still full-screen (a service-worker update will do it): adopt
+// that state so the exit control is on screen rather than leaving the user
+// full-screen with a button that claims kiosk is off.
+if(document.fullscreenElement){_kiosk=true;setKioskUI(true);}
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 renderRail();
