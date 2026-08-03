@@ -100,6 +100,16 @@ entries first.
 - **Grayline & band planner** — sunrise, sunset, solar noon, and day length for
   your location, plus plain-language band advice ("40 m: all-rounder, DX at
   night; strong at grayline"). Computed on your device — no network needed.
+- **Grayline alerts** — the grayline window is the 50 minutes either side of
+  sunrise and sunset. Whenever one is close, a banner appears in the header on
+  *every* tab: a heads-up 30 minutes before it opens, again at 5 minutes, then
+  "Grayline now" with the time remaining. Tap **✕** to dismiss it; the next
+  window brings it back.
+  **⤓ Calendar reminders** downloads an `.ics` file of the next two weeks of
+  grayline windows, each with alarms 30 and 5 minutes before. Open it and your
+  phone's calendar will alert you *with SkyWave closed* — the only alert that
+  works when the app isn't running. Re-download it every couple of weeks, or
+  after you move location, to top it up.
 - **Export & print** — copy the current On-Air list, download a band card as a
   text file, or print a clean reference sheet for the go-kit.
 
@@ -141,6 +151,7 @@ entries first.
 | Mark a station I logged | Tap **✓** on a favorite (clears at 0000 UTC) |
 | Add my local net or repeater | **Saved → My Freq** |
 | Plan a band opening | **Tools → Grayline** |
+| Be told when the grayline hits | **Tools → Grayline → ⤓ Calendar reminders** |
 | Cut an antenna | **Tools → Antenna calculator** |
 | Refresh the broadcast schedule | **Ref → ⟳ Update now** |
 | Check propagation | **Prop** (needs internet) |

@@ -2,6 +2,19 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.28.042] — 2026-07-28
+
+### Added
+- **Grayline alerts.** The grayline window — the 50 minutes either side of sunrise and sunset — was already computed, but only surfaced as text inside the Tools tab if you happened to be looking at it. Now a banner appears in the header on **every** tab: an amber heads-up **30 minutes** before the window opens, again at **5 minutes**, then a green **"Grayline now"** with the time remaining and the bands worth trying. Dismiss with ✕; the next window re-arms it. Computed on-device from your coordinates, so it works offline.
+- **Grayline calendar reminders** (**Tools → Grayline → ⤓ Calendar reminders**). Downloads an `.ics` of the next two weeks of grayline windows, each a 100-minute event with alarms 30 and 5 minutes before it opens. Your own calendar app does the alerting, so **this is the one alert that reaches you with SkyWave closed** — on any platform, with no push server, no subscription endpoint and no third party. The file is generated on-device.
+
+  Real push notifications were considered and rejected: they require a server holding subscriptions, which would reintroduce exactly the third-party dependency removed in `.036`. The calendar route gets the same practical result with none of it.
+
+### Notes
+- 24 new checks in `test/domain.mjs` cover the alert phases and the `.ics` output (RFC 5545 line folding, CRLF, block balance, required properties, unique UIDs, 100-minute windows, both alarm triggers, chronological order). Mutation-tested: reverting the time-remaining formula, changing the lead times, or removing line folding each fail loudly.
+
+---
+
 ## [2026.07.28.041] — 2026-07-28
 
 ### Fixed

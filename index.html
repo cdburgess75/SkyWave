@@ -339,6 +339,17 @@
     .bottomnav{display:none;}
   }
 
+  /* grayline alert strip (inside the sticky header) */
+  .grayalert{display:flex;align-items:center;gap:8px;margin-top:7px;padding:6px 9px;border-radius:8px;
+    font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1.35;
+    border:1px solid var(--amber-dim);background:rgba(255,159,28,.10);color:var(--amber);}
+  .grayalert.now{border-color:var(--green);background:rgba(57,255,20,.10);color:var(--green);}
+  .grayalert .ga-txt{flex:1;min-width:0;}
+  .grayalert .ga-x{flex:none;background:none;border:none;color:inherit;opacity:.7;
+    font-family:var(--mono);font-size:12px;line-height:1;padding:2px 4px;cursor:pointer;}
+  .grayalert .ga-x:hover{opacity:1;}
+  [data-theme="light"] .grayalert{background:rgba(200,96,15,.08);}
+  [data-theme="light"] .grayalert.now{background:rgba(46,139,122,.10);}
   /* Always-reachable kiosk exit. Kiosk mode hides the browser's own chrome, so
      the way out must never depend on finding a tab or scrolling to a button. */
   .kiosk-exit{position:fixed;z-index:95;top:max(10px,env(safe-area-inset-top));right:12px;
@@ -429,6 +440,12 @@
       <div class="clock local"><span class="lbl" id="locLbl">Local</span><span class="val" id="loc">--:--:--</span></div>
     </div>
     <div class="ident"><span id="hdrGrid" class="ident-grid"></span><span class="dbstat" id="dbstat"></span></div>
+    <!-- Grayline alert. Lives inside the sticky header so it stays on screen on
+         every tab; hidden except in the ~2.5 h a day around a grayline window. -->
+    <div class="grayalert" id="grayAlert" role="status" hidden>
+      <span class="ga-txt" id="grayAlertTxt"></span>
+      <button class="ga-x" id="grayAlertX" aria-label="Dismiss grayline alert">✕</button>
+    </div>
   </header>
 
   <!-- ============ LISTEN ============ -->
@@ -543,7 +560,8 @@
         <label>Latitude<input type="number" id="geoLat" step="0.01" inputmode="decimal"></label>
         <label>Longitude<input type="number" id="geoLng" step="0.01" inputmode="decimal"></label>
       </div>
-      <div class="btnrow"><button class="btn ghost sm" id="useLoc">Use my location</button></div>
+      <div class="btnrow"><button class="btn ghost sm" id="useLoc">Use my location</button>
+        <button class="btn ghost sm" id="dlGray">⤓ Calendar reminders</button></div>
       <div class="kv" id="sunKv"></div>
       <div class="advise" id="bandAdvise" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px"></div>
       <div class="hint" style="margin-top:8px">Computed on-device from your coordinates — no network needed. Grayline (sunrise/sunset terminator) gives an enhanced DX window on the lower bands.</div>
@@ -792,7 +810,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.28.041";
+const VERSION="2026.07.28.042";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1699,6 +1717,7 @@ function fmtLocal(d){return d.toLocaleTimeString([],{hour:"2-digit",minute:"2-di
 function renderGray(){
   document.getElementById("grayLoc").textContent=GEO.label||(GEO.lat.toFixed(2)+", "+GEO.lng.toFixed(2));
   document.getElementById("geoLat").value=GEO.lat;document.getElementById("geoLng").value=GEO.lng;
+  updateGrayAlert();      // location may have changed — re-evaluate the banner
   const now=new Date(),st=sunTimes(now,GEO.lat,GEO.lng);
   const kv=document.getElementById("sunKv");
   if(st.polar){kv.innerHTML='<div class="k">Condition</div><div class="v">'+(st.polar==="day"?"24h daylight":"24h darkness")+'</div>';
@@ -1716,6 +1735,68 @@ function renderGray(){
     '<div class="k">Day length</div><div class="v">'+Math.floor(dayLen/60)+'h '+(dayLen%60)+'m</div>'+
     '<div class="k">Now</div><div class="v">'+(nearGray?"◐ GRAYLINE":isDay?"☀ Daytime":"☾ Night")+'</div>';
   renderAdvise(isDay,nearGray);
+}
+/* ============ grayline alert ============
+   The grayline window is the ±50 min either side of sunrise/sunset that
+   renderGray() already calls "nearGray". Warnings fire 30 and 5 minutes before
+   that window opens, so there's time to get to the radio. Everything is
+   computed on-device from GEO — no network, works offline. */
+const GRAY_WINDOW_MIN=50;
+const GRAY_LEADS=[30,5];        // minutes of warning before the window opens
+
+// Grayline moments from `from` onward, skipping polar days where the sun never
+// crosses the horizon. Walks day-by-day because sunTimes() is per-date.
+function grayEvents(from,days,back){
+  const out=[];
+  for(let i=(back?-1:0);i<days;i++){
+    const st=sunTimes(new Date(from.getTime()+i*dayMs),GEO.lat,GEO.lng);
+    if(st.polar)continue;
+    [["sunrise",st.sunrise],["sunset",st.sunset]].forEach(p=>{
+      if(p[1]&&isFinite(p[1].valueOf()))out.push({kind:p[0],at:p[1]});
+    });
+  }
+  return out.filter(e=>back||e.at>=from).sort((a,b)=>a.at-b.at);
+}
+/* Current alert phase: "now" (inside the window), "soon"/"warn" (a lead time has
+   been reached), or null when there's nothing to say. */
+function grayState(now){
+  now=now||new Date();
+  if(!validGeo(GEO.lat,GEO.lng))return null;
+  const evs=grayEvents(now,2,true);
+  if(!evs.length)return null;
+  for(const e of evs){
+    const dm=(e.at-now)/60000;
+    // dm > 0 while the event is still ahead. The window closes at at+50, so the
+    // time remaining is dm+50 — not 50-|dm|, which under-reports the whole first
+    // half of the window (40 min before sunset is 90 min left, not 10).
+    if(Math.abs(dm)<=GRAY_WINDOW_MIN)
+      return{phase:"now",kind:e.kind,at:e.at,left:Math.max(0,Math.round(dm)+GRAY_WINDOW_MIN)};
+  }
+  const next=evs.find(e=>e.at>now);
+  if(!next)return null;
+  const opens=Math.round((next.at-now)/60000)-GRAY_WINDOW_MIN;   // until the window opens
+  if(opens<=GRAY_LEADS[0])
+    return{phase:opens<=GRAY_LEADS[1]?"soon":"warn",kind:next.kind,at:next.at,opens:Math.max(0,opens)};
+  return null;
+}
+let _grayKey="",_grayHidden="";
+function grayAlertKey(s){return s?s.phase+"|"+s.at.toISOString():"";}
+function updateGrayAlert(){
+  const bar=document.getElementById("grayAlert");
+  if(!bar)return;
+  const s=grayState();
+  const key=grayAlertKey(s);
+  // A dismissal applies to that one alert only; the next phase or event re-arms.
+  if(!s||_grayHidden===key){bar.hidden=true;_grayKey=key;return;}
+  if(key!==_grayKey){
+    _grayKey=key;
+    const label=s.kind==="sunrise"?"sunrise":"sunset";
+    document.getElementById("grayAlertTxt").textContent=s.phase==="now"
+      ?"◐ Grayline now — "+label+" "+fmtUTC(s.at)+"Z · "+s.left+" min left · 80/40/30/20 m"
+      :"◐ Grayline "+label+" window opens in "+(s.opens||"<1")+" min · "+fmtUTC(s.at)+"Z";
+    bar.classList.toggle("now",s.phase==="now");
+  }
+  bar.hidden=false;
 }
 function renderAdvise(isDay,nearGray){
   const g='good',d='dim';
@@ -1735,6 +1816,44 @@ function renderAdvise(isDay,nearGray){
 /* ============ export / print ============ */
 function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");
   clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("show"),1600);}
+/* Grayline windows as an .ics calendar feed. This is the only alert that can
+   reach you with SkyWave closed: your own calendar app fires it. No server, no
+   push subscription, no third party — the file is generated on-device. */
+function icsEsc(s){return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n");}
+function icsStamp(d){return d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");}
+// RFC 5545 caps a content line at 75 octets; continuations start with a space.
+function icsFold(line){
+  const out=[];let s=String(line);
+  while(s.length>73){out.push(s.slice(0,73));s=" "+s.slice(73);}
+  out.push(s);return out.join("\r\n");
+}
+function graylineIcs(days){
+  const now=new Date(),evs=grayEvents(now,days||14);
+  const where=GEO.label||(GEO.lat.toFixed(2)+", "+GEO.lng.toFixed(2));
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//SkyWave//Grayline//EN","CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",icsFold("X-WR-CALNAME:"+icsEsc("SkyWave grayline — "+where))];
+  for(const e of evs){
+    const start=new Date(e.at.getTime()-GRAY_WINDOW_MIN*60000);
+    const end=new Date(e.at.getTime()+GRAY_WINDOW_MIN*60000);
+    const label=e.kind==="sunrise"?"Sunrise":"Sunset";
+    L.push("BEGIN:VEVENT",
+      "UID:"+icsStamp(e.at)+"-"+e.kind+"-skywave@cdburgess75.github.io",
+      "DTSTAMP:"+icsStamp(now),
+      "DTSTART:"+icsStamp(start),
+      "DTEND:"+icsStamp(end),
+      icsFold("SUMMARY:"+icsEsc("Grayline — "+label+" "+fmtUTC(e.at)+"Z")),
+      icsFold("DESCRIPTION:"+icsEsc("Enhanced DX window on 80/40/30/20 m.\n"+
+        label+" "+fmtUTC(e.at)+"Z at "+where+".\nWindow "+fmtUTC(start)+"Z–"+fmtUTC(end)+"Z.\nFrom SkyWave.")),
+      icsFold("LOCATION:"+icsEsc(where)));
+    for(const m of GRAY_LEADS)
+      L.push("BEGIN:VALARM","ACTION:DISPLAY",
+        icsFold("DESCRIPTION:"+icsEsc("Grayline "+label.toLowerCase()+" window opens in "+m+" min")),
+        "TRIGGER:-PT"+m+"M","END:VALARM");
+    L.push("END:VEVENT");
+  }
+  L.push("END:VCALENDAR");
+  return L.join("\r\n")+"\r\n";
+}
 function downloadBlob(name,text,mime){
   try{const b=new Blob([text],{type:mime||"text/plain"}),u=URL.createObjectURL(b),a=document.createElement("a");
     a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Saved "+name);}
@@ -1806,7 +1925,10 @@ function tick(){const d=new Date(),p=n=>String(n).padStart(2,"0");
   document.getElementById("loc").textContent=locStr;
   const tz=new Intl.DateTimeFormat("en-US",{timeZoneName:"short"}).formatToParts(d)
     .find(pp=>pp.type==="timeZoneName");
-  document.getElementById("locLbl").textContent=(tz&&tz.value)||"Local";}
+  document.getElementById("locLbl").textContent=(tz&&tz.value)||"Local";
+  // Grayline state only changes by the minute — don't recompute it 60×/min.
+  if(d.getSeconds()===0||!_grayTicked){_grayTicked=true;updateGrayAlert();}}
+let _grayTicked=false;
 function updateDbStat(){const el=document.getElementById("dbstat");
   if(haveEibi)el.innerHTML='<b>'+DATA.length.toLocaleString()+'</b> entries · EiBi '+(META?META.code.toUpperCase():"")+' · offline';
   else el.innerHTML='Reference only · load EiBi in Ref';}
@@ -1924,6 +2046,13 @@ document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.addEventListener("clic
 document.getElementById("hr24Toggle").addEventListener("change",e=>{PREFS.hr24=e.target.checked;saveJSON(K.prefs,PREFS);tick();});
 document.getElementById("kioskBtn").addEventListener("click",toggleKiosk);
 document.getElementById("kioskExit").addEventListener("click",()=>{exitKiosk();toast("Kiosk mode off");});
+document.getElementById("grayAlertX").addEventListener("click",()=>{
+  _grayHidden=_grayKey;document.getElementById("grayAlert").hidden=true;});
+document.getElementById("dlGray").addEventListener("click",()=>{
+  if(!validGeo(GEO.lat,GEO.lng)){toast("Set your location first");return;}
+  const ics=graylineIcs(14);
+  if(!/BEGIN:VEVENT/.test(ics)){toast("No grayline events — polar day/night here");return;}
+  downloadBlob("skywave-grayline.ics",ics,"text/calendar");});
 
 document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
 document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
@@ -2135,6 +2264,7 @@ document.addEventListener("visibilitychange",()=>{
   else if(onListen&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-prop").hidden)renderProp();
   renderRail();
+  updateGrayAlert();   // hours may have passed while hidden
   // Browsers drop the wake lock whenever the page is hidden, so a phone lock
   // silently ends "keeps the screen awake" until we ask again.
   if(_kiosk&&!_wakeLock&&navigator.wakeLock)

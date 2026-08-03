@@ -27,7 +27,12 @@ function grab(startMarker, endMarker) {
 }
 
 const block = [
+  "let GEO={lat:30.61,lng:-90.36,label:'Loranger, LA'};",
+  "function validGeo(la,ln){return isFinite(la)&&isFinite(ln)&&la>=-90&&la<=90&&ln>=-180&&ln<=180;}",
   grab("const METER=", "const HAM="),
+  grab("const GRAY_WINDOW_MIN=", "let _grayKey"),
+  grab("function icsEsc(", "function downloadBlob("),
+  grab("function fmtUTC(", "function renderGray("),
   grab("function entry(", "function keyOf("),
   grab("function cap(", "function modeOf("),
   grab("function bandOf(", "function langName("),
@@ -39,11 +44,13 @@ const block = [
 ].join("\n");
 
 const api = new Function(block + `; return {parseTime,dayAllowed,dowE,onAir,minsUntilStart,bandOf,
-  lastSun,seasonCode,seasonList,looksLikeSchedule,parseEibi,entry,netFreqKhz,normNetObj,sunTimes,toDays};`)();
+  lastSun,seasonCode,seasonList,looksLikeSchedule,parseEibi,entry,netFreqKhz,normNetObj,sunTimes,toDays,
+  grayState,grayEvents,graylineIcs,icsFold,GRAY_WINDOW_MIN,GRAY_LEADS};`)();
 
 const {
   dayAllowed, onAir, minsUntilStart, bandOf, seasonCode, seasonList,
   looksLikeSchedule, parseEibi, netFreqKhz, normNetObj, sunTimes,
+  grayState, grayEvents, graylineIcs, GRAY_WINDOW_MIN,
 } = api;
 
 let pass = 0, fail = 0;
@@ -192,6 +199,64 @@ t("sunTimes: solar noon still returned in polar night", polarNight.noon instance
 const syd = sunTimes(utc(2026, 11, 21, 2), -33.87, 151.2);
 t("sunTimes: southern summer day is long",
   (syd.sunset - syd.sunrise) / 3600000 > 13);
+
+// ------------------------------------------------------ grayline alert ----
+// The window is sunset/sunrise ±50 min; warnings fire 30 and 5 min before it
+// opens. Offsets below are minutes relative to a real sunset at the test GEO.
+const sunsetToday = sunTimes(new Date(), 30.61, -90.36).sunset;
+const off = (m) => new Date(sunsetToday.getTime() + m * 60000);
+const phaseAt = (m) => { const s = grayState(off(m)); return s ? s.phase : "none"; };
+
+t("grayState: quiet two hours out", phaseAt(-120) === "none");
+t("grayState: 30-min warning as the window approaches", phaseAt(-80) === "warn");
+t("grayState: escalates to the 5-min warning", phaseAt(-55) === "soon");
+t("grayState: inside the window before the event", phaseAt(-40) === "now");
+t("grayState: inside the window at the event", phaseAt(0) === "now");
+t("grayState: inside the window after the event", phaseAt(45) === "now");
+t("grayState: quiet once the window closes", phaseAt(70) === "none");
+// Regression: time-remaining used to be computed as 50-|dm|, which reported
+// 10 minutes left 40 minutes *before* the event, when 90 actually remained.
+t("grayState: time left spans the whole window, not the half", grayState(off(-40)).left === 90);
+t("grayState: time left at the event is half the window", grayState(off(0)).left === GRAY_WINDOW_MIN);
+t("grayState: time left near the close is small", grayState(off(45)).left === 5);
+
+// ---------------------------------------------------------- ICS export ----
+const ics = graylineIcs(7);
+const unfold = (s) => s.split("\r\n").reduce((a, l) =>
+  (l.startsWith(" ") && a.length ? (a[a.length - 1] += l.slice(1), a) : (a.push(l), a)), []);
+const lines = unfold(ics);
+const events = ics.split("BEGIN:VEVENT").slice(1);
+
+t("ics: CRLF line endings (RFC 5545)", /\r\n/.test(ics) && !/[^\r]\n/.test(ics));
+t("ics: no line exceeds the 75-octet limit", ics.split("\r\n").every((l) => l.length <= 75));
+t("ics: calendar wrapper", lines[0] === "BEGIN:VCALENDAR" && lines.includes("END:VCALENDAR"));
+t("ics: VERSION and PRODID present", lines.includes("VERSION:2.0") && lines.some((l) => l.startsWith("PRODID:")));
+t("ics: BEGIN/END blocks balance", (() => {
+  const st = [];
+  for (const l of lines) {
+    if (l.startsWith("BEGIN:")) st.push(l.slice(6));
+    else if (l.startsWith("END:") && st.pop() !== l.slice(4)) return false;
+  }
+  return st.length === 0;
+})());
+t("ics: two events per day", events.length >= 12 && events.length <= 14);
+t("ics: every event carries the required properties", events.every((b) =>
+  ["UID:", "DTSTAMP:", "DTSTART:", "DTEND:", "SUMMARY:"].every((k) => b.includes("\r\n" + k) || b.includes(k))));
+t("ics: UIDs are unique", new Set(events.map((b) => /UID:(\S+)/.exec(b)[1])).size === events.length);
+t("ics: UTC timestamps", events.every((b) => /DTSTART:\d{8}T\d{6}Z/.test(b)));
+t("ics: each window is 100 minutes", events.every((b) => {
+  const p = (k) => { const m = new RegExp(k + ":(\\d{4})(\\d\\d)(\\d\\d)T(\\d\\d)(\\d\\d)(\\d\\d)Z").exec(b);
+    return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]); };
+  return p("DTEND") - p("DTSTART") === 2 * GRAY_WINDOW_MIN * 60000;
+}));
+t("ics: two alarms per event", events.every((b) => (b.match(/BEGIN:VALARM/g) || []).length === 2));
+t("ics: alarms fire at 30 and 5 minutes", events.every((b) =>
+  b.includes("TRIGGER:-PT30M") && b.includes("TRIGGER:-PT5M")));
+t("ics: commas escaped in text values", !/[^\\],/.test(/LOCATION:(.*)/.exec(ics)[1]));
+t("ics: events are in chronological order", (() => {
+  const ds = events.map((b) => /DTSTART:(\S+)/.exec(b)[1]);
+  return ds.every((d, i) => i === 0 || ds[i - 1] <= d);
+})());
 
 console.log(`domain: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
