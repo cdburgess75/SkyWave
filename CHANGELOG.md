@@ -2,6 +2,17 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.07.29.043] — 2026-07-29
+
+### Fixed
+- **The empty orange box in the header is gone.** The grayline banner from `.042` shipped with a CSS bug: `.grayalert` sets `display:flex`, and any author display rule silently overrides the browser's built-in `[hidden] → display:none` — so the `hidden` attribute did nothing and the banner's empty shell rendered permanently, on every tab, even with no alert active. Alert text is only written when an alert fires, which is why the box was blank.
+- **Same bug, second victim:** a computed-style sweep of every `[hidden]` element found the Ref tab's **Clear** button also ignoring `hidden` (via the `.btn` display rule) — visible even with no schedule loaded to clear.
+- Fixed with one global `[hidden]{display:none!important}` rule instead of per-element patches, ending the whole bug class; the old per-element `.modal[hidden]` patch is now redundant and removed. A smoke-test guard fails the build if the global rule ever disappears.
+
+Verified by **computed style** this time — the `.042` tests checked the `hidden` property, which is exactly how the bug slipped through: banner hidden in quiet periods, rendering with text during a window, hidden again after; wizard still opens; tabs still switch; sweep reports zero `[hidden]` elements ignoring the attribute.
+
+---
+
 ## [2026.07.28.042] — 2026-07-28
 
 ### Added

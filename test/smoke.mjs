@@ -31,6 +31,12 @@ try {
   throw new Error(`FAIL  1/3  syntax error: ${e.message}`);
 }
 
+// Guard: author display rules (.btn, .grayalert, …) override the browser's
+// built-in [hidden]{display:none}, so the hidden attribute silently stops
+// working without this global rule. Shipped twice before the rule existed.
+if (!/\[hidden\]\{display:none!important;\}/.test(html))
+  throw new Error("FAIL  global [hidden]{display:none!important} rule missing — hidden attribute breaks on styled elements");
+
 // ── Test 2: getElementById coverage ────────────────────────────────────────
 const ids = [...js.matchAll(/getElementById\(["']([^"']+)["']\)/g)].map(m => m[1]);
 const present = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]));

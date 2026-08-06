@@ -59,6 +59,12 @@
   [data-theme="light"] .row.now{border-color:var(--amber-dim);box-shadow:inset 3px 0 0 var(--amber);}
   [data-theme="light"] .netdot.on{box-shadow:none;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  /* Any author display rule (.btn, .grayalert, …) silently beats the browser's
+     built-in [hidden]{display:none} — author styles always outrank UA styles —
+     so the hidden attribute stops working on such elements. This shipped twice
+     (empty grayline banner shell always visible; Clear button visible with no
+     schedule). One global rule ends the whole bug class. */
+  [hidden]{display:none!important;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--mono);}
   body{min-height:100vh;overflow-x:clip;
     background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 5px);
@@ -242,7 +248,6 @@
 
   /* modal */
   .modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.66);display:flex;align-items:flex-end;justify-content:center;}
-  .modal[hidden]{display:none;}
   .sheet{width:100%;max-width:760px;background:var(--panel2);border-top:1px solid var(--amber-dim);
     border-radius:16px 16px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.6);}
   .sheet h3{margin:0 0 12px;font-size:12px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;}
@@ -810,7 +815,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.07.28.042";
+const VERSION="2026.07.29.043";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
