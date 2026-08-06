@@ -33,3 +33,12 @@ jobs:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # The v4 default gives up after 10 min of "deployment_queued" and
+          # cancels the deploy — which is what killed v2026.07.29.043 on
+          # 2026-08-06 while Pages was backed up. The push looked successful,
+          # the site silently stayed on the previous release, and the only
+          # symptom was a stale version number on a phone. Wait longer instead;
+          # a slow deploy is not a failed one.
+          timeout: 1800000        # 30 min
+          error_count: 20         # tolerate more transient status-poll errors
