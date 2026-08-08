@@ -1,0 +1,624 @@
+{
+ "ts": 1786209572302,
+ "nets": [
+  {
+   "name": "7155 Morning Group",
+   "freq": 7155,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "N6KN",
+   "start": "14:22",
+   "server": "NETLOGGER",
+   "dur": "02:57:15",
+   "subs": 3,
+   "checkins": 17,
+   "roster": [
+    {
+     "call": "N2GG",
+     "name": "Gil"
+    },
+    {
+     "call": "K6KOI",
+     "name": "John"
+    },
+    {
+     "call": "N7BUD",
+     "name": "Bud"
+    },
+    {
+     "call": "W6BQZ",
+     "name": "Ken",
+     "qth": "CA"
+    }
+   ]
+  },
+  {
+   "name": "3905 20m SSB Net",
+   "freq": 14320,
+   "mode": "SSB",
+   "band": "20m",
+   "ncs": "KB3ONN",
+   "start": "16:39",
+   "server": "NETLOGGER3",
+   "dur": "00:40:28",
+   "subs": 23,
+   "checkins": 29,
+   "roster": [
+    {
+     "call": "N0PUI",
+     "name": "Jay",
+     "qth": "ST PETER, MN",
+     "grid": "EN34bl"
+    },
+    {
+     "call": "W5IL",
+     "name": "Richard",
+     "qth": "LOS ALAMOS, NM",
+     "grid": "DM65uv"
+    },
+    {
+     "call": "WN1F",
+     "name": "David",
+     "qth": "SCARBOROUGH, ME",
+     "grid": "FN43to"
+    },
+    {
+     "call": "N8BF",
+     "name": "Byron",
+     "qth": "International Falls, MN",
+     "grid": "EN38hn"
+    },
+    {
+     "call": "VA3YKT",
+     "name": "John",
+     "qth": "Newmarket Ontario, ON",
+     "grid": "FN04jm"
+    },
+    {
+     "call": "ON5WO",
+     "name": "Rik W",
+     "qth": "8902 Ieper W-VL",
+     "grid": "JO10lu"
+    },
+    {
+     "call": "M7BUE",
+     "name": "Ian",
+     "qth": "Stoke on Trent Staffordshire",
+     "grid": "IO82wx"
+    },
+    {
+     "call": "W5MKC",
+     "name": "Tom",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65qh"
+    },
+    {
+     "call": "KJ5QAW",
+     "name": "Christopher",
+     "qth": "Ennis, TX",
+     "grid": "EM12rk"
+    },
+    {
+     "call": "KO8MD",
+     "name": "Doc",
+     "qth": "Louisville, KY",
+     "grid": "EM78fg"
+    },
+    {
+     "call": "N6PGQ",
+     "name": "Robert",
+     "qth": "Roseville, CA",
+     "grid": "CM98ht"
+    },
+    {
+     "call": "N4CHL",
+     "name": "Thomas",
+     "qth": "Mulberry, FL",
+     "grid": "EL87xw"
+    },
+    {
+     "call": "KU4NT",
+     "name": "Woody",
+     "qth": "LYNN HAVEN, GA",
+     "grid": "EM70ef"
+    },
+    {
+     "call": "KM4P",
+     "name": "Glenn",
+     "qth": "The Villages, FL",
+     "grid": "EL88xt"
+    },
+    {
+     "call": "W4CBH",
+     "name": "Clifton",
+     "qth": "Pensacola, FL",
+     "grid": "EM60hh"
+    },
+    {
+     "call": "KA1HIR",
+     "name": "Alfred",
+     "qth": "COVENTRY, RI",
+     "grid": "FN41eq"
+    },
+    {
+     "call": "WD0CDX",
+     "name": "Scott",
+     "qth": "Lincoln, NE",
+     "grid": "EN10qt"
+    },
+    {
+     "call": "KE9LA",
+     "name": "Glenn",
+     "qth": "WAUKESHA, WI",
+     "grid": "EN53va"
+    },
+    {
+     "call": "N2KED",
+     "name": "Dave",
+     "qth": "POUGHKEEPSIE, NY",
+     "grid": "FN31br"
+    },
+    {
+     "call": "N5WGA",
+     "name": "Chuck",
+     "qth": "VALLIANT, OK",
+     "grid": "EM24ka"
+    },
+    {
+     "call": "K1ZN",
+     "name": "Jeffrey",
+     "qth": "Senoia, GA",
+     "grid": "EM73qg"
+    },
+    {
+     "call": "KB3ONN",
+     "name": "Denny",
+     "qth": "HAGERSTOWN, MD",
+     "grid": "FM19dp",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "OMISS 15m SSB Net",
+   "freq": 21395,
+   "mode": "SSB",
+   "band": "15m",
+   "ncs": "KD4K",
+   "start": "16:00",
+   "server": "NETLOGGER2",
+   "dur": "01:19:30",
+   "subs": 37,
+   "checkins": 37,
+   "roster": [
+    {
+     "call": "KD4K",
+     "name": "SCOTT",
+     "qth": "SURFSIDE BEACH, SC",
+     "grid": "FM03",
+     "nc": 1
+    },
+    {
+     "call": "KK6TBN",
+     "name": "KENT",
+     "qth": "Sacramento, CA",
+     "grid": "CM98"
+    },
+    {
+     "call": "WB1CMG",
+     "name": "DAVID",
+     "qth": "MONT VERNON, NH",
+     "grid": "FN42"
+    },
+    {
+     "call": "KM4P",
+     "name": "GLENN",
+     "qth": "The Villages, FL",
+     "grid": "EL88"
+    },
+    {
+     "call": "N6WWW",
+     "name": "JASON",
+     "qth": "Gilmer, TX",
+     "grid": "EM22"
+    },
+    {
+     "call": "WW7GBA",
+     "name": "LOUIS",
+     "qth": "HEBER CITY, UT",
+     "grid": "DN40"
+    },
+    {
+     "call": "WA7NVT",
+     "name": "TIM",
+     "qth": "Philomath, OR",
+     "grid": "CN84"
+    },
+    {
+     "call": "K4LO",
+     "name": "PHIL",
+     "qth": "PACE, FL",
+     "grid": "EM60"
+    },
+    {
+     "call": "W4DFR",
+     "name": "DAVE",
+     "qth": "Chaplin, KY",
+     "grid": "EM77"
+    },
+    {
+     "call": "KA0MGM",
+     "name": "JIM",
+     "qth": "KEYSTONE, IA",
+     "grid": "EN31"
+    },
+    {
+     "call": "W4CBH",
+     "name": "BIFF",
+     "qth": "Pensacola, FL",
+     "grid": "EM60"
+    },
+    {
+     "call": "N5WGA",
+     "name": "CHUCK",
+     "qth": "VALLIANT, OK",
+     "grid": "EM24"
+    },
+    {
+     "call": "KB0VHA",
+     "name": "KEVIN",
+     "qth": "ELIZABETH, CO",
+     "grid": "DM79"
+    },
+    {
+     "call": "KC8MM",
+     "name": "MIKE",
+     "qth": "RUDOLPH, OH",
+     "grid": "EN81"
+    },
+    {
+     "call": "KD0IAV",
+     "name": "DONALD",
+     "qth": "Berthoud, CO",
+     "grid": "DN70"
+    },
+    {
+     "call": "VE6APU",
+     "name": "ROBERT",
+     "qth": "ROCKY MOUNTAIN HOUSE, AB",
+     "grid": "DO22"
+    },
+    {
+     "call": "N4TTU",
+     "name": "TOM",
+     "qth": "Athens, GA",
+     "grid": "EM83"
+    },
+    {
+     "call": "KD0WGB",
+     "name": "DON",
+     "qth": "WATERLOO, IA",
+     "grid": "EN42"
+    },
+    {
+     "call": "W9BLI",
+     "name": "JACOB",
+     "qth": "Menasha, WI",
+     "grid": "EN54"
+    },
+    {
+     "call": "K6BBB",
+     "name": "ROB",
+     "qth": "Redding, CA",
+     "grid": "CN80"
+    },
+    {
+     "call": "N3MAV",
+     "name": "GREG",
+     "qth": "Summerfield, FL",
+     "grid": "EL89"
+    },
+    {
+     "call": "N0ZB",
+     "name": "SCOTT",
+     "qth": "Lansing, KS",
+     "grid": "EM29"
+    },
+    {
+     "call": "WB2LZM",
+     "name": "STAN",
+     "qth": "Niskayuna, NY",
+     "grid": "FN32"
+    },
+    {
+     "call": "W5DOC",
+     "name": "DOCK",
+     "qth": "SEGUIN, TX",
+     "grid": "EL09"
+    },
+    {
+     "call": "W2EUA",
+     "name": "PAULIE",
+     "qth": "Palm City, FL",
+     "grid": "EL97"
+    },
+    {
+     "call": "AB0GT",
+     "name": "JOHN",
+     "qth": "Oregon, OH",
+     "grid": "EN81"
+    },
+    {
+     "call": "KA0RTM",
+     "name": "MIKE",
+     "qth": "Rochester, MN",
+     "grid": "EN34"
+    },
+    {
+     "call": "WD5CSK",
+     "name": "RON",
+     "qth": "Edmond, OK",
+     "grid": "EM15"
+    },
+    {
+     "call": "WW6JAY",
+     "name": "JAY",
+     "qth": "Los Angeles, CA",
+     "grid": "DM04"
+    },
+    {
+     "call": "ND0M",
+     "name": "ROB",
+     "qth": "Lenexa, KS",
+     "grid": "EM28"
+    },
+    {
+     "call": "N5HDX",
+     "name": "JOE",
+     "qth": "LOG CABIN, TX",
+     "grid": "EM12"
+    },
+    {
+     "call": "W0KT",
+     "name": "CJ",
+     "qth": "Cheyenne Wells, CO",
+     "grid": "DM88"
+    },
+    {
+     "call": "W0KAD",
+     "name": "KEN",
+     "qth": "KANSAS CITY, MO",
+     "grid": "EM29"
+    },
+    {
+     "call": "KB7BIB",
+     "name": "BRIAN",
+     "qth": "Oracle, AZ",
+     "grid": "DM42"
+    },
+    {
+     "call": "N9DJR",
+     "name": "DONALD",
+     "qth": "KOKOMO, IN",
+     "grid": "EN60"
+    }
+   ]
+  },
+  {
+   "name": "RCWA Boredom Breaker (w Allstar)",
+   "freq": 147090,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "K5AVF",
+   "start": "16:41",
+   "server": "NETLOGGER",
+   "dur": "00:37:40",
+   "subs": 6,
+   "checkins": 7,
+   "roster": [
+    {
+     "call": "K5AVF",
+     "name": "Alex",
+     "qth": "Glenpool, OK",
+     "grid": "EM25ax",
+     "nc": 1
+    },
+    {
+     "call": "KD4YVV",
+     "name": "Jeff",
+     "qth": "Prince George, VA",
+     "grid": "FM17hf"
+    },
+    {
+     "call": "KA5OWI",
+     "name": "Dave",
+     "qth": "OWASSO, OK",
+     "grid": "EM26bg"
+    },
+    {
+     "call": "N5GLO",
+     "name": "Bill",
+     "qth": "Oakhurst, TX",
+     "grid": "EM20ir"
+    },
+    {
+     "call": "AI5Q",
+     "name": "Jerus",
+     "qth": "Tulsa, OK",
+     "grid": "EM26ba"
+    },
+    {
+     "call": "KI5UGI",
+     "name": "Brandon",
+     "qth": "Tulsa, OK",
+     "grid": "EM26ac"
+    },
+    {
+     "call": "K4OG",
+     "name": "Mark",
+     "qth": "OWENSBORO, KY",
+     "grid": "EN91ed"
+    }
+   ]
+  },
+  {
+   "name": "Bosque ARC Net",
+   "freq": 442750,
+   "mode": "FM",
+   "band": "70cm",
+   "ncs": "K6LIE",
+   "start": "17:08",
+   "server": "NETLOGGER",
+   "dur": "00:11:12",
+   "subs": 1,
+   "checkins": 24,
+   "roster": [
+    {
+     "call": "K6LIE",
+     "name": "Jerold",
+     "qth": "Bernalillo, NM",
+     "grid": "DM65rh",
+     "nc": 1
+    },
+    {
+     "call": "N6HEW",
+     "name": "Glen",
+     "qth": "Albuquerque, NM",
+     "grid": "DM65sd"
+    },
+    {
+     "call": "W5IP",
+     "name": "Carroll",
+     "qth": "ALBUQUERQUE, NM",
+     "grid": "DM65oc"
+    },
+    {
+     "call": "KJ5CNC",
+     "name": "Brian",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65qh"
+    },
+    {
+     "call": "KJ5DGY",
+     "name": "John",
+     "qth": "Conway, AR",
+     "grid": "EM35sc"
+    },
+    {
+     "call": "AI5IZ",
+     "name": "Sean",
+     "qth": "Albuquerque, NM",
+     "grid": "DM65pf"
+    },
+    {
+     "call": "NY5L",
+     "name": "Lawrence",
+     "qth": "RIO RANCHO, NM",
+     "grid": "DM65pg"
+    },
+    {
+     "call": "N0OFQ",
+     "name": "James",
+     "qth": "YUTAN, NE",
+     "grid": "EN11tf"
+    },
+    {
+     "call": "K2ANR",
+     "name": "Vincent",
+     "qth": "RIO RANCHO, NM",
+     "grid": "DM65qg"
+    },
+    {
+     "call": "W9YA",
+     "name": "Robert",
+     "qth": "Albuquerque, NM",
+     "grid": "DM65pd"
+    },
+    {
+     "call": "N2GJ",
+     "name": "Gerald",
+     "qth": "Albuquerque, NM",
+     "grid": "DM65pe"
+    },
+    {
+     "call": "K1IHY",
+     "name": "Susan",
+     "qth": "Albuquerque, NM",
+     "grid": "EL96wc"
+    },
+    {
+     "call": "KJ5OFT",
+     "name": "Andy",
+     "qth": "Clarendon, TX",
+     "grid": "DM94nw"
+    },
+    {
+     "call": "ND1R",
+     "name": "Walter",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65qi"
+    },
+    {
+     "call": "KA0B",
+     "name": "William",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65pi"
+    },
+    {
+     "call": "N0IDA",
+     "name": "Jeffrey",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65qh"
+    },
+    {
+     "call": "KA5PTG",
+     "name": "Glenn",
+     "qth": "Bernalillo, NM",
+     "grid": "DM65rh"
+    },
+    {
+     "call": "W4RCN",
+     "name": "Theodore",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65qi"
+    },
+    {
+     "call": "KE5VSE",
+     "name": "David",
+     "qth": "ALBUQUERQUE, NM",
+     "grid": "DM65rb"
+    },
+    {
+     "call": "KJ5RDA",
+     "name": "Jason",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65pg"
+    },
+    {
+     "call": "KI5JJC",
+     "name": "Pedro",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65qg"
+    },
+    {
+     "call": "K5QH",
+     "name": "Kenneth",
+     "qth": "Corrales, NM",
+     "grid": "DM65qf"
+    },
+    {
+     "call": "KI5VJJ",
+     "name": "Andrew",
+     "qth": "Rio Rancho, NM",
+     "grid": "DM65oe"
+    },
+    {
+     "call": "KI5EFG",
+     "name": "Alec",
+     "qth": "ALBUQUERQUE, NM",
+     "grid": "DM65rd"
+    }
+   ]
+  }
+ ]
+}
