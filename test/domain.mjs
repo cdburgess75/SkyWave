@@ -229,6 +229,33 @@ const daily = built.find((e) => e.station === "SouthCARS");
 t("NETDIR days: omitted means daily", [3, 4, 5, 6, 7, 8, 9].every(
   (d) => onAir(daily, utc(2026, 7, d, 14, 0)) === true));
 
+// Gulf Coast additions (2026.08.09) — each exercises a distinct shape.
+// 7290 Traffic Net: daytime, weekday-filtered, no UTC rollover. 2026-08-09 is
+// a Sunday; the morning session runs Mon–Sat.
+const t7290 = built.find((e) => e.station === "7290 Traffic Net");
+t("NETDIR: 7290 morning session on air Sat 1600Z", onAir(t7290, utc(2026, 7, 8, 16, 0)) === true);
+t("NETDIR: 7290 morning session silent Sunday", onAir(t7290, utc(2026, 7, 9, 16, 0)) === false);
+const t7290pm = built.find((e) => e.station === "7290 Traffic Net · afternoon");
+t("NETDIR: 7290 afternoon silent Saturday", onAir(t7290pm, utc(2026, 7, 8, 18, 30)) === false);
+t("NETDIR: 7290 afternoon on air Friday", onAir(t7290pm, utc(2026, 7, 7, 18, 30)) === true);
+// Texas Traffic Net: daily evening window crossing 00:00 UTC.
+const ttn = built.find((e) => e.station === "Texas Traffic Net");
+t("NETDIR: TTN on air at 0015Z (past midnight UTC)", onAir(ttn, utc(2026, 7, 9, 0, 15)) === true);
+t("NETDIR: TTN silent midday", onAir(ttn, utc(2026, 7, 9, 15, 0)) === false);
+// Nightly means every night — probe a midweek evening too, or a mutant that
+// day-restricts TTN sails through the weekend-only probes above.
+t("NETDIR: TTN on air Tuesday 2345Z", onAir(ttn, utc(2026, 7, 11, 23, 45)) === true);
+t("NETDIR: TTN on air Thursday 0015Z", onAir(ttn, utc(2026, 7, 13, 0, 15)) === true);
+// Magnolia Section Net: same frequency, different windows weekdays vs weekends.
+const mags = built.filter((e) => e.station === "Magnolia Section Net");
+t("NETDIR: Magnolia has weekday and weekend sessions", mags.length === 2);
+t("NETDIR: Magnolia weekday session on air Mon 1130Z",
+  mags.some((e) => onAir(e, utc(2026, 7, 10, 11, 30))));
+t("NETDIR: Magnolia weekend session on air Sat 1230Z",
+  mags.some((e) => onAir(e, utc(2026, 7, 8, 12, 30))));
+t("NETDIR: Magnolia silent Sat 1130Z (weekend starts an hour later)",
+  !mags.some((e) => onAir(e, utc(2026, 7, 8, 11, 30))));
+
 // ------------------------------------------------------ grayline alert ----
 // The window is sunset/sunrise ±50 min; warnings fire 30 and 5 min before it
 // opens. Offsets below are minutes relative to a real sunset at the test GEO.

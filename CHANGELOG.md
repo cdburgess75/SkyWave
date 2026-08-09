@@ -2,6 +2,18 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.09.045] — 2026-08-09
+
+### Added
+- **Five Gulf Coast nets in the built-in directory**, each verified against the net's own published schedule (sources in `docs/DATA_SOURCES.md` conventions — nets' own sites and regional net listings):
+  - **7290 Traffic Net** — 7290 kHz LSB, 10 AM–noon Central Mon–Sat plus a 1 PM Mon–Fri session (two entries). Independent public-service traffic net running continuously since 1953.
+  - **Texas Traffic Net** — 3873 kHz LSB, 6:30 PM Central nightly (NTS). Window crosses 00:00 UTC.
+  - **Magnolia Section Net** — 3862 kHz LSB, Mississippi's *morning* section net: 6 AM Central weekdays, 7 AM weekends/holidays (two entries, same frequency as the evening MSPN already listed).
+  - **The Friendly Bunch** — 3919 kHz LSB, 7–11 PM Eastern nightly conversational group (the same group that appears in the live NetLogger list when in session).
+- These exercise directory shapes that didn't exist before yesterday: weekday-only day filters, a weekend/weekday split on one frequency, and a day-filtered check interacting with the midnight UTC wrap. 12 new tests read the entries the app actually builds; a mutation pass showed the first Texas Traffic Net probes could be fooled by a day-restricted mutant (the midnight wrap credits *yesterday's* day at 0015Z), so midweek probes were added until every mutation fails.
+
+---
+
 ## [2026.08.09.044] — 2026-08-09
 
 ### Added
