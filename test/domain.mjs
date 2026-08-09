@@ -33,7 +33,12 @@ const block = [
   grab("const GRAY_WINDOW_MIN=", "let _grayKey"),
   grab("function icsEsc(", "function downloadBlob("),
   grab("function fmtUTC(", "function renderGray("),
-  grab("function entry(", "function keyOf("),
+  grab("const TIME=", "const LANG="),
+  "let MINE=[];",
+  // entry/parseTime/keyOf/makeMine, then the real NETDIR + buildBase, so the
+  // directory tests read what actually ships rather than a reconstruction.
+  grab("function entry(", "/* Major scheduled HF nets"),
+  grab("const NETDIR=", "function rebuildData("),
   grab("function cap(", "function modeOf("),
   grab("function bandOf(", "function langName("),
   grab("function lastSun(", "function relays("),
@@ -45,7 +50,7 @@ const block = [
 
 const api = new Function(block + `; return {parseTime,dayAllowed,dowE,onAir,minsUntilStart,bandOf,
   lastSun,seasonCode,seasonList,looksLikeSchedule,parseEibi,entry,netFreqKhz,normNetObj,sunTimes,toDays,
-  grayState,grayEvents,graylineIcs,icsFold,GRAY_WINDOW_MIN,GRAY_LEADS};`)();
+  grayState,grayEvents,graylineIcs,icsFold,GRAY_WINDOW_MIN,GRAY_LEADS,NETDIR,buildBase};`)();
 
 const {
   dayAllowed, onAir, minsUntilStart, bandOf, seasonCode, seasonList,
@@ -199,6 +204,30 @@ t("sunTimes: solar noon still returned in polar night", polarNight.noon instance
 const syd = sunTimes(utc(2026, 11, 21, 2), -33.87, 151.2);
 t("sunTimes: southern summer day is long",
   (syd.sunset - syd.sunrise) / 3600000 > 13);
+
+// ------------------------------------------- built-in net directory days ----
+// NETDIR entries may carry a day-of-week filter, evaluated in UTC. An evening
+// net in the Americas lands on the following UTC day, so Shrimpnet (Sat 8 PM
+// Central) is day 7. Getting this wrong shows the net a day early — silently.
+// Read the entry the app actually builds — not a hand-rolled copy, which would
+// pass even if NETDIR carried the wrong day or buildBase dropped the field.
+const built = api.buildBase();
+const shrimp = built.find((e) => e.station === "Shrimpnet");
+t("NETDIR: Shrimpnet is in the built-in directory", !!shrimp);
+t("NETDIR: Shrimpnet on 3881 kHz LSB", shrimp.freq === 3881 && shrimp.mode === "LSB");
+t("NETDIR: Shrimpnet window is 0100-0200Z", shrimp.start === 100 && shrimp.end === 200);
+// 2026-08-09 is a Sunday; 01:30Z Sunday == 8:30 PM Central Saturday.
+t("NETDIR days: on air Sunday 0130Z (Sat 8:30 PM Central)",
+  onAir(shrimp, utc(2026, 7, 9, 1, 30)) === true);
+t("NETDIR days: silent Saturday 0130Z (Fri evening Central)",
+  onAir(shrimp, utc(2026, 7, 8, 1, 30)) === false);
+t("NETDIR days: silent Monday 0130Z", onAir(shrimp, utc(2026, 7, 10, 1, 30)) === false);
+t("NETDIR days: silent outside the window on its own day",
+  onAir(shrimp, utc(2026, 7, 9, 3, 0)) === false);
+// A dayless entry must still run every day — the field is optional.
+const daily = built.find((e) => e.station === "SouthCARS");
+t("NETDIR days: omitted means daily", [3, 4, 5, 6, 7, 8, 9].every(
+  (d) => onAir(daily, utc(2026, 7, d, 14, 0)) === true));
 
 // ------------------------------------------------------ grayline alert ----
 // The window is sunset/sunrise ±50 min; warnings fire 30 and 5 min before it

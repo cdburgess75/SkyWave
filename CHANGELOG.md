@@ -2,6 +2,19 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.09.044] — 2026-08-09
+
+### Added
+- **Shrimpnet** in the built-in net directory — 3881 kHz LSB, 8 PM Central Saturdays. Being a directory entry rather than a live-feed entry, it appears at its scheduled time every week, offline, on-air aware and star-able, independent of the NetLogger mirror.
+- **Day-of-week support in the built-in net directory.** `NETDIR` entries can now carry an optional day filter; previously every entry ran daily, so a weekly net had nowhere to express itself. Existing entries are unaffected (an omitted field still means daily).
+
+  Days are evaluated in **UTC**, and that is the trap: an evening net in the Americas falls on the *following* UTC day. Saturday 8 PM Central is Sunday 0100Z — day 7, not 6. Marking it 6 would show the net a day early with nothing on frequency, and nothing would flag it. The format comment now spells this out, and notes carry the local day so the intent stays readable.
+
+### Notes
+- The new directory tests read the entry the app actually builds, via `buildBase()`, instead of constructing an equivalent `entry()` in the test. The first version did the latter and was worthless: mutating the day to 6, or making `buildBase` drop the day field entirely, both passed. Rewritten against the real data, all three mutations (wrong day, dropped field, wrong UTC window) fail loudly.
+
+---
+
 ## [2026.07.29.043] — 2026-07-29
 
 ### Fixed
