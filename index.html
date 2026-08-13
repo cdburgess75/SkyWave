@@ -344,6 +344,8 @@
     .bottomnav{display:none;}
   }
 
+  .farnote{cursor:pointer;}
+  .farnote b{color:var(--amber);}
   /* grayline alert strip (inside the sticky header) */
   .grayalert{display:flex;align-items:center;gap:8px;margin-top:7px;padding:6px 9px;border-radius:8px;
     font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1.35;
@@ -597,6 +599,15 @@
         <input type="checkbox" id="hr24Toggle" checked style="accent-color:var(--amber);width:15px;height:15px">
         24-hour local clock
       </label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-dim);margin-top:8px">
+        Hide VHF/UHF nets farther than
+        <select id="vhfMiSel" style="flex:0 0 auto">
+          <option value="50">50 mi</option><option value="100">100 mi</option>
+          <option value="250">250 mi</option><option value="500">500 mi</option>
+          <option value="0">off — show all</option>
+        </select>
+      </label>
+      <div class="hint">Above ~50 MHz propagation is line of sight, so a distant 2m/70cm net in the live list usually can't be worked. Distance is measured to the net's nearest checked-in station; nets with no location data are always shown. HF nets are never hidden.</div>
       <button class="btn ghost kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode" style="margin-top:12px">⛶&nbsp;Kiosk / shack-monitor mode</button>
       <div class="hint" style="margin-top:6px">Full-screen clock &amp; on-air view that keeps the screen awake — ideal for a shack monitor. Some browsers (iPhone Safari) don't allow full-screen; the keep-awake half still works. Tap again to exit.</div>
     </div>
@@ -815,7 +826,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.08.09.045";
+const VERSION="2026.08.13.046";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -910,7 +921,10 @@ let HEARD=loadJSON(K.heard,{});
   Object.keys(HEARD).forEach(k=>{if(HEARD[k]!==td){delete HEARD[k];ch=true;}});
   if(ch)saveJSON(K.heard,HEARD);})();
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
-let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true,relay:""});
+let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true,relay:"",vhfMi:100});
+// Prefs load whole-object, so keys added after a user's first save come back
+// undefined — normalise them here or the feature silently runs as "off".
+if(PREFS.vhfMi===undefined)PREFS.vhfMi=100;
 let favSet=new Set();
 function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
 
@@ -1319,6 +1333,7 @@ let netsRefreshing=false;                 // true while replacing a stale live l
    time even though it's the freshest data that exists. */
 const NETS_STALE_MS=2*3600000;
 const netOpen=new Set();   // ids of expanded net rows (kept across re-renders)
+let _showFarNets=false;    // session-only 'show' override for the distance filter
 const liveNetId=n=>"L|"+n.freq+"|"+(n.name||"");
 const dirNetId=e=>"D|"+e.freq+"|"+(e.station||"");
 // running time from a net's HH:MM start (UTC), midnight-safe
@@ -1345,6 +1360,7 @@ function liveNetPanel(n){
     ["Started",netsStartStr(n.start)],
     ["Running",dur],
     ["Server",n.server||""],
+    ["Nearest check-in",(function(){const d=netDistMi(n);return d===null?"":("~"+d+" mi");})()],
     ["Checked in",count?(count+" station"+(count===1?"":"s")):"",true]
   ];
   let tail;
@@ -1374,6 +1390,59 @@ function dirNetPanel(e){
   ];
   const note=e.notes?('<div class="netx-note">'+esc(e.notes)+'</div>'):"";
   return '<div class="netx">'+netxRows(rows)+note+'</div>';
+}
+/* ---- VHF/UHF distance filter ------------------------------------------
+   Above ~50 MHz propagation is line-of-sight (plus repeater reach), so a 2m
+   net whose participants are 800 miles away is unworkable noise in the list.
+   A live net's most honest location signal is where its check-ins actually
+   are, so distance = nearest roster grid square to the user; some nets also
+   carry a Maidenhead grid in their name, used as a fallback. Nets with no
+   locatable data are KEPT — hiding on ignorance would make missing grids look
+   like missing nets. */
+const VHF_MIN_KHZ=50000;
+function gridToLatLon(g){
+  g=String(g||"").trim();
+  const m=/^([A-Ra-r]{2})(\d{2})([A-Xa-x]{2})?/.exec(g);
+  if(!m)return null;
+  const G=m[1].toUpperCase();
+  let lon=(G.charCodeAt(0)-65)*20-180+(+m[2][0])*2;
+  let lat=(G.charCodeAt(1)-65)*10-90+(+m[2][1]);
+  if(m[3]){const s=m[3].toLowerCase();
+    lon+=(s.charCodeAt(0)-97)/12+1/24;lat+=(s.charCodeAt(1)-97)/24+1/48;}
+  else{lon+=1;lat+=0.5;}                    // centre of the 2°×1° square
+  return{lat,lon};
+}
+function distMi(la1,lo1,la2,lo2){
+  const R=3958.8,r=Math.PI/180;
+  const a=Math.sin((la2-la1)*r/2)**2+Math.cos(la1*r)*Math.cos(la2*r)*Math.sin((lo2-lo1)*r/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+// Miles from GEO to the nearest thing we can locate about this net, or null.
+function netDistMi(n,geo){
+  geo=geo||GEO;
+  if(!validGeo(geo.lat,geo.lng))return null;
+  let best=null;
+  for(const c of n.roster||[]){
+    const p=c.grid&&gridToLatLon(c.grid);
+    if(p){const d=distMi(geo.lat,geo.lng,p.lat,p.lon);if(best===null||d<best)best=d;}
+  }
+  if(best===null){
+    // e.g. "Lone Ranger Wellness EL287616" — grid embedded in the net name.
+    // Try a clean 6-char grid first; fall back to a 4-char square even when
+    // more digits follow (EL28|7616), where a trailing \b can never match.
+    const m=/\b([A-R]{2}\d{2}[a-x]{2})\b/i.exec(n.name||"")||/\b([A-R]{2}\d{2})/i.exec(n.name||"");
+    const p=m&&gridToLatLon(m[1]);
+    if(p)best=distMi(geo.lat,geo.lng,p.lat,p.lon);
+  }
+  return best===null?null:Math.round(best);
+}
+// true → suppress from the default list
+function netTooFar(n,geo){
+  const lim=+PREFS.vhfMi;
+  if(!lim)return false;                     // 0/off
+  if(!(n.freq>=VHF_MIN_KHZ))return false;   // HF skips: sky wave carries
+  const d=netDistMi(n,geo);
+  return d!==null&&d>lim;
 }
 function netFreqKhz(v){
   const n=parseFloat(String(v).replace(/[^\d.]/g,""));
@@ -1494,6 +1563,11 @@ function renderNets(){
   const f=document.getElementById("netsFilter").value.trim().toLowerCase();
   let list=(NETS.list||[]).slice();
   if(f)list=list.filter(n=>(n.name+" "+n.mode+" "+n.ncs).toLowerCase().includes(f));
+  // Line-of-sight filter: VHF/UHF nets whose nearest locatable participant is
+  // beyond PREFS.vhfMi. Never silent — the hidden count renders as a reveal
+  // row below, so a filtered list can't be mistaken for a broken one.
+  let far=[];
+  if(!_showFarNets){far=list.filter(n=>netTooFar(n));list=list.filter(n=>!netTooFar(n));}
   list.sort((a,b)=>a.freq-b.freq);
   let html="";
   if(netsRefreshing&&navigator.onLine){
@@ -1511,6 +1585,14 @@ function renderNets(){
         '<div class="right"><span class="tag live"><i class="dot"></i>LIVE</span></div>'+
         '<span class="chev">›</span></div>'+(exp?liveNetPanel(n):"");
     }).join("");
+    if(far.length)html+='<div class="empty farnote" data-act="farnets" role="button" tabindex="0">'+
+      far.length+' VHF/UHF net'+(far.length===1?"":"s")+' beyond '+(+PREFS.vhfMi)+' mi hidden (line of sight) · <b>show</b></div>';
+    else if(_showFarNets&&list.some(n=>netTooFar(n)))
+      html+='<div class="empty farnote" data-act="farnets" role="button" tabindex="0">showing distant VHF/UHF nets · <b>hide again</b></div>';
+  } else if(far.length){
+    cnt.innerHTML="";
+    html='<div class="empty farnote" data-act="farnets" role="button" tabindex="0">All '+far.length+
+      ' live nets are VHF/UHF beyond '+(+PREFS.vhfMi)+' mi (line of sight) · <b>show anyway</b></div>';
   } else {
     cnt.innerHTML="";
     html='<div class="empty">'+(NETS.list&&NETS.list.length?'No live nets match your filter.':(navigator.onLine?'No live nets loaded yet — tap ⟳ Refresh.':'Offline — live nets need a connection.'))+'</div>';
@@ -2142,6 +2224,7 @@ function handleAct(t){
   } else if(a==="heard"){toggleHeard(t.dataset.k);}
   else if(a==="delmine"){delMine(+t.dataset.i);}
   else if(a==="netx"){const id=t.dataset.nid;netOpen.has(id)?netOpen.delete(id):netOpen.add(id);renderNets();}
+  else if(a==="farnets"){_showFarNets=!_showFarNets;renderNets();}
 }
 document.addEventListener("click",ev=>{
   const t=ev.target.closest("[data-act]");if(t)handleAct(t);
@@ -2265,6 +2348,8 @@ if(!document.fullscreenEnabled&&!navigator.wakeLock)document.getElementById("kio
 if(document.fullscreenElement){_kiosk=true;setKioskUI(true);}
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
+document.getElementById("vhfMiSel").value=String(+PREFS.vhfMi||0);
+document.getElementById("vhfMiSel").addEventListener("change",e=>{PREFS.vhfMi=+e.target.value;saveJSON(K.prefs,PREFS);_showFarNets=false;renderNets();});
 renderRail();
 if(typeof window.matchMedia==="function"&&window.matchMedia("(min-width:1280px)").matches&&navigator.onLine){_kFetched=true;fetchKIndex();}
 if(PREFS.setup===false)showWizard();

@@ -44,18 +44,22 @@ const block = [
   grab("function lastSun(", "function relays("),
   grab("function looksLikeSchedule(", "async function fetchSchedule("),
   grab("function parseEibi(", "async function loadText("),
+  "let PREFS={vhfMi:100};",
+  grab("const VHF_MIN_KHZ=", "function netFreqKhz("),
   grab("function netFreqKhz(", "function parseNets("),
   grab("const RAD=Math.PI/180", "function fmtUTC("),
 ].join("\n");
 
 const api = new Function(block + `; return {parseTime,dayAllowed,dowE,onAir,minsUntilStart,bandOf,
   lastSun,seasonCode,seasonList,looksLikeSchedule,parseEibi,entry,netFreqKhz,normNetObj,sunTimes,toDays,
-  grayState,grayEvents,graylineIcs,icsFold,GRAY_WINDOW_MIN,GRAY_LEADS,NETDIR,buildBase};`)();
+  grayState,grayEvents,graylineIcs,icsFold,GRAY_WINDOW_MIN,GRAY_LEADS,NETDIR,buildBase,
+  gridToLatLon,distMi,netDistMi,netTooFar,PREFS};`)();
 
 const {
   dayAllowed, onAir, minsUntilStart, bandOf, seasonCode, seasonList,
   looksLikeSchedule, parseEibi, netFreqKhz, normNetObj, sunTimes,
   grayState, grayEvents, graylineIcs, GRAY_WINDOW_MIN,
+  gridToLatLon, distMi, netDistMi, netTooFar, PREFS: PREFS_REF,
 } = api;
 
 let pass = 0, fail = 0;
@@ -255,6 +259,49 @@ t("NETDIR: Magnolia weekend session on air Sat 1230Z",
   mags.some((e) => onAir(e, utc(2026, 7, 8, 12, 30))));
 t("NETDIR: Magnolia silent Sat 1130Z (weekend starts an hour later)",
   !mags.some((e) => onAir(e, utc(2026, 7, 8, 11, 30))));
+
+// ------------------------------------------ VHF/UHF distance filter --------
+// Above ~50 MHz the app hides nets whose nearest locatable participant is
+// beyond PREFS.vhfMi (default 100). Test GEO is Loranger, LA (EM40).
+t("grid: EM40 decodes near Loranger", (() => {
+  const p = gridToLatLon("EM40to");
+  return near(p.lat, 30.6, 0.3) && near(p.lon, -90.4, 0.5);
+})());
+t("grid: 4-char square uses its centre", (() => {
+  const p = gridToLatLon("EM40");
+  return near(p.lat, 30.5, 0.01) && near(p.lon, -91, 0.01);
+})());
+t("grid: garbage decodes to null", gridToLatLon("hello") === null && gridToLatLon("") === null);
+t("dist: Loranger to New Orleans ≈ 55 mi", (() => {
+  const d = distMi(30.61, -90.36, 29.95, -90.07);
+  return near(d, 50, 12);
+})());
+const geo = { lat: 30.61, lng: -90.36 };
+const nearNet = { freq: 146760, name: "Local 2m", roster: [{ call: "X", grid: "EM40um" }] };
+const farNet  = { freq: 145450, name: "Newport 2m", roster: [{ call: "Y", grid: "FN41" }] };
+const hfFar   = { freq: 3961,   name: "Maine Potato Net", roster: [{ call: "Z", grid: "FN43id" }] };
+const noLoc   = { freq: 146655, name: "K4TLH News_Info Net", roster: [] };
+const nameLoc = { freq: 146790, name: "Lone Ranger Wellness EL287616", roster: [] };
+t("filter: nearby VHF net kept", netTooFar(nearNet, geo) === false);
+t("filter: 1,300-mile 2m net hidden", netTooFar(farNet, geo) === true);
+t("filter: distant HF net always kept (sky wave)", netTooFar(hfFar, geo) === false);
+t("filter: unlocatable VHF net kept (fail open)", netTooFar(noLoc, geo) === false);
+t("filter: grid in the net name is used as fallback",
+  netDistMi(nameLoc, geo) !== null && netTooFar(nameLoc, geo) === true);
+t("filter: nearest of several grids decides", netTooFar(
+  { freq: 146760, name: "Mixed", roster: [{ call: "A", grid: "FN41" }, { call: "B", grid: "EM40" }] }, geo) === false);
+t("filter: off (0) keeps everything", (() => {
+  const was = PREFS_REF.vhfMi; PREFS_REF.vhfMi = 0;
+  const r = netTooFar(farNet, geo) === false;
+  PREFS_REF.vhfMi = was; return r;
+})());
+t("filter: radius is honoured (500 mi keeps a ~410-mile net)", (() => {
+  const midNet = { freq: 147030, name: "Dallas 2m", roster: [{ call: "C", grid: "EM12" }] }; // ≈412 mi
+  const was = PREFS_REF.vhfMi;
+  PREFS_REF.vhfMi = 500; const kept = netTooFar(midNet, geo) === false;
+  PREFS_REF.vhfMi = 100; const hidden = netTooFar(midNet, geo) === true;
+  PREFS_REF.vhfMi = was; return kept && hidden;
+})());
 
 // ------------------------------------------------------ grayline alert ----
 // The window is sunset/sunrise ±50 min; warnings fire 30 and 5 min before it

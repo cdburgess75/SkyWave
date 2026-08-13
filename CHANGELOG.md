@@ -2,6 +2,23 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.13.046] — 2026-08-13
+
+### Added
+- **Line-of-sight filter for live VHF/UHF nets.** Above ~50 MHz propagation is line of sight, so a 2m net in Rhode Island is unworkable noise in a Louisiana list. Live nets at or above 50 MHz whose nearest locatable participant is farther than a configurable radius — **default 100 miles** — are now hidden. The radius is settable in **Ref → display settings** (50 / 100 / 250 / 500 mi / off).
+
+  How distance is determined, most-honest signal first: the nearest **checked-in station's grid square** from the live roster; failing that, a Maidenhead grid embedded in the net's name (e.g. "Lone Ranger Wellness EL287616"). Nets with no locatable data are **always shown** — hiding on ignorance would make missing grids look like missing nets. HF nets are never filtered; sky wave doesn't care about your horizon.
+
+  Filtering is never silent: a tappable row reports "*N* VHF/UHF nets beyond 100 mi hidden (line of sight) · show", and revealing them is one tap (session-only; the saved setting is unchanged). Expanded live nets now show "Nearest check-in: ~N mi" so the number driving the decision is visible.
+
+### Fixed
+- The grid-in-name fallback initially failed on names like `EL287616` — a trailing word-boundary can never match when extra digits follow the square. Found by the new tests before it shipped.
+
+### Notes
+- 12 new domain tests: grid decoding (4- and 6-char, garbage→null), haversine sanity, keep/hide policy (near VHF kept, distant VHF hidden, distant HF kept, unlocatable kept, nearest-of-several decides, off-switch, radius boundary). Verified end-to-end in headless Chromium against the real mirror payload: 4 of the day's live nets hidden at 100 mi, reveal/re-hide toggling, "off" restoring all, 500 mi readmitting the ~477-mile net.
+
+---
+
 ## [2026.08.09.045] — 2026-08-09
 
 ### Added
