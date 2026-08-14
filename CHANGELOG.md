@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.14.050] — 2026-08-14
+
+### Added
+- **Share button in the header**, next to the text-size control. On a phone it opens the system share sheet — Messages, Mail, AirDrop, whatever's installed — pre-filled with a one-line description and the app's URL. On browsers without the Web Share API it copies the link to the clipboard ("Link copied — paste it anywhere"). Closing the share sheet without sending is treated as a cancel, not an error — no stray toast.
+
+### Notes
+- All three paths driven in headless Chromium: the share payload carries the canonical URL and title, a cancelled sheet stays silent, and the clipboard fallback copies the URL with the descriptive toast. (An earlier draft reused `copyText`, whose async "Copied" toast could overwrite the descriptive one — fixed before shipping.)
+
+---
+
 ## [2026.08.14.049] — 2026-08-14
 
 ### Removed

@@ -425,6 +425,7 @@
       </div>
       <span class="sub">World Band + Ham Nets</span>
       <div class="hdr-controls">
+        <button class="hdrbtn" id="shareBtn" title="Share SkyWave" aria-label="Share SkyWave"><svg width="13" height="15" viewBox="0 0 13 15" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 1v8.5M3.5 3.5L6.5 1l3 2.5"/><path d="M2 6.5H1v7.5h11V6.5h-1"/></svg></button>
         <button class="hdrbtn font-btn" id="fontToggle" title="Text size" aria-label="Change text size"><span class="fa-s">A</span><span class="fa-b">A</span></button>
         <button class="hdrbtn theme-btn" id="themeToggle" title="Switch to light theme" aria-label="Switch to light theme"></button>
       </div>
@@ -815,7 +816,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.08.14.049";
+const VERSION="2026.08.14.050";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -2118,6 +2119,17 @@ document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.addEventListener("clic
 document.getElementById("hr24Toggle").addEventListener("change",e=>{PREFS.hr24=e.target.checked;saveJSON(K.prefs,PREFS);tick();});
 document.getElementById("kioskBtn").addEventListener("click",toggleKiosk);
 document.getElementById("kioskExit").addEventListener("click",()=>{exitKiosk();toast("Kiosk mode off");});
+const SHARE_URL="https://cdburgess75.github.io/SkyWave/";
+document.getElementById("shareBtn").addEventListener("click",async()=>{
+  if(navigator.share){
+    try{await navigator.share({title:"SkyWave",
+      text:"SkyWave — a TV Guide for the radio bands: shortwave schedules, live ham nets, grayline. Free, works offline:",
+      url:SHARE_URL});}
+    catch(e){}
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(SHARE_URL).then(()=>toast("Link copied — paste it anywhere")).catch(()=>fallbackCopy(SHARE_URL));
+  }else fallbackCopy(SHARE_URL);
+});
 document.getElementById("grayAlertX").addEventListener("click",()=>{
   _grayHidden=_grayKey;document.getElementById("grayAlert").hidden=true;});
 document.getElementById("dlGray").addEventListener("click",()=>{
