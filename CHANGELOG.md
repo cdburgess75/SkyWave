@@ -2,6 +2,23 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.14.049] — 2026-08-14
+
+### Removed
+- **Antenna calculator** — dropped at the owner's request (unused), along with its markup, logic and wiring.
+
+### Changed
+- **The Tools tab and the More sheet are gone entirely; the app is now four flat tabs — Stations · Saved · Prop · Ref — everything one tap from the bottom bar.** With the calculator gone, Tools held only things that belonged elsewhere:
+  - **Grayline & band planner** (with **⤓ Calendar reminders** and location controls) moved to the **top of the Prop tab** — sun geometry and band conditions in one place.
+  - **Export & print** moved to the **Ref tab**, above the code key.
+  This also removes the More bottom-sheet and its scrim, the "nested tabs behind More" pattern that hid the kiosk exit, the refresh button and the callsign field from the person who uses the app most. The desktop side nav simply loses its Tools button.
+- README and the User Guide updated to match (four tabs, grayline under Prop, calculator references removed).
+
+### Notes
+- The smoke suite's ID-coverage check caught two leftover references (`moreScrim` listener, a 30-second `tab-tools` refresh) before they could ship as boot errors. Verified in headless Chromium: bottom nav is Stations/Saved/Prop/Ref, antenna input and More sheet absent from the DOM, Prop opens with the grayline card first and renders sun times plus the calendar button, Ref shows Export & print, and the Nets tab (rows, ✓ LOGGED badge, callsign setter) is untouched.
+
+---
+
 ## [2026.08.14.048] — 2026-08-14
 
 ### Changed

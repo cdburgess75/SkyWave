@@ -33,13 +33,13 @@ latitude/longitude). This powers the grayline planner and your grid square. You
 can skip it and set it later, or re-run it anytime from the **Ref** tab.
 
 ### It works offline
-After the first visit, SkyWave caches itself. The schedule, favorites, antenna
+After the first visit, SkyWave caches itself. The schedule, favorites, grayline
 calculator, and grayline all work in airplane mode. Only live nets, the EiBi
 schedule *update*, and the propagation images need a connection.
 
 ---
 
-## 2. The five tabs
+## 2. The four tabs
 
 Along the bottom (phone) or left side (desktop): **Listen · Saved · Tools · Ref · Prop**
 (on the phone, **Ref** and **Prop** live under the **More** button).
@@ -92,11 +92,22 @@ entries first.
 
 ---
 
-### 🛠 Tools — field utilities
 
-- **Antenna calculator** — enter a frequency (MHz or kHz) and get half-wave
-  dipole, quarter-wave vertical, and full-wave loop lengths in feet and meters,
-  plus a doublet/balun cheat-sheet.
+### ◆ Ref — reference & settings
+
+- **Display** — font size, 12/24-hour clock, and the ☾/☀ light/dark toggle
+  (also in the header).
+- **Full EiBi schedule** — tap **⟳ Update now** once while online to download the
+  complete shortwave broadcast database (~12,000 entries). It's stored on your
+  device from then on. Leave "auto-update on launch" on and it refreshes itself
+  when it gets stale.
+- **Reference tables** — shortwave meter bands, US amateur HF bands, time-signal
+  stations, and the language/target-area code key.
+- **Re-run location setup** — reopens the first-launch wizard.
+
+---
+
+### ≈ Prop — propagation & grayline
 - **Grayline & band planner** — sunrise, sunset, solar noon, and day length for
   your location, plus plain-language band advice ("40 m: all-rounder, DX at
   night; strong at grayline"). Computed on your device — no network needed.
@@ -113,23 +124,6 @@ entries first.
 - **Export & print** — copy the current On-Air list, download a band card as a
   text file, or print a clean reference sheet for the go-kit.
 
----
-
-### ◆ Ref — reference & settings
-
-- **Display** — font size, 12/24-hour clock, and the ☾/☀ light/dark toggle
-  (also in the header).
-- **Full EiBi schedule** — tap **⟳ Update now** once while online to download the
-  complete shortwave broadcast database (~12,000 entries). It's stored on your
-  device from then on. Leave "auto-update on launch" on and it refreshes itself
-  when it gets stale.
-- **Reference tables** — shortwave meter bands, US amateur HF bands, time-signal
-  stations, and the language/target-area code key.
-- **Re-run location setup** — reopens the first-launch wizard.
-
----
-
-### ≈ Prop — propagation *(needs a connection)*
 
 - **Solar conditions** — the HamQSL solar/band-conditions widget.
 - **Planetary K-index** — live from NOAA, with a mini trend chart. Kp ≤ 2 is
@@ -150,9 +144,8 @@ entries first.
 | Keep a station | Tap **★** on its row → find it under **Saved** |
 | Mark a station I logged | Tap **✓** on a favorite (clears at 0000 UTC) |
 | Add my local net or repeater | **Saved → My Freq** |
-| Plan a band opening | **Tools → Grayline** |
-| Be told when the grayline hits | **Tools → Grayline → ⤓ Calendar reminders** |
-| Cut an antenna | **Tools → Antenna calculator** |
+| Plan a band opening | **Prop → Grayline** |
+| Be told when the grayline hits | **Prop → Grayline → ⤓ Calendar reminders** |
 | Refresh the broadcast schedule | **Ref → ⟳ Update now** |
 | Check propagation | **Prop** (needs internet) |
 

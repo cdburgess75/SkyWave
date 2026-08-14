@@ -111,20 +111,6 @@
   .bnav-btn .bicon{font-size:19px;line-height:1;}
   .bnav-btn.on{color:var(--amber);}
   .bnav-btn.on .bicon{opacity:.9;}
-  .morescrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);
-    opacity:0;pointer-events:none;transition:opacity .2s;}
-  .morescrim.open{opacity:1;pointer-events:auto;}
-  .moresheet{position:fixed;bottom:0;left:0;right:0;z-index:55;max-width:760px;margin:0 auto;
-    background:var(--panel2);border-top:1px solid var(--amber-dim);border-radius:16px 16px 0 0;
-    padding:16px 16px max(20px,env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.6);
-    transform:translateY(100%);transition:transform .25s ease;}
-  .moresheet.open{transform:translateY(0);}
-  .moresheet h4{margin:0 0 12px;font-size:11px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;}
-  .morerow{display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:9px;cursor:pointer;
-    background:var(--panel);border:1px solid var(--line);margin-bottom:8px;}
-  .morerow:active{border-color:var(--amber-dim);background:var(--panel2);}
-  .morerow .mlabel{flex:1;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);}
-  .morerow.on .mlabel{color:var(--amber);}
 
   .seg{display:flex;gap:5px;margin:2px 0 12px;}
   .seg button{flex:1;background:transparent;border:1px solid var(--line);color:var(--ink-dim);
@@ -221,7 +207,6 @@
   .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;}
   .kv .k{color:var(--ink-dim);}
   .kv .v{color:var(--amber);font-variant-numeric:tabular-nums;text-align:right;}
-  .calcout{font-size:13px;line-height:1.85;}
   .calcout .v{color:var(--amber);font-weight:600;}
   .advise{font-size:12px;line-height:1.8;}
   .advise .good{color:var(--green);font-weight:600;}
@@ -428,7 +413,6 @@
   <div class="snav-brand">SKY<br>WAVE</div>
   <button class="snav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
   <button class="snav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
-  <button class="snav-btn" data-tab="tools"><span class="bicon">⚙</span>Tools</button>
   <button class="snav-btn" data-tab="ref"><span class="bicon">◆</span>Ref</button>
   <button class="snav-btn" data-tab="prop"><span class="bicon">≈</span>Prop</button>
 </nav>
@@ -557,41 +541,6 @@
   </section>
 
   <!-- ============ TOOLS ============ -->
-  <section id="tab-tools" hidden>
-    <div class="card">
-      <h3>◆ Antenna calculator</h3>
-      <div class="ctrl"><input type="text" id="antFreq" inputmode="decimal" placeholder="frequency — 7.256 MHz or 7256 kHz" autocomplete="off"></div>
-      <div class="calcout" id="antOut"><span class="dim hint">Enter a frequency to compute lengths.</span></div>
-      <div class="hint" style="margin-top:10px;border-top:1px solid var(--line);padding-top:9px">
-        <b style="color:var(--ink)">Doublet (ladder-line, multiband):</b> cut as long as the lot allows — 135 ft covers 80–10 m, 88 ft for 40–10 m, 44 ft for 40 m up. Feed with window line into a <b style="color:var(--ink)">4:1 Guanella</b> + tuner.<br>
-        <b style="color:var(--ink)">Coax-fed resonant dipole:</b> <b style="color:var(--ink)">1:1</b> current balun at the feedpoint. Off-center-fed / folded → 4:1. RG-8X/LMR feedline velocity factor ≈ 0.82–0.86 if you're cutting a phasing/matching section.
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>◆ Grayline &amp; band planner <small id="grayLoc"></small></h3>
-      <div class="formgrid">
-        <label>Latitude<input type="number" id="geoLat" step="0.01" inputmode="decimal"></label>
-        <label>Longitude<input type="number" id="geoLng" step="0.01" inputmode="decimal"></label>
-      </div>
-      <div class="btnrow"><button class="btn ghost sm" id="useLoc">Use my location</button>
-        <button class="btn ghost sm" id="dlGray">⤓ Calendar reminders</button></div>
-      <div class="kv" id="sunKv"></div>
-      <div class="advise" id="bandAdvise" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px"></div>
-      <div class="hint" style="margin-top:8px">Computed on-device from your coordinates — no network needed. Grayline (sunrise/sunset terminator) gives an enhanced DX window on the lower bands.</div>
-    </div>
-
-    <div class="card">
-      <h3>◆ Export &amp; print</h3>
-      <div class="btnrow">
-        <button class="btn ghost sm" id="copyNow">Copy on-air list</button>
-        <button class="btn ghost sm" id="dlCard">Download band card</button>
-        <button class="btn ghost sm" id="printCard">Print reference card</button>
-      </div>
-      <div class="hint">Copy the current On-Air list as plain text (good for a net log or report), save an offline band card, or print a clean reference sheet for the go-kit.</div>
-    </div>
-  </section>
-
   <!-- ============ REF ============ -->
   <section id="tab-ref" hidden>
     <div class="card" id="displayCard">
@@ -657,6 +606,15 @@
     <div class="card" id="refMeter"></div>
     <div class="card" id="refTime"></div>
     <div class="card" id="refHam"></div>
+    <div class="card">
+      <h3>◆ Export &amp; print</h3>
+      <div class="btnrow">
+        <button class="btn ghost sm" id="copyNow">Copy on-air list</button>
+        <button class="btn ghost sm" id="dlCard">Download band card</button>
+        <button class="btn ghost sm" id="printCard">Print reference card</button>
+      </div>
+      <div class="hint">Copy the current On-Air list as plain text (good for a net log or report), save an offline band card, or print a clean reference sheet for the go-kit.</div>
+    </div>
     <div class="card"><h3>◆ Code key</h3><div class="legend" id="legend"></div></div>
     <footer>
       <span id="verFoot"></span><br>
@@ -669,6 +627,19 @@
   <!-- ============ PROP ============ -->
   <section id="tab-prop" hidden>
     <div id="propStatus" class="hint" style="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);text-align:center;"></div>
+
+    <div class="card">
+      <h3>◆ Grayline &amp; band planner <small id="grayLoc"></small></h3>
+      <div class="formgrid">
+        <label>Latitude<input type="number" id="geoLat" step="0.01" inputmode="decimal"></label>
+        <label>Longitude<input type="number" id="geoLng" step="0.01" inputmode="decimal"></label>
+      </div>
+      <div class="btnrow"><button class="btn ghost sm" id="useLoc">Use my location</button>
+        <button class="btn ghost sm" id="dlGray">⤓ Calendar reminders</button></div>
+      <div class="kv" id="sunKv"></div>
+      <div class="advise" id="bandAdvise" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px"></div>
+      <div class="hint" style="margin-top:8px">Computed on-device from your coordinates — no network needed. Grayline (sunrise/sunset terminator) gives an enhanced DX window on the lower bands.</div>
+    </div>
 
     <div class="card">
       <h3>◆ Solar conditions <small>HamQSL · N0NBH / K4HG</small></h3>
@@ -745,25 +716,13 @@
 </div>
 
 <!-- ============ MORE SHEET ============ -->
-<div class="morescrim" id="moreScrim"></div>
-<div class="moresheet" id="moreSheet" role="dialog" aria-label="More tabs">
-  <h4>◆ More</h4>
-  <div class="morerow" id="moreTools" data-tab="tools" role="button" tabindex="0">
-    <span class="mlabel">⚙ Tools</span>
-  </div>
-  <div class="morerow" id="moreRef" data-tab="ref" role="button" tabindex="0">
-    <span class="mlabel">◆ Reference</span>
-  </div>
-  <div class="morerow" id="moreProp" data-tab="prop" role="button" tabindex="0">
-    <span class="mlabel">◆ Propagation</span>
-  </div>
-</div>
 
 <!-- ============ BOTTOM NAV ============ -->
 <nav class="bottomnav" id="bottomNav">
   <button class="bnav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
   <button class="bnav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
-  <button class="bnav-btn" id="moreBtn" aria-expanded="false" aria-haspopup="true"><span class="bicon">⋯</span>More</button>
+  <button class="bnav-btn" data-tab="prop"><span class="bicon">≈</span>Prop</button>
+  <button class="bnav-btn" data-tab="ref"><span class="bicon">◆</span>Ref</button>
 </nav>
 
 <!-- ============ SETUP WIZARD ============ -->
@@ -856,7 +815,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.08.14.048";
+const VERSION="2026.08.14.049";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1691,20 +1650,6 @@ async function openNets(force){
 function ageMin(ts){const m=Math.max(1,Math.round((Date.now()-ts)/60000));return m<60?m+" min":Math.round(m/60)+" h";}
 
 /* ============ antenna calculator ============ */
-function calcAnt(){
-  let v=document.getElementById("antFreq").value.trim().replace(",",".");
-  const out=document.getElementById("antOut");
-  if(!v){out.innerHTML='<span class="dim hint">Enter a frequency to compute lengths.</span>';return;}
-  let n=parseFloat(v);if(!isFinite(n)){out.innerHTML='<span class="dim hint">Not a number.</span>';return;}
-  const fMHz=n>=1000?n/1000:n;const kHz=Math.round(fMHz*1000);
-  const f2=x=>x.toFixed(2),f1=x=>x.toFixed(1);
-  const dipFt=468/fMHz,dipM=142.5/fMHz,legFt=dipFt/2,vertFt=234/fMHz,loopFt=1005/fMHz,lamM=300/fMHz;
-  out.innerHTML=
-    '<div>Wavelength λ &nbsp;<span class="v">'+f2(lamM)+' m</span> &nbsp;('+f2(lamM*3.281)+' ft) · band '+(bandOf(kHz)||"—")+'</div>'+
-    '<div>½-wave dipole &nbsp;<span class="v">'+f1(dipFt)+' ft</span> &nbsp;('+f2(dipM)+' m) · each leg '+f1(legFt)+' ft</div>'+
-    '<div>¼-wave vertical &nbsp;<span class="v">'+f1(vertFt)+' ft</span> &nbsp;('+f2(vertFt*0.3048)+' m)</div>'+
-    '<div>Full-wave loop &nbsp;<span class="v">'+f1(loopFt)+' ft</span> &nbsp;('+f2(loopFt*0.3048)+' m)</div>';
-}
 
 /* ============ sun / grayline ============ */
 /* ============ Maidenhead grid square ============ */
@@ -2153,29 +2098,11 @@ function renderProp(){
     if(kEl)kEl.innerHTML='<div class="hint" style="padding:10px 0">Offline — K-index unavailable</div>';
   }
 }
-function closeMore(){
-  document.getElementById("moreSheet").classList.remove("open");
-  document.getElementById("moreScrim").classList.remove("open");
-  document.getElementById("moreBtn").setAttribute("aria-expanded","false");
-  document.body.style.overflow="";
-}
-function openMore(){
-  const active=["listen","log","tools","ref","prop"].find(t=>!document.getElementById("tab-"+t).hidden)||"listen";
-  document.querySelectorAll(".morerow[data-tab]").forEach(r=>r.classList.toggle("on",r.dataset.tab===active));
-  document.getElementById("moreSheet").classList.add("open");
-  document.getElementById("moreScrim").classList.add("open");
-  document.getElementById("moreBtn").setAttribute("aria-expanded","true");
-  document.body.style.overflow="hidden";
-}
 function showTab(name){
-  const moreTabs=["tools","ref","prop"];
   document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
   document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
-  document.getElementById("moreBtn").classList.toggle("on",moreTabs.includes(name));
-  ["listen","log","tools","ref","prop"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
-  if(name==="tools")renderGray();
-  if(name==="prop")renderProp();
-  closeMore();
+  ["listen","log","ref","prop"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
+  if(name==="prop"){renderGray();renderProp();}
 }
 function showSub(group,sub){
   document.querySelectorAll("#seg-"+group+" button").forEach(b=>b.classList.toggle("on",b.dataset.sub===sub));
@@ -2201,12 +2128,6 @@ document.getElementById("dlGray").addEventListener("click",()=>{
 
 document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
 document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
-document.getElementById("moreBtn").addEventListener("click",openMore);
-document.getElementById("moreScrim").addEventListener("click",closeMore);
-document.querySelectorAll(".morerow[data-tab]").forEach(r=>{
-  r.addEventListener("click",()=>showTab(r.dataset.tab));
-  r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showTab(r.dataset.tab);}});
-});
 
 // wizard
 document.getElementById("wizNext1").addEventListener("click",()=>{
@@ -2289,11 +2210,10 @@ document.addEventListener("keydown",ev=>{
     const t=ev.target&&ev.target.closest?ev.target.closest("[data-act]"):null;
     if(t){ev.preventDefault();handleAct(t);return;}
   }
-  // Escape leaves kiosk first, then closes the More sheet, then the wizard
+  // Escape leaves kiosk first, then closes the wizard
   if(ev.key==="Escape"){
     if(_kiosk){exitKiosk();toast("Kiosk mode off");return;}
-    if(document.getElementById("moreSheet").classList.contains("open"))closeMore();
-    else if(!document.getElementById("wizardModal").hidden)closeWizard();
+    if(!document.getElementById("wizardModal").hidden)closeWizard();
     return;
   }
   // keep Tab inside the wizard while it's open
@@ -2313,7 +2233,6 @@ document.getElementById("addMine").addEventListener("click",addMine);
 document.getElementById("exMine").addEventListener("click",addExamples);
 
 // tools
-document.getElementById("antFreq").addEventListener("input",calcAnt);
 document.getElementById("geoLat").addEventListener("change",saveGeo);
 document.getElementById("geoLng").addEventListener("change",saveGeo);
 document.getElementById("useLoc").addEventListener("click",()=>{
@@ -2392,7 +2311,7 @@ const scheduleReady=(async function(){
   if(raw)await loadText(raw,{code:META&&META.code,ts:META&&META.ts,stored:true});
   else{renderLastUpd();updateDbStat();}
 })();
-renderLastUpd();updateDbStat();calcAnt();renderGray();renderIdent();
+renderLastUpd();updateDbStat();renderGray();renderIdent();
 // Hide only if neither half of kiosk mode is possible — on iPhone there's no
 // Fullscreen API but Wake Lock still keeps the shack monitor awake.
 if(!document.fullscreenEnabled&&!navigator.wakeLock)document.getElementById("kioskBtn").hidden=true;
@@ -2428,7 +2347,7 @@ document.getElementById("hdrVer").textContent="v"+VERSION;
 tick();setInterval(tick,1000);
 setInterval(()=>{if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-now").hidden)refreshNow();
   if(!document.getElementById("tab-listen").hidden&&!document.getElementById("sub-nets").hidden)renderNets();
-  if(!document.getElementById("tab-tools").hidden)renderGray();renderRail();},30000);
+  if(!document.getElementById("tab-prop").hidden)renderGray();renderRail();},30000);
 // Reopened after a while (iOS often restores the app from memory rather than
 // reloading): resync the clock and refresh whatever view is showing so the
 // stale frame is replaced right away.

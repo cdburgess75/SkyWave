@@ -75,8 +75,8 @@ No account. No tracking. No server. No build step. The file you open *is* the ap
 - **Propagation** — live NOAA planetary K-index with an 8-period trend, plus quick links to solar data, VOACAP/Proppy, WebSDR receivers and DX clusters.
 
 **🎒 Built for the field**
-- **Genuinely offline** — the full schedule is stored on-device; grayline, band advice and antenna math never touch the network.
-- **Field tools** — antenna calculator (dipole / vertical / loop, feet & meters), band-card export, a printable reference sheet, and a kiosk / shack-monitor mode that keeps the screen awake.
+- **Genuinely offline** — the full schedule is stored on-device; grayline and band advice never touch the network.
+- **Field extras** — band-card export, a printable reference sheet, and a kiosk / shack-monitor mode that keeps the screen awake.
 - **Yours to keep** — star stations and nets, mark catches as "heard today," add your own frequencies alongside everything else.
 - **Light & dark, any text size** — a neon "shack" dark theme, a clean light theme, and a built-in text-size control.
 
@@ -88,9 +88,9 @@ No account. No tracking. No server. No build step. The file you open *is* the ap
 |:---:|:---:|:---:|
 | <img src="docs/images/nets-roster.png" width="260" alt="A live amateur-radio net expanded to show every checked-in station with callsign, name, city and grid square"> | <img src="docs/images/on-air.png" width="260" alt="The On Air list — mediumwave and shortwave broadcasts transmitting right now, sorted by frequency"> | <img src="docs/images/by-freq.png" width="260" alt="Typing a dial frequency to identify an unknown signal, nearby scheduled stations listed on-air first"> |
 
-| Field tools (antenna + grayline) | Light theme |
+| Grayline & band planner | Light theme |
 |:---:|:---:|
-| <img src="docs/images/tools.png" width="260" alt="Antenna length calculator and the grayline band planner in the Tools tab"> | <img src="docs/images/light-mode.png" width="260" alt="SkyWave in its clean light theme"> |
+| <img src="docs/images/tools.png" width="260" alt="The grayline and band planner, now on the Prop tab"> | <img src="docs/images/light-mode.png" width="260" alt="SkyWave in its clean light theme"> |
 
 <!-- ═══════════════ SCREENSHOTS TO ADD ═══════════════
      Two captures would complete this gallery. Save them as:
@@ -231,7 +231,7 @@ SkyWave/
 
 **Data flow.** One array is the single source of truth: built-in time stations and net directory + your own frequencies + the parsed EiBi schedule. Every view is a filter over that array, rendered through event delegation. The schedule lives in IndexedDB; small state stays in guarded localStorage.
 
-**Staying dependency-free.** The app never calls a third party — not for the schedule, not for the nets, not through anyone's CORS proxy. Both live feeds are fetched **server-side by scheduled GitHub Actions in this repo** and mirrored to a data branch the app reads over CORS-open `raw.githubusercontent.com`: the EiBi schedule daily, live ham nets (with check-in rosters) on a rolling schedule. Everything else — grayline, band advice, antenna math — is computed on-device.
+**Staying dependency-free.** The app never calls a third party — not for the schedule, not for the nets, not through anyone's CORS proxy. Both live feeds are fetched **server-side by scheduled GitHub Actions in this repo** and mirrored to a data branch the app reads over CORS-open `raw.githubusercontent.com`: the EiBi schedule daily, live ham nets (with check-in rosters) on a rolling schedule. Everything else — grayline and band advice — is computed on-device.
 
 Design rules held throughout: no runtime dependencies, every storage access wrapped in `try/catch`, all rendered data escaped, and every network feature caches its last result and renders an explicit offline state.
 

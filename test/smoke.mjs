@@ -93,7 +93,7 @@ await new Promise(r => setTimeout(r, 100));
 
 // Basic DOM-presence assertions
 const doc = dom.window.document;
-for (const id of ["tab-listen", "tab-log", "tab-tools", "tab-ref", "tab-prop", "toast", "updBar", "wizardModal"]) {
+for (const id of ["tab-listen", "tab-log", "tab-ref", "tab-prop", "toast", "updBar", "wizardModal"]) {
   if (!doc.getElementById(id)) {
     errors.push(`Expected element #${id} not found after boot`);
   }
