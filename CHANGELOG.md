@@ -2,6 +2,17 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.14.048] — 2026-08-14
+
+### Changed
+- **The callsign field now lives on the Nets tab itself.** `.047` put it in Ref → display settings — which is behind More → Reference, the third control this run of releases to be buried somewhere users had to be told about. Until a callsign is set, the Nets tab shows an inline "your callsign — get ✓ LOGGED when NCS logs you" field right under the filter; save it there (or press Enter) and the field disappears. The Ref setting remains for changing or clearing it later, and the two stay in sync.
+- **Tools removed from the phone bottom nav** — it's now a row in the **More** sheet alongside Reference and Propagation, and the More button lights up when Tools is open. Nothing inside Tools changed (antenna calculator, grayline planner and calendar reminders, export/print all still there); the desktop side nav keeps its Tools button since space isn't scarce there. Bottom nav is now Stations · Saved · More.
+
+### Notes
+- The inline setter deliberately avoids an element-level `display:flex` style, which would have re-created the `[hidden]`-override bug fixed in `.043`. Verified in headless Chromium: Tools absent from the bottom nav and reachable via More (tab opens, grayline renders, More stays lit); callsign field visible when unset, saving `n5gb` uppercases it, hides the field, badges the net whose roster contains it, and syncs the Ref input.
+
+---
+
 ## [2026.08.14.047] — 2026-08-14
 
 ### Added

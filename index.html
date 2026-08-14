@@ -510,6 +510,10 @@
         <button class="btn ghost sm" id="netsRefresh" style="flex:0 0 auto">⟳ Refresh</button>
       </div>
       <div class="hint" id="netsMsg" style="margin-bottom:10px"></div>
+      <div id="callSetup" class="ctrl" hidden style="margin-bottom:10px">
+        <input type="text" id="callQuick" placeholder="your callsign — get ✓ LOGGED when NCS logs you" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:1;text-transform:uppercase">
+        <button class="btn ghost sm" id="callQuickSave" style="flex:0 0 auto">Save</button>
+      </div>
       <div class="count" id="netsCount"></div>
       <div class="rows" id="netsRows"></div>
       <div class="hint" style="margin-top:12px">Live nets in session via <a href="https://www.netlogger.org/" target="_blank" rel="noopener" style="color:var(--amber)">NetLogger</a> (needs a connection; last fetch kept for reference). The major scheduled HF nets below are built in and work fully offline — star ★ to keep one in Favorites.</div>
@@ -744,6 +748,9 @@
 <div class="morescrim" id="moreScrim"></div>
 <div class="moresheet" id="moreSheet" role="dialog" aria-label="More tabs">
   <h4>◆ More</h4>
+  <div class="morerow" id="moreTools" data-tab="tools" role="button" tabindex="0">
+    <span class="mlabel">⚙ Tools</span>
+  </div>
   <div class="morerow" id="moreRef" data-tab="ref" role="button" tabindex="0">
     <span class="mlabel">◆ Reference</span>
   </div>
@@ -756,7 +763,6 @@
 <nav class="bottomnav" id="bottomNav">
   <button class="bnav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
   <button class="bnav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
-  <button class="bnav-btn" data-tab="tools"><span class="bicon">⚙</span>Tools</button>
   <button class="bnav-btn" id="moreBtn" aria-expanded="false" aria-haspopup="true"><span class="bicon">⋯</span>More</button>
 </nav>
 
@@ -850,7 +856,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.08.14.047";
+const VERSION="2026.08.14.048";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -2162,7 +2168,7 @@ function openMore(){
   document.body.style.overflow="hidden";
 }
 function showTab(name){
-  const moreTabs=["ref","prop"];
+  const moreTabs=["tools","ref","prop"];
   document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
   document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
   document.getElementById("moreBtn").classList.toggle("on",moreTabs.includes(name));
@@ -2396,12 +2402,21 @@ if(!document.fullscreenEnabled&&!navigator.wakeLock)document.getElementById("kio
 if(document.fullscreenElement){_kiosk=true;setKioskUI(true);}
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
+function saveCall(v){
+  v=String(v||"").trim().toUpperCase();
+  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("That doesn't look like a callsign");return false;}
+  PREFS.call=v;saveJSON(K.prefs,PREFS);
+  const a=document.getElementById("callIn"),b=document.getElementById("callQuick");
+  if(a)a.value=v;if(b)b.value=v;
+  document.getElementById("callSetup").hidden=!!v;
+  renderNets();toast(v?"Callsign saved — live rosters will mark you":"Callsign cleared");
+  return true;
+}
+document.getElementById("callSetup").hidden=!!PREFS.call;
+document.getElementById("callQuickSave").addEventListener("click",()=>saveCall(document.getElementById("callQuick").value));
+document.getElementById("callQuick").addEventListener("keydown",e=>{if(e.key==="Enter")saveCall(e.target.value);});
 document.getElementById("callIn").value=PREFS.call||"";
-document.getElementById("callIn").addEventListener("change",e=>{
-  const v=e.target.value.trim().toUpperCase();
-  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("That doesn't look like a callsign");return;}
-  PREFS.call=v;e.target.value=v;saveJSON(K.prefs,PREFS);renderNets();
-  toast(v?"Callsign saved — live rosters will mark you":"Callsign cleared");});
+document.getElementById("callIn").addEventListener("change",e=>saveCall(e.target.value));
 document.getElementById("vhfMiSel").value=String(+PREFS.vhfMi||0);
 document.getElementById("vhfMiSel").addEventListener("change",e=>{PREFS.vhfMi=+e.target.value;saveJSON(K.prefs,PREFS);_showFarNets=false;renderNets();});
 renderRail();
