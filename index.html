@@ -344,6 +344,9 @@
     .bottomnav{display:none;}
   }
 
+  .tag.you{color:var(--blue);border-color:var(--blue);font-weight:700;margin-right:4px;}
+  .ck.me{border-left:2px solid var(--blue);padding-left:6px;background:rgba(0,229,255,.07);}
+  [data-theme="light"] .ck.me{background:rgba(31,95,176,.08);}
   .farnote{cursor:pointer;}
   .farnote b{color:var(--amber);}
   /* grayline alert strip (inside the sticky header) */
@@ -600,6 +603,11 @@
         24-hour local clock
       </label>
       <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-dim);margin-top:8px">
+        Your callsign
+        <input type="text" id="callIn" placeholder="e.g. KD5XYZ" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:0 1 130px;text-transform:uppercase">
+      </label>
+      <div class="hint">Used only to highlight you in live net rosters and mark nets "✓ logged" once net control logs you. Stored on-device.</div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-dim);margin-top:8px">
         Hide VHF/UHF nets farther than
         <select id="vhfMiSel" style="flex:0 0 auto">
           <option value="50">50 mi</option><option value="100">100 mi</option>
@@ -753,7 +761,7 @@
 </nav>
 
 <!-- ============ SETUP WIZARD ============ -->
-<div class="modal" id="wizardModal" role="dialog" aria-modal="true" aria-label="Location setup" hidden>
+<div class="modal" id="wizardModal" role="dialog" aria-modal="true" aria-label="Station setup" hidden>
   <div class="wizard">
     <div class="wiz-steps">
       <div class="wiz-dot on" id="wd1">1</div>
@@ -761,6 +769,8 @@
       <div class="wiz-dot" id="wd2">2</div>
       <div class="wiz-bar" id="wb2"></div>
       <div class="wiz-dot" id="wd3">3</div>
+      <div class="wiz-bar" id="wb3"></div>
+      <div class="wiz-dot" id="wd4">4</div>
     </div>
 
     <!-- Step 1: Welcome -->
@@ -795,8 +805,22 @@
       </div>
     </div>
 
-    <!-- Step 3: All set -->
+    <!-- Step 3: Callsign (optional) -->
     <div id="wiz3" hidden>
+      <p class="wiz-head">Your callsign</p>
+      <p class="wiz-sub">Optional. When a live net logs you, SkyWave highlights your entry in the roster and marks the net "✓ logged" — confirmation that net control got you in the log. Stored on this device only.</p>
+      <div class="formgrid" style="margin-bottom:14px">
+        <label>Callsign<input type="text" id="wizCall" placeholder="e.g. KD5XYZ" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+      </div>
+      <div class="wiz-nav">
+        <button class="btn sm ghost" id="wizBack3">← Back</button>
+        <button class="btn sm" id="wizNext3">Next →</button>
+        <button class="wiz-skip" id="wizSkip3">Skip</button>
+      </div>
+    </div>
+
+    <!-- Step 4: All set -->
+    <div id="wiz4" hidden>
       <p class="wiz-head">◆ All set!</p>
       <p class="wiz-sub">Your station is saved on this device only — no account, no server, no tracking.</p>
       <div class="wiz-preview">
@@ -826,7 +850,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.08.13.046";
+const VERSION="2026.08.14.047";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -921,10 +945,11 @@ let HEARD=loadJSON(K.heard,{});
   Object.keys(HEARD).forEach(k=>{if(HEARD[k]!==td){delete HEARD[k];ch=true;}});
   if(ch)saveJSON(K.heard,HEARD);})();
 let GEO=loadJSON(K.geo,{lat:30.61,lng:-90.36,label:"Loranger, LA"});
-let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true,relay:"",vhfMi:100});
+let PREFS=loadJSON(K.prefs,{autoUpd:true,setup:false,theme:"",zoom:1,hr24:true,relay:"",vhfMi:100,call:""});
 // Prefs load whole-object, so keys added after a user's first save come back
 // undefined — normalise them here or the feature silently runs as "off".
 if(PREFS.vhfMi===undefined)PREFS.vhfMi=100;
+if(PREFS.call===undefined)PREFS.call="";
 let favSet=new Set();
 function rebuildFavSet(){favSet=new Set(FAVS.map(keyOf));}
 
@@ -1365,7 +1390,8 @@ function liveNetPanel(n){
   ];
   let tail;
   if(n.roster&&n.roster.length){
-    const items=n.roster.map(c=>'<div class="ck">'+(c.nc?'<span class="nc">NC</span>':'')+
+    const me=callBase(PREFS.call);
+    const items=n.roster.map(c=>'<div class="ck'+(me&&callBase(c.call)===me?' me':'')+'">'+(c.nc?'<span class="nc">NC</span>':'')+
       '<span class="cs">'+esc(c.call)+'</span>'+
       (c.name?'<span class="nm">'+esc(c.name)+'</span>':'')+
       ([c.qth,c.grid].filter(Boolean).length?'<span class="qt">'+esc([c.qth,c.grid].filter(Boolean).join(" · "))+'</span>':'')+
@@ -1443,6 +1469,15 @@ function netTooFar(n,geo){
   if(!(n.freq>=VHF_MIN_KHZ))return false;   // HF skips: sky wave carries
   const d=netDistMi(n,geo);
   return d!==null&&d>lim;
+}
+/* Check-in verification: the roster is what net control actually logged, so
+   "am I in it?" is the one check-in signal that can't lie. Compare base
+   callsigns — NCS may log "KD5XYZ/M" when you gave "KD5XYZ", or vice versa. */
+function callBase(c){return String(c||"").trim().toUpperCase().split("/")[0];}
+function selfInRoster(n,call){
+  const me=callBase(call!==undefined?call:PREFS.call);
+  if(!me)return false;
+  return(n.roster||[]).some(c=>callBase(c.call)===me);
 }
 function netFreqKhz(v){
   const n=parseFloat(String(v).replace(/[^\d.]/g,""));
@@ -1582,7 +1617,7 @@ function renderNets(){
       return '<div class="row now netrow'+(exp?' exp':'')+'" data-act="netx" data-nid="'+attr(id)+'" role="button" tabindex="0" aria-expanded="'+(exp?"true":"false")+'">'+
         '<div class="freq">'+fmtFreq(n.freq)+'<span class="u">'+freqUnit(n.freq)+'</span></div>'+
         '<div class="mid"><div class="st">'+esc(n.name)+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
-        '<div class="right"><span class="tag live"><i class="dot"></i>LIVE</span></div>'+
+        '<div class="right">'+(selfInRoster(n)?'<span class="tag you">✓ LOGGED</span>':'')+'<span class="tag live"><i class="dot"></i>LIVE</span></div>'+
         '<span class="chev">›</span></div>'+(exp?liveNetPanel(n):"");
     }).join("");
     if(far.length)html+='<div class="empty farnote" data-act="farnets" role="button" tabindex="0">'+
@@ -2040,12 +2075,12 @@ function showClear(){document.getElementById("clearBtn").hidden=!haveEibi;}
 
 /* ============ setup wizard ============ */
 function wizStep(n){
-  [1,2,3].forEach(i=>{
+  [1,2,3,4].forEach(i=>{
     document.getElementById("wiz"+i).hidden=(i!==n);
     const d=document.getElementById("wd"+i);
     d.className="wiz-dot"+(i<n?" done":i===n?" on":"");
   });
-  [1,2].forEach(i=>document.getElementById("wb"+i).className="wiz-bar"+(i<n?" done":""));
+  [1,2,3].forEach(i=>document.getElementById("wb"+i).className="wiz-bar"+(i<n?" done":""));
 }
 function updateWiz2Preview(){
   const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
@@ -2191,12 +2226,25 @@ document.getElementById("wizNext2").addEventListener("click",()=>{
   if(validGeo(la,ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);}
   else if(document.getElementById("wizLat").value.trim()||document.getElementById("wizLng").value.trim()){
     toast("Latitude −90…90 · longitude −180…180");return;}
+  renderGray();renderIdent();
+  document.getElementById("wizCall").value=PREFS.call||"";
+  wizStep(3);
+});
+function fillWizDone(){
   document.getElementById("wiz3Grid").textContent=toGrid(GEO.lat,GEO.lng);
   const st=sunTimes(new Date(),GEO.lat,GEO.lng);
   document.getElementById("wiz3SR").textContent=st.sunrise?fmtUTC(st.sunrise)+"Z":st.polar||"—";
   document.getElementById("wiz3SS").textContent=st.sunset?fmtUTC(st.sunset)+"Z":st.polar||"—";
-  renderGray();renderIdent();wizStep(3);
+  wizStep(4);
+}
+document.getElementById("wizBack3").addEventListener("click",()=>wizStep(2));
+document.getElementById("wizNext3").addEventListener("click",()=>{
+  const v=document.getElementById("wizCall").value.trim().toUpperCase();
+  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("That doesn't look like a callsign");return;}
+  PREFS.call=v;saveJSON(K.prefs,PREFS);fillWizDone();
 });
+// Skip = continue without saving anything — settable later in Ref
+document.getElementById("wizSkip3").addEventListener("click",fillWizDone);
 document.getElementById("wizDone").addEventListener("click",closeWizard);
 document.getElementById("rerunWiz").addEventListener("click",e=>{e.preventDefault();showWizard();});
 
@@ -2348,6 +2396,12 @@ if(!document.fullscreenEnabled&&!navigator.wakeLock)document.getElementById("kio
 if(document.fullscreenElement){_kiosk=true;setKioskUI(true);}
 applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
+document.getElementById("callIn").value=PREFS.call||"";
+document.getElementById("callIn").addEventListener("change",e=>{
+  const v=e.target.value.trim().toUpperCase();
+  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("That doesn't look like a callsign");return;}
+  PREFS.call=v;e.target.value=v;saveJSON(K.prefs,PREFS);renderNets();
+  toast(v?"Callsign saved — live rosters will mark you":"Callsign cleared");});
 document.getElementById("vhfMiSel").value=String(+PREFS.vhfMi||0);
 document.getElementById("vhfMiSel").addEventListener("change",e=>{PREFS.vhfMi=+e.target.value;saveJSON(K.prefs,PREFS);_showFarNets=false;renderNets();});
 renderRail();

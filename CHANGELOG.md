@@ -2,6 +2,17 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.14.047] — 2026-08-14
+
+### Added
+- **Check-in verification.** Tell SkyWave your callsign and it watches the live rosters for you: once net control logs you into a net, that net's row shows a cyan **✓ LOGGED** badge and your entry is highlighted in the expanded roster. This is deliberately *verification*, not remote check-in — checking in happens on the air, net control's log is the only record that counts, and NetLogger's published API is read-only. SkyWave reports what NCS actually logged, which is the one check-in signal that can't lie. (Confirmation lags the mirror's ~hourly refresh.)
+- **Callsign step in the first-run wizard.** The setup wizard is now four steps — welcome → location → **callsign (optional, with Skip)** → done. Matching is on base callsigns, so being logged as `KD5XYZ/M` when you gave `KD5XYZ` (or the reverse) still matches. Also settable or changeable any time under **Ref → display settings**; stored on-device only, used for nothing else.
+
+### Notes
+- 10 new domain tests cover the matcher (case, portable suffixes both directions, near-miss callsigns, empty/rosterless safety). The full first-run flow was driven in headless Chromium against real mirror data: wizard through all four steps, a lowercase entry saved uppercase, the badge landing on the one net whose roster genuinely contained the test callsign, the roster row highlighted, and everything clearing when the callsign changes.
+
+---
+
 ## [2026.08.13.046] — 2026-08-13
 
 ### Added

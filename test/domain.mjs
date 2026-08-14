@@ -44,7 +44,7 @@ const block = [
   grab("function lastSun(", "function relays("),
   grab("function looksLikeSchedule(", "async function fetchSchedule("),
   grab("function parseEibi(", "async function loadText("),
-  "let PREFS={vhfMi:100};",
+  "let PREFS={vhfMi:100,call:\"\"};",
   grab("const VHF_MIN_KHZ=", "function netFreqKhz("),
   grab("function netFreqKhz(", "function parseNets("),
   grab("const RAD=Math.PI/180", "function fmtUTC("),
@@ -53,13 +53,13 @@ const block = [
 const api = new Function(block + `; return {parseTime,dayAllowed,dowE,onAir,minsUntilStart,bandOf,
   lastSun,seasonCode,seasonList,looksLikeSchedule,parseEibi,entry,netFreqKhz,normNetObj,sunTimes,toDays,
   grayState,grayEvents,graylineIcs,icsFold,GRAY_WINDOW_MIN,GRAY_LEADS,NETDIR,buildBase,
-  gridToLatLon,distMi,netDistMi,netTooFar,PREFS};`)();
+  gridToLatLon,distMi,netDistMi,netTooFar,callBase,selfInRoster,PREFS};`)();
 
 const {
   dayAllowed, onAir, minsUntilStart, bandOf, seasonCode, seasonList,
   looksLikeSchedule, parseEibi, netFreqKhz, normNetObj, sunTimes,
   grayState, grayEvents, graylineIcs, GRAY_WINDOW_MIN,
-  gridToLatLon, distMi, netDistMi, netTooFar, PREFS: PREFS_REF,
+  gridToLatLon, distMi, netDistMi, netTooFar, callBase, selfInRoster, PREFS: PREFS_REF,
 } = api;
 
 let pass = 0, fail = 0;
@@ -302,6 +302,28 @@ t("filter: radius is honoured (500 mi keeps a ~410-mile net)", (() => {
   PREFS_REF.vhfMi = 100; const hidden = netTooFar(midNet, geo) === true;
   PREFS_REF.vhfMi = was; return kept && hidden;
 })());
+
+// -------------------------------------------- check-in verification --------
+// The roster is what net control actually logged; selfInRoster answers "did I
+// make the log?" Matching is on base callsigns so portable suffixes don't
+// break it in either direction.
+const roster = { name: "Shrimpnet", freq: 3881,
+  roster: [{ call: "K3WJH" }, { call: "KD5XYZ/M" }, { call: "W5ABC" }] };
+t("checkin: exact call matches", selfInRoster({ roster: [{ call: "W5ABC" }] }, "W5ABC") === true);
+t("checkin: case-insensitive", selfInRoster(roster, "w5abc") === true);
+t("checkin: NCS logged /M, you gave the base call", selfInRoster(roster, "KD5XYZ") === true);
+t("checkin: you gave /P, NCS logged the base call", selfInRoster(roster, "W5ABC/P") === true);
+t("checkin: absent call does not match", selfInRoster(roster, "N0CALL") === false);
+t("checkin: near-miss callsign does not match", selfInRoster(roster, "W5AB") === false);
+t("checkin: empty callsign never matches", selfInRoster(roster, "") === false &&
+  selfInRoster(roster, "   ") === false);
+t("checkin: rosterless net is false, not a crash", selfInRoster({ name: "X", freq: 7255 }, "W5ABC") === false);
+t("checkin: defaults to PREFS.call when no call passed", (() => {
+  const was = PREFS_REF.call; PREFS_REF.call = "kd5xyz";
+  const r = selfInRoster(roster) === true;
+  PREFS_REF.call = was; return r;
+})());
+t("callBase: strips suffix and normalises", callBase(" kd5xyz/m ") === "KD5XYZ");
 
 // ------------------------------------------------------ grayline alert ----
 // The window is sunset/sunrise ±50 min; warnings fire 30 and 5 min before it
