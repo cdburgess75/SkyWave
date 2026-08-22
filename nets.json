@@ -1,0 +1,557 @@
+{
+ "ts": 1787427332264,
+ "nets": [
+  {
+   "name": "Just Another Net",
+   "freq": 7204,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "K7MKA",
+   "start": "18:13",
+   "server": "NETLOGGER",
+   "dur": "01:22:30",
+   "subs": 7,
+   "checkins": 44,
+   "roster": [
+    {
+     "call": "K7MKA",
+     "name": "Michael",
+     "qth": "FALLON, NV",
+     "grid": "DM09nm",
+     "nc": 1
+    },
+    {
+     "call": "KN6DAM",
+     "name": "William",
+     "qth": "Pine Grove, CA",
+     "grid": "CM98qj"
+    },
+    {
+     "call": "KA7WRU",
+     "name": "Ivy",
+     "qth": "Grants Pass, OR",
+     "grid": "CN82gk"
+    },
+    {
+     "call": "K6ODI",
+     "name": "Michael",
+     "qth": "Winnemucca, NV",
+     "grid": "DN11eg"
+    },
+    {
+     "call": "WB6DXR",
+     "name": "Lester",
+     "qth": "PETALUMA, CA",
+     "grid": "CM88pe"
+    },
+    {
+     "call": "N6GEB",
+     "name": "Glen",
+     "qth": "Petaluma, CA",
+     "grid": "CM88qf"
+    },
+    {
+     "call": "WB7VUF",
+     "name": "Lyle",
+     "qth": "Phoenix, Oregon, OR",
+     "grid": "CN82og"
+    },
+    {
+     "call": "KK6ILV",
+     "name": "James",
+     "qth": "Modesto, CA",
+     "grid": "CM97mp"
+    },
+    {
+     "call": "KO6DLV",
+     "name": "Raoul",
+     "qth": "Santa Rosa, CA",
+     "grid": "CM88ok"
+    },
+    {
+     "call": "K6BRR",
+     "name": "Dana",
+     "qth": "Packwood (near Mt Rainier), WA",
+     "grid": "CN96do"
+    },
+    {
+     "call": "K7SUN",
+     "name": "Stan",
+     "qth": "FALLON, NV",
+     "grid": "DM09om"
+    },
+    {
+     "call": "KI7DIX",
+     "name": "Louis",
+     "qth": "BROOKING, OR",
+     "grid": "CN72ve"
+    },
+    {
+     "call": "KN6TCI",
+     "name": "Brian",
+     "qth": "Sacramento, CA",
+     "grid": "CM98ho"
+    },
+    {
+     "call": "WA6FTU",
+     "name": "Mark",
+     "qth": "LA CANADA FLINTRIDGE, CA",
+     "grid": "DM04ta"
+    },
+    {
+     "call": "KE8HGS",
+     "name": "Mark",
+     "qth": "New Salisbury, IN",
+     "grid": "EM68wh"
+    },
+    {
+     "call": "KG7GM",
+     "name": "John",
+     "qth": "Sparks, NV",
+     "grid": "DM09dn"
+    },
+    {
+     "call": "KN6SD",
+     "name": "Russell",
+     "qth": "SACRAMENTO, CA",
+     "grid": "CM98gm"
+    },
+    {
+     "call": "KO6EUM",
+     "name": "Carl",
+     "qth": "LITTLEROCK (Rightwood), CA",
+     "grid": "DM14al"
+    },
+    {
+     "call": "K7DWE",
+     "name": "Dennis",
+     "qth": "Medford, OR",
+     "grid": "CN82ni"
+    },
+    {
+     "call": "N6HRO",
+     "name": "Ham Radio Outlet Sacramento Arc",
+     "qth": "WALNUT CREEK, CA",
+     "grid": "CM98hp"
+    },
+    {
+     "call": "W7OKE",
+     "name": "Adam",
+     "qth": "Carson, CA",
+     "grid": "DM03uu"
+    },
+    {
+     "call": "WB6POJ",
+     "name": "Stephen",
+     "qth": "ROSEBURG, OR",
+     "grid": "CN83if"
+    },
+    {
+     "call": "N6GC",
+     "name": "Bruce",
+     "qth": "Bend, OR",
+     "grid": "CN93hx"
+    },
+    {
+     "call": "K6AXS",
+     "name": "Dana",
+     "qth": "El Dorado Hills, CA",
+     "grid": "CM98lp"
+    },
+    {
+     "call": "W6WL",
+     "name": "Craig",
+     "qth": "Santa Cruz, CA",
+     "grid": "CM96cw"
+    },
+    {
+     "call": "W6NDA",
+     "name": "Nathaniel",
+     "qth": "Shingle Springs, CA",
+     "grid": "CM98mq"
+    },
+    {
+     "call": "KB7SMK",
+     "name": "Lester",
+     "qth": "TRAIL, OR",
+     "grid": "CN82op"
+    },
+    {
+     "call": "KN6BEJ",
+     "name": "Michael",
+     "qth": "The Sea Ranch (Near Ft Ross), CA",
+     "grid": "CM88fs"
+    },
+    {
+     "call": "KE6NCU",
+     "name": "Stuart",
+     "qth": "Brookings, OR",
+     "grid": "CN72ub"
+    },
+    {
+     "call": "K7MJB",
+     "name": "Michael",
+     "qth": "Salem, OR",
+     "grid": "CN84mw"
+    },
+    {
+     "call": "KN6DXK",
+     "name": "Robert",
+     "qth": "Hanford, CA",
+     "grid": "DM06ei"
+    },
+    {
+     "call": "K7AIR",
+     "name": "Antone",
+     "qth": "Gardnerville, NV",
+     "grid": "DM09es"
+    },
+    {
+     "call": "K1RLP",
+     "name": "Robert",
+     "qth": "Clovis, CA",
+     "grid": "DM06eu"
+    },
+    {
+     "call": "K5SCB",
+     "name": "Warren",
+     "qth": "Livingston, OR",
+     "grid": "EM20mr"
+    },
+    {
+     "call": "KK6OB",
+     "name": "Howard",
+     "qth": "Pine Grove, CA",
+     "grid": "CM98pk"
+    },
+    {
+     "call": "K7ELJ",
+     "name": "Eric",
+     "qth": "Boardman (way up Columbia River), OR",
+     "grid": "DN05hv"
+    },
+    {
+     "call": "WD4FCX",
+     "name": "George",
+     "qth": "San Antonio, TX",
+     "grid": "EL09rm"
+    },
+    {
+     "call": "W6DNN",
+     "name": "Ricky",
+     "qth": "SONORA, CA",
+     "grid": "CM97ux"
+    },
+    {
+     "call": "W3IV",
+     "name": "Ralph",
+     "qth": "RANCHO CORDOVA, CA",
+     "grid": "CM98jn"
+    },
+    {
+     "call": "W7KJU",
+     "name": "Matthew",
+     "qth": "Stateline, NV, NV",
+     "grid": "DM08ax"
+    },
+    {
+     "call": "N7YMZ",
+     "name": "Mario",
+     "qth": "Hollister, CA",
+     "grid": "CM96hu"
+    },
+    {
+     "call": "AE6EG",
+     "name": "James",
+     "qth": "Carpenteria, CA",
+     "grid": "DM14uc"
+    },
+    {
+     "call": "K6RBN",
+     "name": "William",
+     "qth": "San Anselmo, CA",
+     "grid": "CM87rx"
+    },
+    {
+     "call": "WB6YBA",
+     "name": "Gary",
+     "qth": "Livermore, CA",
+     "grid": "CM97cp"
+    }
+   ]
+  },
+  {
+   "name": "OMISS 20m SSB Net",
+   "freq": 14285,
+   "mode": "SSB",
+   "band": "20m",
+   "ncs": "AC1NQ",
+   "start": "17:30",
+   "server": "NETLOGGER2",
+   "dur": "02:04:58",
+   "subs": 26,
+   "checkins": 52,
+   "roster": [
+    {
+     "call": "AC1NQ",
+     "name": "LONE WOLF",
+     "qth": "Lewiston, ME",
+     "grid": "FN44",
+     "nc": 1
+    },
+    {
+     "call": "WH6S",
+     "name": "RICHARD",
+     "qth": "KEKAHA, HI",
+     "grid": "BL01"
+    },
+    {
+     "call": "GHOST1"
+    },
+    {
+     "call": "N9VKV",
+     "name": "Dennis",
+     "qth": "WARSAW, IN",
+     "grid": "EN71cf"
+    },
+    {
+     "call": "KQ4GAH",
+     "name": "JOSEF",
+     "qth": "HOPKINSVILLE, KY",
+     "grid": "EM66"
+    },
+    {
+     "call": "N5HDX",
+     "name": "JOE",
+     "qth": "LOG CABIN, TX",
+     "grid": "EM12"
+    },
+    {
+     "call": "AC6DX",
+     "name": "STEVEN",
+     "qth": "Nuevo, CA",
+     "grid": "DM13"
+    },
+    {
+     "call": "N7HQY",
+     "name": "TERRY",
+     "qth": "Mesa, AZ",
+     "grid": "DM43"
+    },
+    {
+     "call": "K7ORL",
+     "name": "DANNY",
+     "qth": "CHENEY, WA",
+     "grid": "DN17"
+    },
+    {
+     "call": "VA3TCV",
+     "name": "Tennessee",
+     "qth": "Kitchener, ON",
+     "grid": "EN93sl"
+    },
+    {
+     "call": "AA5AH",
+     "name": "ROBERT",
+     "qth": "Richardson, TX",
+     "grid": "EM12"
+    },
+    {
+     "call": "KK7KHK",
+     "name": "TED",
+     "qth": "Meridian, ID",
+     "grid": "DN13"
+    },
+    {
+     "call": "AA0HF",
+     "name": "ERIC",
+     "qth": "Saint Francis, MN",
+     "grid": "EN35"
+    },
+    {
+     "call": "W4FNZ",
+     "name": "BILL",
+     "qth": "Saint Simons Island, GA",
+     "grid": "EM91"
+    },
+    {
+     "call": "K4VCL",
+     "name": "SUPPO",
+     "qth": "OAK HARBOR, WA",
+     "grid": "CN88"
+    },
+    {
+     "call": "WB0CSF",
+     "name": "CRAIG",
+     "qth": "LINCOLN, NE",
+     "grid": "EN10"
+    },
+    {
+     "call": "W0KAD",
+     "name": "KEN",
+     "qth": "KANSAS CITY, MO",
+     "grid": "EM29"
+    },
+    {
+     "call": "KN4RDF",
+     "name": "BRIAN",
+     "qth": "Westminster, CO",
+     "grid": "DM79"
+    },
+    {
+     "call": "W0RCH",
+     "name": "RICHARD",
+     "qth": "Fountain, CO",
+     "grid": "DM78"
+    },
+    {
+     "call": "WB1CMG",
+     "name": "DAVID",
+     "qth": "MONT VERNON, NH",
+     "grid": "FN42"
+    },
+    {
+     "call": "N9PKL",
+     "name": "JAMES",
+     "qth": "Marion, IN",
+     "grid": "EN70"
+    },
+    {
+     "call": "N1PGF",
+     "name": "ARCHIE",
+     "qth": "Chichester, NH",
+     "grid": "FN43"
+    },
+    {
+     "call": "AB0N",
+     "name": "DAVID",
+     "qth": "Hayti, SD",
+     "grid": "EN14"
+    },
+    {
+     "call": "AI8O",
+     "name": "DANIEL",
+     "qth": "Lexington, NC",
+     "grid": "EM95"
+    },
+    {
+     "call": "WD4BMG",
+     "name": "GEORGE",
+     "qth": "WILKESBORO, NC",
+     "grid": "EM96"
+    },
+    {
+     "call": "K5RJM",
+     "name": "RUSSELL",
+     "qth": "Duncanville, TX",
+     "grid": "EM12"
+    },
+    {
+     "call": "AB8PS",
+     "name": "PAT",
+     "qth": "BAY CITY, MI",
+     "grid": "EN83"
+    },
+    {
+     "call": "W9DLW",
+     "name": "Donald",
+     "qth": "FREEPORT, IL",
+     "grid": "EN52gj"
+    },
+    {
+     "call": "KE5GY",
+     "name": "JERRY",
+     "qth": "Mt. Juliet, TN",
+     "grid": "EM66"
+    },
+    {
+     "call": "NN6EE",
+     "name": "James",
+     "qth": "CONCORD, CA",
+     "grid": "CM87xx"
+    },
+    {
+     "call": "KA1COM",
+     "name": "David",
+     "qth": "Winchendon, MA",
+     "grid": "FN32xq"
+    },
+    {
+     "call": "KD4DOU",
+     "name": "MARK",
+     "qth": "FLORENCE, KY",
+     "grid": "EM78"
+    },
+    {
+     "call": "KD0WGB",
+     "name": "DON",
+     "qth": "WATERLOO, IA",
+     "grid": "EN42"
+    },
+    {
+     "call": "K1HLB",
+     "name": "Henry",
+     "qth": "WELLFLEET, MA",
+     "grid": "FN41ww"
+    },
+    {
+     "call": "WD5CSK",
+     "name": "RON",
+     "qth": "Edmond, OK",
+     "grid": "EM15"
+    },
+    {
+     "call": "VE5RR",
+     "name": "DOUGLAS",
+     "qth": "Wolseley, SK",
+     "grid": "DO80"
+    },
+    {
+     "call": "N8TEN",
+     "name": "RON",
+     "qth": "Saline, MI",
+     "grid": "EN82"
+    },
+    {
+     "call": "W5DOC",
+     "name": "DOCK",
+     "qth": "SEGUIN, AL",
+     "grid": "EL09"
+    },
+    {
+     "call": "AK4SZ",
+     "name": "LARRY",
+     "qth": "Savannah, TX",
+     "grid": "EM13"
+    },
+    {
+     "call": "W9PDP",
+     "name": "PAT",
+     "qth": "Carmel, IN",
+     "grid": "EM69"
+    },
+    {
+     "call": "K4CKY",
+     "name": "WILLARD",
+     "qth": "Lexington, KY",
+     "grid": "EM78"
+    },
+    {
+     "call": "WB6MAX",
+     "name": "MAX",
+     "qth": "El Segundo, CA",
+     "grid": "DM03"
+    },
+    {
+     "call": "GHOST2"
+    },
+    {
+     "call": "N2QIL",
+     "name": "KWKENNY",
+     "qth": "Northville, NY",
+     "grid": "FN23"
+    }
+   ]
+  }
+ ]
+}
