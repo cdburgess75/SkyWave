@@ -1,0 +1,757 @@
+{
+ "ts": 1788650063684,
+ "nets": [
+  {
+   "name": "THE FRIENDLY BUNCH CONVERSATION",
+   "freq": 3919,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "K2MFS",
+   "start": "22:54",
+   "server": "NETLOGGER",
+   "dur": "00:19:30",
+   "subs": 4,
+   "checkins": 5,
+   "roster": [
+    {
+     "call": "K2MFS",
+     "name": "Michael",
+     "qth": "Eatontown, NJ",
+     "grid": "FN20wh",
+     "nc": 1
+    },
+    {
+     "call": "AB3BD",
+     "name": "Dean",
+     "qth": "Bethlehem, PA",
+     "grid": "FN20ho"
+    },
+    {
+     "call": "N8BCF",
+     "name": "Robert",
+     "qth": "Norcross, GA",
+     "grid": "EM73ux"
+    },
+    {
+     "call": "W1RJ",
+     "name": "Howard",
+     "qth": "Gilford, NH",
+     "grid": "FN43hn"
+    },
+    {
+     "call": "KC1VIO",
+     "name": "Michael",
+     "qth": "Middleboro, MA",
+     "grid": "FN41ot"
+    }
+   ]
+  },
+  {
+   "name": "NORTHEAST CRACKERBARREL NET",
+   "freq": 3932,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "KC1EUJ",
+   "start": "22:45",
+   "server": "NETLOGGER",
+   "dur": "00:28:48",
+   "subs": 5,
+   "checkins": 11,
+   "roster": [
+    {
+     "call": "K1WTX",
+     "name": "Gerald",
+     "qth": "Turner, ME",
+     "grid": "FN44"
+    },
+    {
+     "call": "K1WMN",
+     "name": "Walter",
+     "qth": "South Easton, MA"
+    },
+    {
+     "call": "KA1TWV",
+     "name": "Fern",
+     "qth": "Wardsboro, VT"
+    },
+    {
+     "call": "K1HTJ",
+     "name": "William",
+     "qth": "Graniteville, VT"
+    },
+    {
+     "call": "K1PAI",
+     "name": "Roger",
+     "qth": "Wethersfield, CT"
+    },
+    {
+     "call": "AA1BS",
+     "name": "Robert",
+     "qth": "North Waterboro, ME"
+    },
+    {
+     "call": "WB1CEI",
+     "name": "Edward",
+     "qth": "Sharon, CT",
+     "grid": "FN31"
+    },
+    {
+     "call": "KC1EUJ",
+     "name": "Kurt",
+     "qth": "Marshfield, MA",
+     "nc": 1
+    },
+    {
+     "call": "W1DYQ",
+     "name": "Dean",
+     "qth": "Uxbridge, MA",
+     "grid": "FN42"
+    },
+    {
+     "call": "N2CHD",
+     "name": "Charles",
+     "qth": "Oxford, NY"
+    },
+    {
+     "call": "N1JXQ",
+     "name": "Ronald",
+     "qth": "Bethel, ME"
+    }
+   ]
+  },
+  {
+   "name": "The Maine Potato Net",
+   "freq": 3961,
+   "mode": "SSB",
+   "band": "75m",
+   "ncs": "W1JZR",
+   "start": "22:14",
+   "server": "NETLOGGER",
+   "dur": "00:59:46",
+   "subs": 6,
+   "checkins": 12,
+   "roster": [
+    {
+     "call": "W1JZR",
+     "name": "Gary W",
+     "qth": "Holyoke, MA",
+     "grid": "FN32qf",
+     "nc": 1
+    },
+    {
+     "call": "KD2EMQ",
+     "name": "Tom",
+     "qth": "Sparrow Bush, NY",
+     "grid": "FN21pk"
+    },
+    {
+     "call": "K1CTY",
+     "name": "Mr J",
+     "qth": "Groton, CT",
+     "grid": "FN31xi"
+    },
+    {
+     "call": "N2VZD",
+     "name": "Tim",
+     "qth": "Memphis, NY",
+     "grid": "FN13tc"
+    },
+    {
+     "call": "KA1KAC",
+     "name": "Bill R",
+     "qth": "Dudley, MA",
+     "grid": "FN42aa"
+    },
+    {
+     "call": "W1JZR",
+     "name": "Gary W",
+     "qth": "Holyoke, MA",
+     "grid": "FN32qf",
+     "nc": 1
+    },
+    {
+     "call": "KB1SL",
+     "name": "Les",
+     "qth": "Stratford, CT",
+     "grid": "FN31ml"
+    },
+    {
+     "call": "AA1BF",
+     "name": "Bill",
+     "qth": "Epsom, NH",
+     "grid": "FN43id"
+    },
+    {
+     "call": "K7NWA",
+     "name": "John",
+     "qth": "Bushkill, PA",
+     "grid": "FN21md"
+    },
+    {
+     "call": "KB3JUF",
+     "name": "Charlie",
+     "qth": "HENRYVILLE, PA",
+     "grid": "FN21ib"
+    },
+    {
+     "call": "WA3SOI",
+     "name": "Scott",
+     "qth": "Wind Gap, PA",
+     "grid": "FN20ht"
+    }
+   ]
+  },
+  {
+   "name": "the N0SWR net",
+   "freq": 7185,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "KF0SKU",
+   "start": "22:40",
+   "server": "NETLOGGER",
+   "dur": "00:34:08",
+   "subs": 9,
+   "checkins": 9,
+   "roster": [
+    {
+     "call": "KF0SKU",
+     "name": "Jonathan",
+     "qth": "Albion, NE",
+     "grid": "EN11aq",
+     "nc": 1
+    },
+    {
+     "call": "KD2DMR",
+     "name": "Jeremy",
+     "qth": "Fulton, IL",
+     "grid": "EN41wu"
+    },
+    {
+     "call": "W9BLH",
+     "name": "Brad",
+     "qth": "ELDORADO, WI",
+     "grid": "EN53qt"
+    },
+    {
+     "call": "K6ODI",
+     "name": "Michael",
+     "qth": "Winnemucca, NV",
+     "grid": "DN11eg"
+    },
+    {
+     "call": "KE9EAA",
+     "name": "Thomas",
+     "qth": "SCHAUMBURG, IL",
+     "grid": "EN52wa"
+    },
+    {
+     "call": "K5DPP",
+     "name": "David",
+     "qth": "Westlake, WY",
+     "grid": "EM12kw"
+    },
+    {
+     "call": "WA9UIR",
+     "name": "Richard",
+     "qth": "CARMEL, IN",
+     "grid": "EM69xx"
+    },
+    {
+     "call": "K4SBF",
+     "name": "Seneca",
+     "qth": "BENSON, NM",
+     "grid": "FM05rj"
+    },
+    {
+     "call": "VA4AAW",
+     "name": "Jaime Jr",
+     "qth": "Steinbach, MB",
+     "grid": "EN19pm"
+    }
+   ]
+  },
+  {
+   "name": "WASA NET",
+   "freq": 7188,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "N6TCO",
+   "start": "22:18",
+   "server": "NETLOGGER",
+   "dur": "00:55:40",
+   "subs": 21,
+   "checkins": 21,
+   "roster": [
+    {
+     "call": "KF6FOK",
+     "name": "Brad",
+     "qth": "Dayton, OH",
+     "grid": "FN21ja"
+    },
+    {
+     "call": "N9DJR",
+     "name": "JIM",
+     "qth": "KOKOMO, IN",
+     "grid": "EN60wk"
+    },
+    {
+     "call": "KO4DBP",
+     "name": "William",
+     "qth": "MORGANTON, NC",
+     "grid": "EM95et"
+    },
+    {
+     "call": "KE2IFC",
+     "name": "Steven",
+     "qth": "Medford, NY",
+     "grid": "FN30mt"
+    },
+    {
+     "call": "KB3BXL",
+     "name": "Hoss",
+     "qth": "McKean, PA",
+     "grid": "EN91wx"
+    },
+    {
+     "call": "VE3WZX",
+     "name": "Wayne",
+     "qth": "St. Clements, ON",
+     "grid": "EN93qm"
+    },
+    {
+     "call": "KB8LPR",
+     "name": "Swootz",
+     "qth": "Glendale, WV",
+     "grid": "EM99px"
+    },
+    {
+     "call": "KE2HQZ",
+     "name": "Christopher",
+     "qth": "Brooklyn, NY",
+     "grid": "FN30aq"
+    },
+    {
+     "call": "KQ4GAH",
+     "name": "Josef",
+     "qth": "HOPKINSVILLE, KY",
+     "grid": "EM66fv"
+    },
+    {
+     "call": "K4RCY",
+     "name": "Bryan",
+     "qth": "Albemarle, NC",
+     "grid": "EM95wi"
+    },
+    {
+     "call": "AC3LN",
+     "name": "Peter",
+     "qth": "Darlington, PA",
+     "grid": "EN90us"
+    },
+    {
+     "call": "NN2P",
+     "name": "John",
+     "qth": "Bloomingdale, NJ",
+     "grid": "FN21ua"
+    },
+    {
+     "call": "K1HOW",
+     "name": "Howard",
+     "qth": "Torrington, CT",
+     "grid": "FN31kt"
+    },
+    {
+     "call": "KC2MMC",
+     "name": "Terry",
+     "qth": "NEWARK, NJ",
+     "grid": "FN20vs"
+    },
+    {
+     "call": "N2VQD",
+     "name": "Randy",
+     "qth": "Mayville, NY",
+     "grid": "FN02fg"
+    },
+    {
+     "call": "WA0TZK",
+     "name": "Steven",
+     "qth": "AMES, IA",
+     "grid": "EN32ea"
+    },
+    {
+     "call": "KD8NKY",
+     "name": "Randall",
+     "qth": "Grove City, OH",
+     "grid": "EM89ku"
+    },
+    {
+     "call": "KE8ZOB",
+     "name": "Bob",
+     "qth": "OWOSSO, MI",
+     "grid": "EN72wx"
+    },
+    {
+     "call": "VE3HZ",
+     "name": "Harry",
+     "qth": "KITCHENER, ON",
+     "grid": "EN93rk"
+    },
+    {
+     "call": "N6TCO",
+     "name": "Guido",
+     "qth": "Horseshoe Bend, AR",
+     "grid": "EM46cf",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "MOONLIGHTERS Saturday Night",
+   "freq": 7275,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "KQ4PCR",
+   "start": "22:06",
+   "server": "NETLOGGER",
+   "dur": "01:07:46",
+   "subs": 19
+  },
+  {
+   "name": "Litter Box Lounge on 11 Cats!!!",
+   "freq": 55763,
+   "mode": "FM",
+   "band": "70cm",
+   "ncs": "KM5Y",
+   "start": "22:32",
+   "server": "NETLOGGER",
+   "dur": "00:42:18",
+   "subs": 5,
+   "checkins": 18,
+   "roster": [
+    {
+     "call": "KI5SSR",
+     "name": "Janette",
+     "qth": "GRAPEVINE, TX",
+     "grid": "EM12kw"
+    },
+    {
+     "call": "KM5Y",
+     "name": "Mike",
+     "qth": "GRAPEVINE, TX",
+     "grid": "EM12kw",
+     "nc": 1
+    },
+    {
+     "call": "N0GIX",
+     "name": "Maureen",
+     "qth": "HOUSTON, TX",
+     "grid": "EM20ha"
+    },
+    {
+     "call": "N5AQM",
+     "name": "Mike",
+     "qth": "CHANDLER, AZ",
+     "grid": "DM43ah"
+    },
+    {
+     "call": "KE0WRU",
+     "name": "Bob",
+     "qth": "Golden City, MO",
+     "grid": "EM27wg"
+    },
+    {
+     "call": "KF8FSQ",
+     "name": "Fred",
+     "qth": "Fenton, MI",
+     "grid": "EN82dt"
+    },
+    {
+     "call": "DU3XCD",
+     "name": "Dennis Glenn",
+     "qth": "Cabanatuan Luzon",
+     "grid": "PK05ll"
+    },
+    {
+     "call": "KY4NB",
+     "name": "Scott&Robbie Rhea",
+     "qth": "Memphis, TN",
+     "grid": "EM55ad"
+    },
+    {
+     "call": "KK7HLD",
+     "name": "Dave",
+     "qth": "Portland, OR",
+     "grid": "CN85rm"
+    },
+    {
+     "call": "K4CUP",
+     "name": "Virgil",
+     "qth": "Flat Gap, KY",
+     "grid": "EM87mx"
+    },
+    {
+     "call": "KY4VC",
+     "name": "Shawn",
+     "qth": "STL, TN",
+     "grid": "EM65el"
+    },
+    {
+     "call": "KB3PFF",
+     "name": "Steve",
+     "qth": "Rockville, MD",
+     "grid": "FM19kb"
+    },
+    {
+     "call": "GM5CAR",
+     "name": "Carrie",
+     "qth": "Lanarkshire",
+     "grid": "IO85at"
+    },
+    {
+     "call": "W9BKY",
+     "name": "Danny",
+     "qth": "Evansville, IN",
+     "grid": "EM67hw"
+    },
+    {
+     "call": "K0ECK",
+     "name": "Gail",
+     "qth": "Kyle, TX",
+     "grid": "EM10ca"
+    },
+    {
+     "call": "KE9EDF",
+     "name": "Emdon",
+     "qth": "Lewistown, IL",
+     "grid": "EN40xj"
+    },
+    {
+     "call": "N3PAY",
+     "name": "Matt",
+     "qth": "Omaha, NE",
+     "grid": "EN11xf"
+    }
+   ]
+  },
+  {
+   "name": "Sat Nite DSSTV Net-1900-2100 hrs",
+   "freq": 146670,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "WA2LBE",
+   "start": "22:47",
+   "server": "NETLOGGER",
+   "dur": "00:26:44",
+   "subs": 3,
+   "checkins": 5,
+   "roster": [
+    {
+     "call": "N2VZD",
+     "name": "Timothy",
+     "qth": "Memphis"
+    },
+    {
+     "call": "WA2LBE",
+     "name": "Richard",
+     "qth": "Mexico",
+     "nc": 1
+    },
+    {
+     "call": "KB2VSJ",
+     "name": "Earl",
+     "qth": "Liverpool"
+    },
+    {
+     "call": "N2MRE",
+     "name": "Daniel",
+     "qth": "Preble"
+    },
+    {
+     "call": "KB2SWA",
+     "name": "Michael",
+     "qth": "Jamesville"
+    }
+   ]
+  },
+  {
+   "name": "GSARA Nightly Net",
+   "freq": 146685,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "W1WRA",
+   "start": "22:58",
+   "server": "NETLOGGER",
+   "dur": "00:15:34",
+   "subs": 2,
+   "checkins": 9,
+   "roster": [
+    {
+     "call": "W1WRA",
+     "name": "William",
+     "qth": "Bedford, NH",
+     "grid": "FN42fx",
+     "nc": 1
+    },
+    {
+     "call": "KC1VXA",
+     "name": "Stephen",
+     "qth": "Amherst, NH",
+     "grid": "FN42ev"
+    },
+    {
+     "call": "N1RJF",
+     "name": "Richard",
+     "qth": "Nashua, NH",
+     "grid": "FN42gr"
+    },
+    {
+     "call": "AC1J",
+     "name": "Thomas",
+     "qth": "BEDFORD, NH",
+     "grid": "FN42ex"
+    },
+    {
+     "call": "WM1H",
+     "name": "Timothy",
+     "qth": "Manchester, NH",
+     "grid": "FN42gx"
+    },
+    {
+     "call": "W1SNH",
+     "name": "Ryan",
+     "qth": "Milford, NH",
+     "grid": "FN42dt"
+    },
+    {
+     "call": "KC1VYM",
+     "name": "Kimberly",
+     "qth": "Manchester, NH",
+     "grid": "FN43ga"
+    },
+    {
+     "call": "WX1OZZ",
+     "name": "Steven",
+     "qth": "MERRIMACK, NH",
+     "grid": "FN42fv"
+    }
+   ]
+  },
+  {
+   "name": "Lone Ranger Wellness EL287616",
+   "freq": 146790,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "KO4MKP",
+   "start": "22:46",
+   "server": "NETLOGGER",
+   "dur": "00:27:55",
+   "subs": 2,
+   "checkins": 24,
+   "roster": [
+    {
+     "call": "KN4MEF",
+     "name": "Debbie",
+     "qth": "Hixson, TN",
+     "grid": "EM75jd"
+    },
+    {
+     "call": "KE4RP",
+     "name": "Elizabeth",
+     "qth": "Chattanooga, TN",
+     "grid": "EM75id"
+    },
+    {
+     "call": "KM4DPS",
+     "name": "Terry",
+     "qth": "Flintstone, GA",
+     "grid": "EM74hv"
+    },
+    {
+     "call": "K4SKT",
+     "name": "Charles",
+     "qth": "Chattanooga, TN",
+     "grid": "EM75ja"
+    },
+    {
+     "call": "AA4EZ",
+     "name": "Raymond",
+     "qth": "Signal Mountain, TN",
+     "grid": "EM75id"
+    },
+    {
+     "call": "KE5CEJ",
+     "name": "Catherine",
+     "qth": "Wichita, KS",
+     "grid": "EM17iq"
+    },
+    {
+     "call": "KO4MKP",
+     "name": "Jim",
+     "qth": "Hixson, TN",
+     "grid": "EM75jd",
+     "nc": 1
+    },
+    {
+     "call": "WB4IEJ",
+     "name": "Wayne",
+     "qth": "CHATTANOOGA, TN",
+     "grid": "EM75ka"
+    },
+    {
+     "call": "WD4JAN",
+     "name": "Janice",
+     "qth": "Chattanooga, TN",
+     "grid": "EM75ka"
+    },
+    {
+     "call": "K6KJV",
+     "name": "Kevin",
+     "qth": "Valley Springs, CA",
+     "grid": "CM98nd"
+    },
+    {
+     "call": "KR4LWL",
+     "name": "Howard",
+     "qth": "Soddy Daisy, TN",
+     "grid": "EM75kg"
+    },
+    {
+     "call": "N4WD",
+     "name": "Bruce",
+     "qth": "FORT OGLETHORPE, GA",
+     "grid": "EM74iw"
+    },
+    {
+     "call": "N4JGT",
+     "name": "Robert",
+     "qth": "Soddy Daisy, TN",
+     "grid": "EM75kg"
+    },
+    {
+     "call": "KR4MMD",
+     "name": "Thomas",
+     "qth": "Ooltewah, TN",
+     "grid": "EM75lc"
+    },
+    {
+     "call": "KR4LDR",
+     "name": "Ronnie",
+     "qth": "Rossville, GA",
+     "grid": "EM74iw"
+    },
+    {
+     "call": "KM4YHK",
+     "name": "Janice",
+     "qth": "Micanopy, FL",
+     "grid": "EL89um"
+    },
+    {
+     "call": "WA4NFO",
+     "name": "Arnold",
+     "qth": "Chattanooga, TN",
+     "grid": "EM75ka"
+    }
+   ]
+  }
+ ]
+}
