@@ -2,6 +2,16 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.15.052] — 2026-08-15
+
+### Changed
+- **The SKYWAVE wordmark is now seven LEDs.** Each letter lights in its own colour, arranged as a band scale from long wave to short wave — red, orange, amber, yellow, green, cyan, violet — with a glow in its own hue. On load the letters warm up in sequence like a vacuum-fluorescent display (once, 70 ms apart; disabled under `prefers-reduced-motion`). The desktop side-rail brand gets the same treatment, and the light theme uses deeper inks of the same seven hues with no glow. The heading keeps an accessible name of "SkyWave" so screen readers don't spell it letter by letter.
+
+### Notes
+- Verified in headless Chromium: 7 letters / 7 distinct computed colours in both themes, the side rail (which has a line break mid-word, shifting `nth-child`) matching the header letter-for-letter, glow present in dark and absent in light.
+
+---
+
 ## [2026.08.15.051] — 2026-08-15
 
 ### Changed

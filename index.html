@@ -32,7 +32,30 @@
     --header-bg:linear-gradient(180deg,#0B0B0C,#000000);
   }
   /* Retro LED — glow on readouts only, as stacked text-shadows (no filters) */
-  .brand h1{text-shadow:0 0 4px rgba(255,176,0,.55),0 0 14px rgba(255,176,0,.25);}
+  /* Wordmark: seven letters, seven LEDs — a band scale from long wave (red)
+     to short wave (violet). Each glows in its own hue. --wm-N holds the
+     colour, --wm-gN its glow, so the light theme can swap in deeper inks. */
+  :root{
+    --wm-1:#FF2D1C;--wm-2:#FF7A1A;--wm-3:#FFB000;--wm-4:#E8FF3D;--wm-5:#2BFF88;--wm-6:#3DF0FF;--wm-7:#7B8CFF;
+    --wm-g1:255,45,28;--wm-g2:255,122,26;--wm-g3:255,176,0;--wm-g4:232,255,61;--wm-g5:43,255,136;--wm-g6:61,240,255;--wm-g7:123,140,255;
+  }
+  .wordmark span{display:inline-block;color:var(--wm);text-shadow:0 0 4px rgba(var(--wm-g),.55),0 0 14px rgba(var(--wm-g),.25);
+    animation:wm-warm .9s ease-out both;animation-delay:calc(var(--wm-i)*70ms);}
+  .wordmark span:nth-child(1){--wm:var(--wm-1);--wm-g:var(--wm-g1);--wm-i:0}
+  .wordmark span:nth-child(2){--wm:var(--wm-2);--wm-g:var(--wm-g2);--wm-i:1}
+  .wordmark span:nth-child(3){--wm:var(--wm-3);--wm-g:var(--wm-g3);--wm-i:2}
+  .wordmark span:nth-child(4){--wm:var(--wm-4);--wm-g:var(--wm-g4);--wm-i:3}
+  .wordmark span:nth-child(5){--wm:var(--wm-5);--wm-g:var(--wm-g5);--wm-i:4}
+  .wordmark span:nth-child(6){--wm:var(--wm-6);--wm-g:var(--wm-g6);--wm-i:5}
+  .wordmark span:nth-child(7){--wm:var(--wm-7);--wm-g:var(--wm-g7);--wm-i:6}
+  /* the side-rail brand has a <br> in the middle, so nth-child shifts by one after it */
+  .snav-brand span:nth-child(5){--wm:var(--wm-4);--wm-g:var(--wm-g4);--wm-i:3}
+  .snav-brand span:nth-child(6){--wm:var(--wm-5);--wm-g:var(--wm-g5);--wm-i:4}
+  .snav-brand span:nth-child(7){--wm:var(--wm-6);--wm-g:var(--wm-g6);--wm-i:5}
+  .snav-brand span:nth-child(8){--wm:var(--wm-7);--wm-g:var(--wm-g7);--wm-i:6}
+  /* VFD warm-up: each segment fades up in turn, once, on load */
+  @keyframes wm-warm{from{opacity:.15;filter:none}to{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.wordmark span{animation:none;}}
   .clock .val{text-shadow:0 0 4px rgba(255,176,0,.55),0 0 14px rgba(255,176,0,.25);}
   .clock.local .val{text-shadow:0 0 4px rgba(61,240,255,.55),0 0 14px rgba(61,240,255,.25);}
   .ident-grid{text-shadow:0 0 4px rgba(61,240,255,.45),0 0 12px rgba(61,240,255,.2);}
@@ -63,6 +86,10 @@
     --clk-green:#1c8a55;--clk-blue:#0e7e9c;
     --header-bg:linear-gradient(180deg,#F7F7F7,#FFFFFF);
   }
+  [data-theme="light"]{
+    --wm-1:#C8241A;--wm-2:#C55A0F;--wm-3:#B07A00;--wm-4:#7A8A00;--wm-5:#1F8A55;--wm-6:#0E7E9C;--wm-7:#4650B8;
+  }
+  [data-theme="light"] .wordmark span{text-shadow:none;}
   [data-theme="light"] body{background-image:none;}
   [data-theme="light"] .brand h1,
   [data-theme="light"] .clock .val,
@@ -427,7 +454,7 @@
 </div>
 <div id="layout">
 <nav class="sidenav" id="sideNav">
-  <div class="snav-brand">SKY<br>WAVE</div>
+  <div class="snav-brand wordmark" aria-label="SkyWave"><span>S</span><span>K</span><span>Y</span><br><span>W</span><span>A</span><span>V</span><span>E</span></div>
   <button class="snav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
   <button class="snav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
   <button class="snav-btn" data-tab="ref"><span class="bicon">◆</span>Ref</button>
@@ -437,7 +464,7 @@
   <header>
     <div class="brand">
       <div class="brandcol">
-        <h1>SKYWAVE</h1>
+        <h1 class="wordmark" aria-label="SkyWave"><span>S</span><span>K</span><span>Y</span><span>W</span><span>A</span><span>V</span><span>E</span></h1>
         <span class="hdrver" id="hdrVer"></span>
       </div>
       <span class="sub">World Band + Ham Nets</span>
@@ -833,7 +860,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.08.15.051";
+const VERSION="2026.08.15.052";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
