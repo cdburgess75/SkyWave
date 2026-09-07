@@ -78,7 +78,7 @@ No account. No tracking. No server. No build step. The file you open *is* the ap
 - **Genuinely offline** — the full schedule is stored on-device; grayline and band advice never touch the network.
 - **Field extras** — band-card export, a printable reference sheet, and a kiosk / shack-monitor mode that keeps the screen awake.
 - **Yours to keep** — star stations and nets, mark catches as "heard today," add your own frequencies alongside everything else.
-- **Light & dark, any text size** — a neon "shack" dark theme, a clean light theme, and a built-in text-size control.
+- **Light & dark, any text size** — a retro **LED clock-radio** dark theme (true-black panel, amber VFD readouts with ghost segments under the clocks), a clean light theme, and a built-in text-size control.
 
 ---
 

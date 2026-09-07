@@ -2,6 +2,19 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.08.15.051] — 2026-08-15
+
+### Changed
+- **New dark theme: retro LED clock-radio.** True-black panel (`#000`), raised surfaces at `#0B0B0C` with hairline bezels, and **amber VFD** (`#FFB000`) as the primary readout colour. The palette is used with one meaning per colour, like a real front panel: **amber** for readouts and the current selection (frequencies, Zulu clock, active tab/pill, SKYWAVE wordmark), **cyan** (`#3DF0FF`) for secondary readouts (local clock, grid square, ✓ LOGGED), **green** (`#2BFF88`) strictly for live/on-air lamps, **red** (`#FF2D1C`) for alerts. Body copy is warm off-white (`#E8DCC4`) with no glow; glow is stacked text-shadows on readouts only (no CSS filters), and inactive labels use the dim amber rather than opacity so they don't go muddy on black.
+- **Ghost segments under both clocks** — the "all segments lit" state (`88:88:88`) drawn faintly beneath the live digits, the detail that makes a seven-segment panel read as real. The ghost tracks the readout's *shape*, so in 12-hour mode it becomes `8:88:88 PM` and never misaligns. The local clock's ghost takes the cyan hue to match its readout.
+- Sub-tab selection (NETS / ON AIR / …) moves from green to amber so green now means only one thing: something is live.
+- `theme-color` and the manifest background follow the panel to true black. The light theme is untouched (ghosts hidden there).
+
+### Notes
+- Two cascade bugs were caught in headless Chromium before shipping: the ghost initially rendered at full brightness (`.clock .val` later in the sheet won at equal specificity) and sat 2 px high (flex blockifies the display wrapper, so its line box was taller than the readout's). Fixed with a deeper selector and `line-height:1` on both layers; verified pixel-aligned, correct colour and no glow on both ghosts, in dark and 12-hour modes, and hidden in light.
+
+---
+
 ## [2026.08.14.050] — 2026-08-14
 
 ### Added
