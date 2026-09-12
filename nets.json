@@ -1,0 +1,1013 @@
+{
+ "ts": 1789253279854,
+ "nets": [
+  {
+   "name": "NORTHEAST CRACKERBARREL NET",
+   "freq": 3932,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "KC1EUJ",
+   "start": "22:42",
+   "server": "NETLOGGER",
+   "dur": "00:05:17",
+   "subs": 5,
+   "checkins": 7,
+   "roster": [
+    {
+     "call": "K1WTX",
+     "name": "Gerald",
+     "qth": "Turner, ME",
+     "grid": "FN44"
+    },
+    {
+     "call": "K1SRR",
+     "name": "Robert",
+     "qth": "Rangeley, ME"
+    },
+    {
+     "call": "K1HTJ",
+     "name": "William",
+     "qth": "Graniteville, VT"
+    },
+    {
+     "call": "KC1EUJ",
+     "name": "Kurt",
+     "qth": "Marshfield, MA",
+     "nc": 1
+    },
+    {
+     "call": "KA1TWV",
+     "name": "Fern",
+     "qth": "Wardsboro, VT"
+    },
+    {
+     "call": "WU2M",
+     "name": "Rocco",
+     "qth": "Gloversville, NY",
+     "grid": "FN23"
+    },
+    {
+     "call": "KC1WBX",
+     "name": "Thomas",
+     "qth": "Griswold, CT"
+    }
+   ]
+  },
+  {
+   "name": "Wolverine SSB Saturday Night",
+   "freq": 3935,
+   "mode": "SSB",
+   "band": "75m",
+   "ncs": "N9PKL",
+   "start": "20:43",
+   "server": "NETLOGGER",
+   "dur": "02:04:29",
+   "subs": 6,
+   "checkins": 21,
+   "roster": [
+    {
+     "call": "N9PKL",
+     "name": "James",
+     "qth": "Marion, IN",
+     "grid": "EN70el",
+     "nc": 1
+    },
+    {
+     "call": "K3ESL",
+     "name": "Eric",
+     "qth": "Bloomfield Hills, MI",
+     "grid": "EN82io"
+    },
+    {
+     "call": "WB8WIV",
+     "name": "Thomas",
+     "qth": "Cadillac, MI",
+     "grid": "EN74gg"
+    },
+    {
+     "call": "K8CGS",
+     "name": "Greg",
+     "qth": "Coloma, MI",
+     "grid": "EN62uf"
+    },
+    {
+     "call": "WD8INW",
+     "name": "George",
+     "qth": "Clarkston, MI",
+     "grid": "EN82hr"
+    },
+    {
+     "call": "KE8AVT",
+     "name": "Harold",
+     "qth": "davidson, MI",
+     "grid": "EN82hp"
+    },
+    {
+     "call": "KE8CBW",
+     "name": "Joseph",
+     "qth": "Ypsilanti, MI",
+     "grid": "EN82ef"
+    },
+    {
+     "call": "W8GMA",
+     "name": "Robert",
+     "qth": "Southgate, MI",
+     "grid": "EN82jf"
+    },
+    {
+     "call": "WG8W",
+     "name": "Rodney",
+     "qth": "Indian River, MI",
+     "grid": "EN75ri"
+    },
+    {
+     "call": "WB8VOW",
+     "name": "Rusty",
+     "qth": "LAMBERTVILLE, MI",
+     "grid": "EN81es"
+    },
+    {
+     "call": "KB8PRU",
+     "name": "Charles",
+     "qth": "Saint Helen, MI",
+     "grid": "EN74pi"
+    },
+    {
+     "call": "AA8PQ",
+     "name": "William",
+     "qth": "GAYLORD, MI",
+     "grid": "EN75oa"
+    },
+    {
+     "call": "KC9KRX",
+     "name": "Bradley",
+     "qth": "Hobart, IN",
+     "grid": "EN61in"
+    },
+    {
+     "call": "KE8TQR",
+     "name": "Keith",
+     "qth": "UNIONTOWN, OH",
+     "grid": "EN90gx"
+    },
+    {
+     "call": "AD8DP",
+     "name": "Douglas",
+     "qth": "Detroit, MI",
+     "grid": "EN82kh"
+    },
+    {
+     "call": "N8XUY",
+     "name": "Samuel",
+     "qth": "Manchester, MI",
+     "grid": "EN72xd"
+    },
+    {
+     "call": "WB9VGO",
+     "name": "Robert",
+     "qth": "Downers Grove, IL",
+     "grid": "EN51xs"
+    },
+    {
+     "call": "KJ4SBC",
+     "name": "Ray",
+     "qth": "COLLIERVILLE, TN",
+     "grid": "EM55db"
+    },
+    {
+     "call": "N8HLH",
+     "name": "Joe",
+     "qth": "Marquette, MI",
+     "grid": "EN66hm"
+    },
+    {
+     "call": "AA8DD",
+     "name": "Robert",
+     "qth": "ROCHESTER HILLS, MI",
+     "grid": "EN82kp"
+    },
+    {
+     "call": "W1IK",
+     "name": "William",
+     "qth": "Eastpointe, MI",
+     "grid": "EN82ml"
+    }
+   ]
+  },
+  {
+   "name": "The Maine Potato Net",
+   "freq": 3961,
+   "mode": "SSB",
+   "band": "75m",
+   "ncs": "W1JZR",
+   "start": "22:14",
+   "server": "NETLOGGER",
+   "dur": "00:33:35",
+   "subs": 5,
+   "checkins": 9,
+   "roster": [
+    {
+     "call": "W1JZR",
+     "name": "Gary W",
+     "qth": "Holyoke, MA",
+     "grid": "FN32qf",
+     "nc": 1
+    },
+    {
+     "call": "KD2EMQ",
+     "name": "Tom",
+     "qth": "Sparrow Bush, NY",
+     "grid": "FN21pk"
+    },
+    {
+     "call": "KB1SL",
+     "name": "Les",
+     "qth": "Stratford, CT",
+     "grid": "FN31ml"
+    },
+    {
+     "call": "N2VZD",
+     "name": "Tim",
+     "qth": "Memphis, NY",
+     "grid": "FN13tc"
+    },
+    {
+     "call": "KA1KAC",
+     "name": "Bill R",
+     "qth": "Dudley, MA",
+     "grid": "FN42aa"
+    },
+    {
+     "call": "K7NWA",
+     "name": "John",
+     "qth": "Bushkill, PA",
+     "grid": "FN21md"
+    },
+    {
+     "call": "KD2YLZ",
+     "name": "Jules",
+     "qth": "Long Lake, NY",
+     "grid": "FN23sx"
+    },
+    {
+     "call": "KB3JUF",
+     "name": "Charlie",
+     "qth": "HENRYVILLE, PA",
+     "grid": "FN21ib"
+    },
+    {
+     "call": "W1JZR",
+     "name": "Gary W",
+     "qth": "Holyoke, MA",
+     "grid": "FN32qf",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "WASA NET",
+   "freq": 7188,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "KF6FOK",
+   "start": "22:10",
+   "server": "NETLOGGER",
+   "dur": "00:37:52",
+   "subs": 16,
+   "checkins": 16,
+   "roster": [
+    {
+     "call": "KF6FOK",
+     "name": "Brad",
+     "qth": "Dayton, OH",
+     "grid": "FN21ja",
+     "nc": 1
+    },
+    {
+     "call": "KE2IFC",
+     "name": "Steven",
+     "qth": "Medford, NY",
+     "grid": "FN30mt"
+    },
+    {
+     "call": "KQ4GAH",
+     "name": "Josef",
+     "qth": "HOPKINSVILLE, KY",
+     "grid": "EM66fv"
+    },
+    {
+     "call": "KB8LPR",
+     "name": "Swootz",
+     "qth": "Glendale, WV",
+     "grid": "EM99px"
+    },
+    {
+     "call": "K8DFD",
+     "name": "David",
+     "qth": "Macomb, MI",
+     "grid": "EN82mq"
+    },
+    {
+     "call": "K3GOD",
+     "name": "Robert",
+     "qth": "Rosedale, MD",
+     "grid": "FM19rh"
+    },
+    {
+     "call": "NN2P",
+     "name": "John",
+     "qth": "Bloomingdale, NJ",
+     "grid": "FN21ua"
+    },
+    {
+     "call": "W1MSJ",
+     "name": "Michael",
+     "qth": "BRUNSWICK, ME",
+     "grid": "FN53aw"
+    },
+    {
+     "call": "K0JDB",
+     "name": "Jim",
+     "qth": "BROKEN ARROW, OK",
+     "grid": "EM26ca"
+    },
+    {
+     "call": "K1HOW",
+     "name": "Howard",
+     "qth": "Torrington, CT",
+     "grid": "FN31kt"
+    },
+    {
+     "call": "N9DJR",
+     "name": "JIM",
+     "qth": "KOKOMO, IN",
+     "grid": "EN60wk"
+    },
+    {
+     "call": "N0PF",
+     "name": "Will",
+     "qth": "LOUISVILLE, KY",
+     "grid": "EM78db"
+    },
+    {
+     "call": "KE8ZOB",
+     "name": "Bob",
+     "qth": "OWOSSO, MI",
+     "grid": "EN72wx"
+    },
+    {
+     "call": "KB3BXL",
+     "name": "Hoss",
+     "qth": "McKean, PA",
+     "grid": "EN91wx"
+    },
+    {
+     "call": "KD8NKY",
+     "name": "Randall",
+     "qth": "Grove City, OH",
+     "grid": "EM89ku"
+    },
+    {
+     "call": "N2VQD",
+     "name": "Randy",
+     "qth": "Mayville, NY",
+     "grid": "FN02fg"
+    }
+   ]
+  },
+  {
+   "name": "Moonlighters Saturday",
+   "freq": 7275,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "WA1NIP",
+   "start": "22:00",
+   "server": "NETLOGGER",
+   "dur": "00:47:30",
+   "subs": 14,
+   "checkins": 19,
+   "roster": [
+    {
+     "call": "N9JLR",
+     "name": "Douglas",
+     "qth": "Fontanet, IN",
+     "grid": "EM69jn"
+    },
+    {
+     "call": "WA1NIP",
+     "name": "Mark",
+     "qth": "ROSWELL, GA",
+     "grid": "EM74tb",
+     "nc": 1
+    },
+    {
+     "call": "KG6NYE",
+     "name": "Gerry",
+     "qth": "Sparta, TN",
+     "grid": "EM75ow"
+    },
+    {
+     "call": "K4EBW",
+     "name": "Eric",
+     "qth": "NEWPORT, TN",
+     "grid": "EM85kx"
+    },
+    {
+     "call": "KF0VQF",
+     "name": "Peter",
+     "qth": "University City, MO",
+     "grid": "EM48up"
+    },
+    {
+     "call": "WA3IJU",
+     "name": "Kenneth",
+     "qth": "NEW COLUMBIA, PA",
+     "grid": "FN11nb"
+    },
+    {
+     "call": "K8WBL",
+     "name": "Timothy",
+     "qth": "CINCINNATI, OH",
+     "grid": "EM79qd"
+    },
+    {
+     "call": "N9DRC",
+     "name": "Delbert",
+     "qth": "RIO, WI",
+     "grid": "EN53ik"
+    },
+    {
+     "call": "WA3AEP",
+     "name": "Andrew",
+     "qth": "BUTLER, PA",
+     "grid": "FN00as"
+    },
+    {
+     "call": "KB2IXT",
+     "name": "Frederick",
+     "qth": "DELMAR, NY",
+     "grid": "FN32bo"
+    },
+    {
+     "call": "N4JY",
+     "name": "John",
+     "qth": "KENOSHA, WI",
+     "grid": "EN62bn"
+    },
+    {
+     "call": "KC3LXJ",
+     "name": "Ethan",
+     "qth": "Shippensburg, PA",
+     "grid": "FN10fb"
+    },
+    {
+     "call": "N3VS",
+     "name": "Thomas",
+     "qth": "TUNKHANNOCK, PA",
+     "grid": "FN21ao"
+    },
+    {
+     "call": "W8RNE",
+     "name": "Richard",
+     "qth": "EASTLAKE, OH",
+     "grid": "EN91gp"
+    },
+    {
+     "call": "KY4LW",
+     "name": "Leland",
+     "qth": "GREENEVILLE, TN",
+     "grid": "EM86ne"
+    },
+    {
+     "call": "N9RMB",
+     "name": "Eric",
+     "qth": "PEKIN, IL",
+     "grid": "EN50en"
+    },
+    {
+     "call": "K1HTJ",
+     "name": "William",
+     "qth": "Graniteville, VT",
+     "grid": "FN34sd"
+    },
+    {
+     "call": "W1JPD",
+     "name": "Jonathan",
+     "qth": "N SWANZEY, NH",
+     "grid": "FN32uv"
+    },
+    {
+     "call": "KD9GRL",
+     "name": "Steven",
+     "qth": "Mobile, AL",
+     "grid": "EM50wq"
+    }
+   ]
+  },
+  {
+   "name": "South Texas Rag Chew Net",
+   "freq": 7279,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "K2WJ",
+   "start": "22:44",
+   "server": "NETLOGGER",
+   "dur": "00:03:34",
+   "subs": 2,
+   "checkins": 2,
+   "roster": [
+    {
+     "call": "K2WJ",
+     "name": "John",
+     "qth": "Cut and Shoot, TX",
+     "grid": "EM20hk",
+     "nc": 1
+    },
+    {
+     "call": "W5GDI",
+     "name": "Gary",
+     "qth": "Skidmore, TX",
+     "grid": "EL18eg"
+    }
+   ]
+  },
+  {
+   "name": "Chile Mar y Tierra 15 m",
+   "freq": 21315,
+   "mode": "SSB",
+   "band": "15m",
+   "ncs": "HK6G",
+   "start": "21:57",
+   "server": "NETLOGGER",
+   "dur": "00:50:10",
+   "subs": 3,
+   "checkins": 28,
+   "roster": [
+    {
+     "call": "HK6G",
+     "name": "Roberto",
+     "qth": "Melgar Tolima",
+     "grid": "FJ24rf",
+     "nc": 1
+    },
+    {
+     "call": "LU2YAA",
+     "name": "Evando Sebastian",
+     "qth": "Neuquen",
+     "grid": "FF51xb"
+    },
+    {
+     "call": "CE1OEY",
+     "name": "Patricio",
+     "qth": "Arica",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "CE4DHI",
+     "name": "Pedro F",
+     "qth": "San Fernando",
+     "grid": "FF45lj"
+    },
+    {
+     "call": "CE4BJ",
+     "name": "Federico J.",
+     "qth": "Rengo Chile, 6",
+     "grid": "FF45nn"
+    },
+    {
+     "call": "CE7FPL",
+     "name": "Oscar",
+     "qth": "Llanquihue, X",
+     "grid": "FE38ls"
+    },
+    {
+     "call": "CE3FIK",
+     "name": "Enrique",
+     "qth": "Buin, RM",
+     "grid": "FF46pg"
+    },
+    {
+     "call": "CE2VBU",
+     "name": "Claudio",
+     "qth": "Coquimbo Chile",
+     "grid": "FG40ha"
+    },
+    {
+     "call": "CE2NBW",
+     "name": "Nivaldo",
+     "qth": "Las Mercedes NÂ° 2014 Quilpue",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "CE1RXE",
+     "name": "Mario",
+     "qth": "COPIAPO",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "CE1NTD",
+     "name": "Gilberto Italo Chia",
+     "qth": "Iquique Cavancha",
+     "grid": "FG49ws"
+    },
+    {
+     "call": "PY2ZJM",
+     "name": "Arturo R.",
+     "qth": "SÃ£o Paulo / SP",
+     "grid": "GH49eq"
+    },
+    {
+     "call": "CE4FOQ",
+     "name": "Eduardo",
+     "qth": "San Clemente",
+     "grid": "FF44hl"
+    },
+    {
+     "call": "HK4OC",
+     "name": "Omar",
+     "qth": "Medellin Antioquia",
+     "grid": "FJ26fg"
+    },
+    {
+     "call": "CE3VTK",
+     "name": "Rodrigo",
+     "qth": "peÃ±aflor",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "CE3PT",
+     "name": "Jorge",
+     "qth": "LAMPA SANTIAGO, CH",
+     "grid": "FF46nr"
+    },
+    {
+     "call": "CE3WOB",
+     "name": "Ivan Andres",
+     "qth": "Santiago TALAGANTE",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "XQ3NB",
+     "name": "Roberto",
+     "qth": "ÃuÃ±oa Santiago",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "CE4RHB",
+     "name": "Claudio",
+     "qth": "Chillan",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "CE3WNC",
+     "name": "Carlos Hernan",
+     "qth": "PeÃ±aflor",
+     "grid": "FF46nj"
+    },
+    {
+     "call": "VE3MZD",
+     "name": "Mike",
+     "qth": "Windzor, ON",
+     "grid": "EN82lh"
+    },
+    {
+     "call": "CE1WJC",
+     "name": "Jose",
+     "grid": "FF46rq"
+    },
+    {
+     "call": "N1VGJ",
+     "name": "Arcadio",
+     "qth": "LAKE WORTH, FL",
+     "grid": "FN42ml"
+    },
+    {
+     "call": "CE8EIO",
+     "name": "Luis",
+     "qth": "PUNTA ARENAS",
+     "grid": "FD46nx"
+    },
+    {
+     "call": "KM6OL",
+     "name": "Martin",
+     "qth": "DOWNEY, CA",
+     "grid": "DM03ww"
+    },
+    {
+     "call": "TI2ASM",
+     "name": "Jorge AndrÃ©s",
+     "qth": "TibÃ¡s San JosÃ©",
+     "grid": "EJ79wx"
+    },
+    {
+     "call": "CE3TAZ",
+     "name": "Ramon",
+     "qth": "PeÃ±alolen, RM",
+     "grid": "FF46rl"
+    },
+    {
+     "call": "XE2SAG",
+     "name": "Aguayo Garcia",
+     "qth": "Tijuana, BC",
+     "grid": "DM12lm"
+    }
+   ]
+  },
+  {
+   "name": "Litter Box Lounge on 11 Cats!!!",
+   "freq": 55763,
+   "mode": "FM",
+   "band": "70cm",
+   "ncs": "KM5Y",
+   "start": "22:45",
+   "server": "NETLOGGER",
+   "dur": "00:02:42",
+   "subs": 1,
+   "checkins": 2,
+   "roster": [
+    {
+     "call": "KI5SSR",
+     "name": "Janette",
+     "qth": "GRAPEVINE, TX",
+     "grid": "EM12kw"
+    },
+    {
+     "call": "KM5Y",
+     "name": "Mike",
+     "qth": "GRAPEVINE, TX",
+     "grid": "EM12kw",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "Sat Nite DSSTV Net-1900-2100 hrs",
+   "freq": 146670,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "WA2LBE",
+   "start": "22:44",
+   "server": "NETLOGGER",
+   "dur": "00:03:03",
+   "subs": 1,
+   "checkins": 2,
+   "roster": [
+    {
+     "call": "N2VZD",
+     "name": "Timothy",
+     "qth": "Memphis"
+    },
+    {
+     "call": "WA2LBE",
+     "name": "Richard",
+     "qth": "Mexico",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "VK4WIS-R Echolink Morning Net",
+   "freq": 146850,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "VK4KU",
+   "start": "22:15",
+   "server": "NETLOGGER",
+   "dur": "00:32:11",
+   "subs": 5,
+   "checkins": 17,
+   "roster": [
+    {
+     "call": "VK4IKZ",
+     "name": "Izaac",
+     "qth": "Landsborough, QD"
+    },
+    {
+     "call": "VK4KU",
+     "name": "Raymond",
+     "qth": "Buderim, QD",
+     "nc": 1
+    },
+    {
+     "call": "VK4BNT",
+     "name": "Brent",
+     "qth": "Nambour, QD"
+    },
+    {
+     "call": "KC2VWR",
+     "name": "Nicholas",
+     "qth": "Cohoes, NY"
+    },
+    {
+     "call": "VK4UN",
+     "name": "David",
+     "qth": "Eli Waters, QD"
+    },
+    {
+     "call": "VK4BAL",
+     "name": "Unknown",
+     "qth": "Tewantin, QD"
+    },
+    {
+     "call": "VK4HDH",
+     "name": "Don",
+     "qth": "Palmwoods, QD"
+    },
+    {
+     "call": "VK4AIY",
+     "name": "Dave",
+     "qth": "Nambour, QD"
+    },
+    {
+     "call": "AK6JE",
+     "name": "Masatoshi",
+     "qth": "Yokohama, CA"
+    },
+    {
+     "call": "WN4V",
+     "name": "Jon",
+     "qth": "Oneco, FL"
+    },
+    {
+     "call": "VK4AN",
+     "name": "Mark",
+     "qth": "Caloundra, QD"
+    },
+    {
+     "call": "KO6INP",
+     "name": "Dan",
+     "qth": "Stanton, CA"
+    },
+    {
+     "call": "VK4RY",
+     "name": "Richard",
+     "qth": "Mooloolah Valley, QD"
+    },
+    {
+     "call": "VK4CGQ",
+     "name": "Clancy",
+     "qth": "Maroochydore, QD"
+    },
+    {
+     "call": "VK4LAW",
+     "name": "Lauren Ann",
+     "qth": "Hervey Bay, QD"
+    },
+    {
+     "call": "VK4DMB",
+     "name": "Doug",
+     "qth": "Upper Mount Gravatt, QD"
+    },
+    {
+     "call": "VK4OR",
+     "name": "Aj",
+     "qth": "Nambour, QD"
+    }
+   ]
+  },
+  {
+   "name": "SPARCS-CLUB NIGHTLY-NET",
+   "freq": 147060,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "W4XXI",
+   "start": "22:25",
+   "server": "NETLOGGER",
+   "dur": "00:22:16",
+   "subs": 2,
+   "checkins": 14,
+   "roster": [
+    {
+     "call": "W4XXI",
+     "name": "Joseph",
+     "qth": "Land O Lakes, FL",
+     "nc": 1
+    },
+    {
+     "call": "N0BUZ",
+     "name": "Michael",
+     "qth": "Saint Petersburg, FL"
+    },
+    {
+     "call": "KD4TWS",
+     "name": "Thomas",
+     "qth": "Okeechobee, FL"
+    },
+    {
+     "call": "KG4VTE",
+     "name": "Arlen",
+     "qth": "SPRING HILL, FL"
+    },
+    {
+     "call": "N4ZAP",
+     "name": "Erik",
+     "qth": "Lake Worth, FL"
+    },
+    {
+     "call": "N4OFX",
+     "name": "Nicholas",
+     "qth": "BOCA RATON, FL"
+    },
+    {
+     "call": "KV8D",
+     "name": "John",
+     "qth": "Rotonda West, FL"
+    },
+    {
+     "call": "W4SCX",
+     "name": "Joseph",
+     "qth": "TAMPA, FL"
+    },
+    {
+     "call": "WW4US",
+     "name": "Thomas (goob)",
+     "qth": "GREEN COVE SPRINGS, FL"
+    },
+    {
+     "call": "W8IM",
+     "name": "Robert",
+     "qth": "Pinellas Park, FL"
+    },
+    {
+     "call": "KC4SXO",
+     "name": "Robert",
+     "qth": "SAINT PETERSBURG, FL"
+    },
+    {
+     "call": "WB4AIZ",
+     "name": "Charles",
+     "qth": "Kenneth city, FL"
+    },
+    {
+     "call": "KO4CEE",
+     "name": "Alexander",
+     "qth": "Saint Petersburg, FL"
+    },
+    {
+     "call": "K2TLC",
+     "name": "Terry",
+     "qth": "Largo, FL"
+    }
+   ]
+  },
+  {
+   "name": "The Everything net ast 608251",
+   "freq": 927662.5,
+   "mode": "FM",
+   "band": "33cm",
+   "ncs": "WB9CSP",
+   "start": "22:08",
+   "server": "NETLOGGER",
+   "dur": "00:39:24",
+   "subs": 1,
+   "checkins": 15,
+   "roster": [
+    {
+     "call": "N4ZVC"
+    },
+    {
+     "call": "KF0OQA"
+    },
+    {
+     "call": "W8TOY"
+    },
+    {
+     "call": "W0DXD"
+    },
+    {
+     "call": "KE0MIZ"
+    },
+    {
+     "call": "K6GRL"
+    },
+    {
+     "call": "WB8RMC"
+    },
+    {
+     "call": "KF0VPW"
+    },
+    {
+     "call": "VK2EEL"
+    },
+    {
+     "call": "KE7KTQ"
+    },
+    {
+     "call": "KK7UZB"
+    },
+    {
+     "call": "KJ5PCD"
+    },
+    {
+     "call": "KF8AXO"
+    },
+    {
+     "call": "KE3GRO"
+    },
+    {
+     "call": "KF8HDI"
+    }
+   ]
+  }
+ ]
+}
