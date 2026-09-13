@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SkyWave">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0B1325">
 <meta name="description" content="A TV-Guide for the radio bands — see what is on the air right now across longwave, mediumwave, and shortwave (9,000+ broadcasts), plus live HF ham nets with who is checked in, grayline, and propagation. Offline-first PWA, no account.">
 <meta property="og:title" content="SKYWAVE — World Band Radio & Ham Nets">
 <meta property="og:description" content="What is on the air now across LW/MW/SW, live amateur-radio HF nets with check-in rosters, and propagation. Offline-first PWA, no dependencies.">
@@ -17,19 +17,21 @@
 <title>SKYWAVE · World Band Radio + Ham Nets</title>
 <style>
   :root{
-    /* Retro LED display — true-black panel, amber VFD readouts. One meaning per
+    /* Retro LED readouts on the obsidian panel. The surfaces are SkyWave's
+       original midnight-blue family (true black was tried in .051 and lost the
+       "Earth at night" feel); the readout colours stay LED. One meaning per
        colour: amber = readouts / current selection, cyan = secondary readouts,
        green = live lamp, red = alert. Body copy is warm off-white, no glow. */
-    --bg:#000000;--nav-bg:#000000;--panel:#0B0B0C;--panel2:#141416;--line:#1C1C1E;
-    --amber:#FFB000;--amber-dim:#8A5F00;        /* --led / --led-dim */
-    --led-ghost:rgba(255,176,0,.09);
-    --green:#2BFF88;--green-dim:#14803F;        /* --ok */
-    --blue:#3DF0FF;--blue-dim:#1E7F87;          /* --info */
-    --red:#FF2D1C;                              /* --alert */
-    --ink:#E8DCC4;--ink-dim:#A6997D;            /* --text / secondary body copy */
+    --bg:#0B1325;--nav-bg:#0a1020;--panel:#152238;--panel2:#1b2c48;--line:#203354;
+    --amber:#FFB000;--amber-dim:#9C7212;        /* --led / --led-dim, lifted to read on blue */
+    --led-ghost:rgba(255,176,0,.15);           /* ghost segments need more on a lit panel */
+    --green:#2BFF88;--green-dim:#1C9E56;        /* --ok */
+    --blue:#3DF0FF;--blue-dim:#2A9DB0;          /* --info */
+    --red:#FF5A4A;                              /* --alert, softened against navy */
+    --ink:#E8E4DA;--ink-dim:#9AA3B5;            /* --text / secondary body copy */
     --clk-green:#FFB000;--clk-blue:#3DF0FF;     /* Zulu = primary amber, local = info cyan */
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
-    --header-bg:linear-gradient(180deg,#0B0B0C,#000000);
+    --header-bg:linear-gradient(180deg,#152238,#0B1325);
   }
   /* Retro LED — glow on readouts only, as stacked text-shadows (no filters) */
   /* Wordmark: seven letters, seven LEDs — a band scale from long wave (red)
@@ -72,7 +74,7 @@
      specificity, so this selector is one class deeper on purpose. Both layers
      are block boxes at line-height 1, so they measure identically. */
   .clock .display .val.ghost{display:block;color:var(--led-ghost);text-shadow:none;}
-  .clock.local .display .val.ghost{color:rgba(61,240,255,.09);}   /* ghost matches the readout's hue */
+  .clock.local .display .val.ghost{color:rgba(61,240,255,.15);}  /* ghost matches the readout's hue */
   .display .val:not(.ghost){position:absolute;left:0;top:0;}
 
   /* LED light — same palette on white, no aggressive glows */
@@ -860,7 +862,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.08.15.052";
+const VERSION="2026.09.13.053";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1717,7 +1719,7 @@ function applyTheme(t){
   document.documentElement.dataset.theme=t||"";
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
   const tc=document.querySelector('meta[name="theme-color"]');
-  if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#000000");
+  if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#0B1325");
   const b=document.getElementById("themeToggle");
   if(b){
     const sun='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f5a623" stroke="none"/><line x1="12" y1="2.6" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.4"/><line x1="4.3" y1="4.3" x2="6" y2="6"/><line x1="18" y1="18" x2="19.7" y2="19.7"/><line x1="2.6" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.4" y2="12"/><line x1="4.3" y1="19.7" x2="6" y2="18"/><line x1="18" y1="6" x2="19.7" y2="4.3"/></svg>';

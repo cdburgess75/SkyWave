@@ -1,4 +1,4 @@
-const CACHE = "skywave-2026.08.15.052";
+const CACHE = "skywave-2026.09.13.053";
 const SHELL = [
   "./",
   "./index.html",

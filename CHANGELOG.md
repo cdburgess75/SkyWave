@@ -2,6 +2,15 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.09.13.053] — 2026-09-13
+
+### Changed
+- **The obsidian background is back.** `.051` took the dark theme's surfaces to true black; midnight blue (`#0B1325`) reads better and is what SkyWave has always looked like, so the whole surface family is restored — background, nav, cards (`#152238`), raised surfaces and borders. Everything the LED theme actually added stays: amber VFD readouts, cyan secondary readouts, green reserved for live lamps, ghost segments under the clocks, and the seven-colour wordmark.
+- Three token adjustments so the LED palette still works on a lit panel instead of pure black: **ghost segments** raised from `.09` to `.15` alpha (both the amber Zulu and cyan local ghosts, which had drifted apart — the cyan one was hard-coded and missed the first bump), **dim amber** lifted to `#9C7212` so inactive labels don't sink into the navy, **alert red** softened to `#FF5A4A` against blue, and body copy moved from warm cream to a neutral off-white (`#E8E4DA`) that doesn't read yellow on a blue ground.
+- `theme-color`, the PWA manifest background, and the README's theme description all follow back to `#0B1325`.
+
+---
+
 ## [2026.08.15.052] — 2026-08-15
 
 ### Changed
