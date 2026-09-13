@@ -2,6 +2,17 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.09.13.054] — 2026-09-13
+
+### Changed
+- **New app icon.** Same globe, same curved grayline, same obsidian tile — re-coloured: **ice-white continents** on the production blue ocean, with the terminator now in **electric cyan**. The grayline is the only coloured element on the tile, which is the point of the icon, and it survives down to Spotlight size where the old amber landmass used to blur into the ocean. The tile matches the app background exactly (`#0B1325`).
+- SVG, `icon-512.png` and `apple-touch-icon.png` all regenerated from one source; icon URLs bumped to `?v=13` in the head links, service-worker shell and manifest so home screens actually pick up the change.
+
+### Notes
+- PNGs rasterized at exactly 512×512 and 180×180 with the same RGBA/transparent-rounded-corner treatment as the originals, then pixel-verified: obsidian tile, transparent corners, zero amber pixels remaining, cyan terminator present in both.
+
+---
+
 ## [2026.09.13.053] — 2026-09-13
 
 ### Changed

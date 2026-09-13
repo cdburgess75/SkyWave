@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="icons/icon.svg" width="120" alt="SkyWave app icon — an amber grayline globe on an obsidian tile">
+<img src="icons/icon.svg" width="120" alt="SkyWave app icon — a grayline globe with a cyan terminator on an obsidian tile">
 
 # SKYWAVE
 
