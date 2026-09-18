@@ -32,6 +32,14 @@
     --clk-green:#FFB000;--clk-blue:#3DF0FF;     /* Zulu = primary amber, local = info cyan */
     --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Roboto Mono",monospace;
     --header-bg:linear-gradient(180deg,#152238,#0B1325);
+    /* text on filled accents, and the faint accent washes behind selected controls */
+    --on-amber:#000;--on-green:#000;--on-red:#000;
+    --amber-tint:rgba(255,176,0,.08);--green-tint:rgba(43,255,136,.10);--blue-tint:rgba(61,240,255,.07);
+    /* type scale — every size in the sheet comes from here; 11px is the floor */
+    --fs-xs:11px;--fs-sm:12px;--fs-md:13px;--fs-lg:14px;--fs-xl:18px;--fs-2xl:22px;
+    /* elevation follows the theme; the light theme softens it */
+    --shadow-hdr:0 6px 18px rgba(0,0,0,.5);--shadow-nav:0 -4px 14px rgba(0,0,0,.45);--shadow-pop:0 6px 24px rgba(0,0,0,.55);
+    --shadow-modal:0 20px 60px rgba(0,0,0,.75);--shadow-rail:2px 0 8px rgba(0,0,0,.3);
   }
   /* Retro LED — glow on readouts only, as stacked text-shadows (no filters) */
   /* Wordmark: seven letters, seven LEDs — a band scale from long wave (red)
@@ -80,13 +88,17 @@
   /* LED light — same palette on white, no aggressive glows */
   [data-theme="light"]{
     --bg:#F9FBFF;--nav-bg:#F7F7F7;--panel:#FFFFFF;--panel2:#F7F7F7;--line:#E4E4E4;
-    --amber:#c8600f;--amber-dim:#e0872f;
-    --green:#2E8B7A;--green-dim:#AED8CA;
+    --amber:#a84e0a;--amber-dim:#c8600f;     /* 5.6:1 on white as text, 5.6:1 under white as a fill */
+    --green:#247061;--green-dim:#AED8CA;     /* 5.9:1 both ways */
     --blue:#1f5fb0;--blue-dim:#9cc0e8;
     --red:#C83430;
     --ink:#12202f;--ink-dim:#3a4655;
     --clk-green:#1c8a55;--clk-blue:#0e7e9c;
     --header-bg:linear-gradient(180deg,#F7F7F7,#FFFFFF);
+    --on-amber:#fff;--on-green:#fff;--on-red:#fff;
+    --amber-tint:rgba(168,78,10,.08);--green-tint:rgba(36,112,97,.10);--blue-tint:rgba(31,95,176,.08);
+    --shadow-hdr:0 2px 10px rgba(0,0,0,.08);--shadow-nav:0 -2px 10px rgba(0,0,0,.08);--shadow-pop:0 6px 20px rgba(0,0,0,.14);
+    --shadow-modal:0 12px 40px rgba(0,0,0,.18);--shadow-rail:2px 0 8px rgba(0,0,0,.05);
   }
   [data-theme="light"]{
     --wm-1:#C8241A;--wm-2:#C55A0F;--wm-3:#B07A00;--wm-4:#7A8A00;--wm-5:#1F8A55;--wm-6:#0E7E9C;--wm-7:#4650B8;
@@ -120,12 +132,12 @@
   header{position:sticky;top:0;z-index:30;margin:0 -14px 10px;padding:12px 16px 8px;
     padding-top:max(12px,env(safe-area-inset-top));
     background:var(--header-bg);border-bottom:1px solid var(--line);
-    box-shadow:0 6px 18px rgba(0,0,0,.5);}
+    box-shadow:var(--shadow-hdr);}
   .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
   .brand h1{font-size:17px;letter-spacing:.42em;margin:0;color:var(--amber);font-weight:700;}
   .brandcol{display:flex;flex-direction:column;gap:3px;}
   .brandcol h1{line-height:1;}
-  .brand .sub{font-size:9.5px;letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;}
+  .brand .sub{font-size:var(--fs-xs);letter-spacing:.28em;color:var(--ink-dim);text-transform:uppercase;}
   .hdr-controls{display:flex;gap:6px;align-items:center;margin-left:auto;flex-shrink:0;}
   /* compact pill buttons: text-size + theme */
   .hdrbtn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);
@@ -140,49 +152,57 @@
   .font-btn .fa-s{font-size:9.5px;font-weight:700;}
   .font-btn .fa-b{font-size:13px;font-weight:700;margin-left:1px;}
   .theme-btn{padding:0 7px;}
+  .theme-btn.sun{color:var(--amber);}.theme-btn.moon{color:var(--blue);}
+  /* skip link: the first thing Tab reaches, visible only while focused */
+  .skip{position:absolute;left:-999px;top:8px;z-index:100;background:var(--amber);color:var(--on-amber);padding:8px 12px;border-radius:8px;font-size:var(--fs-sm);font-weight:700;text-decoration:none;}
+  .skip:focus{left:12px;}
   .clocks{display:flex;gap:16px;align-items:flex-end;margin-top:6px;flex-wrap:nowrap;}
   .clock{display:flex;flex-direction:column;gap:1px;min-width:0;}
-  .clock .lbl{font-size:8.5px;letter-spacing:.22em;color:var(--ink-dim);text-transform:uppercase;}
-  .clock .val{font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1;color:var(--clk-green);}
+  .clock .lbl{font-size:var(--fs-xs);letter-spacing:.22em;color:var(--ink-dim);text-transform:uppercase;}
+  .clock .val{font-size:var(--fs-2xl);font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1;color:var(--clk-green);}
   .clock.local .val{color:var(--clk-blue);}
-  .dbstat{text-align:right;font-size:8.5px;letter-spacing:.06em;color:var(--ink-dim);min-width:0;overflow-wrap:anywhere;}
+  .dbstat{text-align:right;font-size:var(--fs-xs);letter-spacing:.06em;color:var(--ink-dim);min-width:0;overflow-wrap:anywhere;}
   .dbstat b{color:var(--green);font-weight:600;}
 
   .bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:40;display:flex;align-items:stretch;
     width:100%;max-width:760px;background:var(--nav-bg);border-top:1px solid var(--line);
-    padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 14px rgba(0,0,0,.45);}
+    padding-bottom:env(safe-area-inset-bottom);box-shadow:var(--shadow-nav);}
   .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-    background:none;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:10.5px;
-    letter-spacing:.06em;padding:9px 4px 7px;cursor:pointer;text-transform:uppercase;transition:.15s;min-width:0;}
+    background:none;border:none;color:var(--ink-dim);font-family:var(--mono);font-size:var(--fs-xs);
+    letter-spacing:.06em;padding:9px 4px 7px;cursor:pointer;text-transform:uppercase;transition:color .15s;min-width:0;}
   .bnav-btn .bicon{font-size:19px;line-height:1;}
-  .bnav-btn.on{color:var(--amber);}
+  .bnav-btn.on{color:var(--amber);font-weight:700;}
   .bnav-btn.on .bicon{opacity:.9;}
 
   .seg{display:flex;gap:5px;margin:2px 0 12px;}
   .seg button{flex:1;background:transparent;border:1px solid var(--line);color:var(--ink-dim);
-    font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:8px 4px;border-radius:6px;cursor:pointer;text-transform:uppercase;}
-  .seg button.on{color:var(--amber);border-color:var(--amber-dim);background:rgba(255,176,0,.08);}
+    font-family:var(--mono);font-size:var(--fs-xs);letter-spacing:.12em;padding:8px 4px;border-radius:6px;cursor:pointer;text-transform:uppercase;}
+  .seg button.on{color:var(--amber);border-color:var(--amber-dim);background:var(--amber-tint);font-weight:700;}
 
   .chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 11px;}
   .chip{background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);font-family:var(--mono);
-    font-size:10.5px;letter-spacing:.08em;padding:6px 11px;border-radius:20px;cursor:pointer;}
-  .chip.on{color:#000;background:var(--amber);border-color:var(--amber);font-weight:700;}
+    font-size:var(--fs-xs);letter-spacing:.08em;padding:6px 11px;border-radius:20px;cursor:pointer;}
+  .chip.on{color:var(--on-amber);background:var(--amber);border-color:var(--amber);font-weight:700;}
   .ctrl{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 11px;}
   input[type=text],input[type=search],input[type=number],select,textarea{
     background:var(--panel);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);
-    font-size:14px;padding:10px 12px;border-radius:8px;outline:none;flex:1;min-width:0;}
-  input:focus,select:focus,textarea:focus{border-color:var(--amber);box-shadow:0 0 0 2px rgba(255,176,0,.22);}
-  select{flex:0 0 auto;font-size:12px;}
+    font-size:16px;padding:10px 12px;border-radius:8px;flex:1;min-width:0;}
+  /* 16px on phones so iOS Safari doesn't zoom the page on focus; the desktop layout uses the UI size */
+  @media(min-width:860px){input[type=text],input[type=search],input[type=number],select,textarea{font-size:var(--fs-lg);}}
+  input:focus,select:focus,textarea:focus{border-color:var(--amber);}
+  /* one focus ring everywhere: buttons keep the browser's own, fields get an explicit 2px ring */
+  input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+  select{flex:0 0 auto;}
   textarea{width:100%;resize:vertical;min-height:54px;}
-  .hint{font-size:10.5px;color:var(--ink-dim);line-height:1.6;letter-spacing:.03em;}
-  .count{font-size:10px;letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase;margin:2px 2px 8px;}
+  .hint{font-size:var(--fs-md);color:var(--ink-dim);line-height:1.6;letter-spacing:.03em;max-width:72ch;}
+  .count{font-size:var(--fs-xs);letter-spacing:.18em;color:var(--ink-dim);text-transform:uppercase;margin:2px 2px 8px;}
   .count b{color:var(--amber);}
 
-  .btn{display:inline-block;background:var(--amber);color:#000;border:none;font-family:var(--mono);
-    font-weight:700;font-size:12px;letter-spacing:.1em;padding:11px 15px;border-radius:8px;cursor:pointer;text-transform:uppercase;}
+  .btn{display:inline-block;background:var(--amber);color:var(--on-amber);border:none;font-family:var(--mono);
+    font-weight:700;font-size:var(--fs-sm);letter-spacing:.1em;padding:11px 15px;border-radius:8px;cursor:pointer;text-transform:uppercase;}
   .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line);font-weight:500;}
-  .btn.sm{padding:8px 12px;font-size:10.5px;}
-  .btn:active{transform:translateY(1px);}
+  .btn.sm{padding:8px 12px;font-size:var(--fs-xs);}
+  .btn:active{transform:scale(.96);}
   .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
 
   .rows{display:flex;flex-direction:column;gap:6px;}
@@ -190,43 +210,46 @@
     background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 11px;}
   .row.now{border-color:var(--amber-dim);box-shadow:inset 3px 0 0 var(--amber);}
   .row.mine{box-shadow:inset 3px 0 0 var(--amber);}
-  .row.stale{opacity:.45;}
-  .freq{font-size:18px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums;line-height:1.05;}
-  .freq .u{display:block;font-size:8px;letter-spacing:.18em;color:var(--ink-dim);font-weight:500;margin-top:2px;}
-  .mid .st{font-size:13.5px;color:var(--ink);line-height:1.25;}
-  .mid .meta{font-size:10px;color:var(--ink-dim);margin-top:3px;letter-spacing:.03em;}
+  .freq{font-size:var(--fs-xl);font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums;line-height:1.05;}
+  .freq .u{display:block;font-size:var(--fs-xs);letter-spacing:.18em;color:var(--ink-dim);font-weight:500;margin-top:2px;}
+  .mid .st{font-size:var(--fs-md);color:var(--ink);line-height:1.25;}
+  .mid .meta{font-size:var(--fs-xs);color:var(--ink-dim);margin-top:3px;letter-spacing:.03em;}
   .mid .meta .lang{color:var(--ink-dim);}
   /* tap-to-expand net rows */
   .netrow{cursor:pointer;position:relative;}
-  .netrow .chev{position:absolute;right:11px;bottom:7px;font-size:12px;line-height:1;color:var(--ink-dim);transition:transform .2s ease,color .2s;}
+  .netrow .chev{position:absolute;right:4px;bottom:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    background:none;border:0;padding:0;font:inherit;font-size:var(--fs-sm);line-height:1;color:var(--ink-dim);cursor:pointer;transition:transform .2s ease,color .2s;}
   .netrow.exp{border-color:var(--amber-dim);}
   .netrow.exp .chev{transform:rotate(90deg);color:var(--amber);}
   .netx{margin:-4px 2px 10px;padding:12px 14px 13px;border:1px solid var(--line);border-top:none;
     border-radius:0 0 10px 10px;background:var(--panel2);}
   .netx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 16px;}
   .netx-grid>div{display:flex;flex-direction:column;gap:2px;min-width:0;}
-  .netx .k{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);}
-  .netx .v{font-size:12.5px;color:var(--ink);overflow-wrap:anywhere;}
+  .netx .k{font-size:var(--fs-xs);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);}
+  .netx .v{font-size:var(--fs-sm);color:var(--ink);overflow-wrap:anywhere;}
   .netx .v.hi{color:var(--green);font-weight:700;}
-  .netx-note{margin-top:11px;font-size:10.5px;color:var(--ink-dim);line-height:1.45;}
+  .netx-note{margin-top:11px;font-size:var(--fs-sm);color:var(--ink-dim);line-height:1.45;max-width:72ch;}
   .netx-note a{color:var(--amber);white-space:nowrap;}
-  .netx .ckhead{margin-top:13px;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);}
+  .netx .ckhead{margin-top:13px;font-size:var(--fs-xs);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim);}
   .netx .cklist{margin-top:6px;display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;}
-  .netx .ck{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:11.5px;line-height:1.2;}
+  .netx .ck{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;font-size:var(--fs-sm);line-height:1.2;}
   .netx .ck .cs{color:var(--amber);font-weight:700;letter-spacing:.03em;}
   .netx .ck .nm{color:var(--ink);}
-  .netx .ck .qt{color:var(--ink-dim);font-size:10px;overflow-wrap:anywhere;}
-  .netx .ck .nc{font-size:7px;font-weight:700;letter-spacing:.08em;background:#3bbf85;color:#062012;padding:1px 4px;border-radius:3px;align-self:center;}
-  .badge{display:inline-block;font-size:7.5px;letter-spacing:.1em;padding:1px 4px;border-radius:3px;border:1px solid var(--amber-dim);color:var(--amber);margin-left:5px;vertical-align:middle;}
+  .netx .ck .qt{color:var(--ink-dim);font-size:var(--fs-xs);overflow-wrap:anywhere;}
+  .netx .ck .nc{font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;background:var(--green);color:var(--on-green);padding:1px 4px;border-radius:3px;align-self:center;}
+  .badge{display:inline-block;font-size:var(--fs-xs);letter-spacing:.1em;padding:1px 4px;border-radius:3px;border:1px solid var(--amber-dim);color:var(--amber);margin-left:5px;vertical-align:middle;}
   .right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
-  .time{font-size:11px;color:var(--ink);font-variant-numeric:tabular-nums;opacity:.75;}
-  .tag{font-size:8px;letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
-  .tag.live{color:#000;background:var(--green);border-color:var(--green);font-weight:700;display:inline-flex;align-items:center;gap:4px;}
-  .tag.live .dot{width:5px;height:5px;border-radius:50%;background:#000;flex:none;}
+  .time{font-size:var(--fs-xs);color:var(--ink);font-variant-numeric:tabular-nums;opacity:.75;}
+  .tag{font-size:var(--fs-xs);letter-spacing:.14em;padding:2px 6px;border-radius:4px;text-transform:uppercase;border:1px solid var(--line);color:var(--ink-dim);}
+  .tag.live{color:var(--on-green);background:var(--green);border-color:var(--green);font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+  .tag.live .dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex:none;}
   .tag.soon{color:var(--amber);border-color:var(--amber);font-weight:700;}
   .tag.ref{color:var(--amber);border-color:var(--amber-dim);}
   .acts{display:flex;gap:8px;margin-top:2px;}
-  .act{font-size:13px;cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;}
+  /* row actions are real buttons; 24×24 is the minimum target even though the glyph is smaller */
+  .act{background:none;border:0;padding:0;font:inherit;font-size:var(--fs-md);cursor:pointer;color:var(--ink-dim);user-select:none;line-height:1;
+    min-width:24px;min-height:24px;display:inline-flex;align-items:center;justify-content:center;}
+  .act.log{font-size:var(--fs-xs);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);border-radius:6px;padding:4px 8px;}
   .act.fav.on{color:var(--amber);text-shadow:0 0 4px rgba(255,176,0,.55);}
 
   /* "heard today" row — sage greens, scoped so they don't touch the rest of the theme */
@@ -234,98 +257,98 @@
   [data-theme="light"]{--wkd:#257263;--wkd-dim:#AED8CA;}
   .row.worked{opacity:.62;}
   .row.worked .callsign{text-decoration:line-through;text-decoration-color:var(--wkd);text-decoration-thickness:2px;}
-  .wkd{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  .wkd{display:inline-block;font-size:var(--fs-xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
     padding:1px 5px;margin-left:6px;border:1px solid var(--wkd-dim);border-radius:3px;color:var(--wkd);vertical-align:middle;}
   .act.heard{color:var(--ink-dim);}
   .act.heard.on{color:var(--wkd);text-shadow:0 0 8px rgba(174,216,202,.4);}
 
-  .empty{text-align:center;color:var(--ink-dim);font-size:12px;padding:34px 10px;line-height:1.7;letter-spacing:.04em;}
+  .empty{text-align:center;color:var(--ink-dim);font-size:var(--fs-sm);padding:34px 10px;line-height:1.7;letter-spacing:.04em;}
 
   .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 14px;margin-bottom:11px;}
-  .card h3{margin:0 0 10px;font-size:11px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;}
-  .card h3 small{color:var(--ink-dim);letter-spacing:.06em;text-transform:none;font-size:9.5px;float:right;font-weight:400;}
-  table{width:100%;border-collapse:collapse;font-size:12px;}
+  .card h2{margin:0 0 10px;font-size:var(--fs-xs);letter-spacing:.2em;color:var(--amber);text-transform:uppercase;}
+  .card h2 small{color:var(--ink-dim);letter-spacing:.06em;text-transform:none;font-size:var(--fs-xs);float:right;font-weight:400;}
+  table{width:100%;border-collapse:collapse;font-size:var(--fs-sm);}
   th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;}
-  th{color:var(--ink-dim);font-weight:500;font-size:9px;letter-spacing:.16em;text-transform:uppercase;}
+  th{color:var(--ink-dim);font-weight:500;font-size:var(--fs-xs);letter-spacing:.16em;text-transform:uppercase;}
   td.f{color:var(--amber);font-weight:600;}
-  .legend{font-size:10.5px;color:var(--ink-dim);line-height:1.9;}
+  .legend{font-size:var(--fs-sm);color:var(--ink-dim);line-height:1.9;max-width:72ch;}
   .legend b{color:var(--ink);font-weight:600;}
-  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12px;}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:var(--fs-sm);}
   .kv .k{color:var(--ink-dim);}
   .kv .v{color:var(--amber);font-variant-numeric:tabular-nums;text-align:right;}
   .calcout .v{color:var(--amber);font-weight:600;}
-  .advise{font-size:12px;line-height:1.8;}
+  .advise{font-size:var(--fs-sm);line-height:1.8;max-width:72ch;}
   .advise .good{color:var(--green);font-weight:600;}
   .advise .dim{color:var(--ink-dim);}
   .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-  .formgrid label{display:flex;flex-direction:column;gap:3px;font-size:9px;letter-spacing:.12em;color:var(--ink-dim);text-transform:uppercase;}
+  .formgrid label{display:flex;flex-direction:column;gap:3px;font-size:var(--fs-xs);letter-spacing:.12em;color:var(--ink-dim);text-transform:uppercase;}
   .formgrid label.wide{grid-column:1/-1;}
   .formgrid input,.formgrid select{flex:none;width:100%;}
 
   .loadbox{background:var(--panel);border:1px dashed var(--amber-dim);border-radius:10px;padding:14px;margin-bottom:12px;}
-  .loadbox h3{margin:0 0 6px;font-size:11px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;}
-  .loadbox ol{margin:8px 0 10px;padding-left:18px;font-size:11.5px;color:var(--ink-dim);line-height:1.7;}
+  .loadbox h2{margin:0 0 6px;font-size:var(--fs-xs);letter-spacing:.2em;color:var(--amber);text-transform:uppercase;}
+  .loadbox ol{margin:8px 0 10px;padding-left:18px;font-size:var(--fs-sm);color:var(--ink-dim);line-height:1.7;}
   .loadbox a{color:var(--green);text-decoration:none;border-bottom:1px dotted var(--green-dim);word-break:break-all;}
   .updrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
   .updrow select{background:var(--panel2);}
   .netdot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-left:4px;box-shadow:0 0 8px currentColor;}
   .netdot.on{background:var(--green);color:var(--green);}.netdot.off{background:var(--red);color:var(--red);}
+  .netlbl{font-size:var(--fs-xs);letter-spacing:.06em;text-transform:none;color:var(--ink-dim);font-weight:400;margin-left:4px;}
   .loadbox details{border-top:1px solid var(--line);padding-top:10px;margin-top:6px;}
-  .loadbox summary{font-size:11px;letter-spacing:.08em;color:var(--ink-dim);cursor:pointer;}
+  .loadbox summary{font-size:var(--fs-sm);letter-spacing:.08em;color:var(--ink-dim);cursor:pointer;}
   .loadbox summary:hover{color:var(--amber);}
   .upd-spin{animation:spin 1s linear infinite;display:inline-block;}@keyframes spin{to{transform:rotate(360deg);}}
-  .prop-online{margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--green-dim);background:rgba(125,232,122,.08);color:var(--green);font-size:10.5px;letter-spacing:.06em;text-align:center;}
-  .prop-offline{margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);font-size:10.5px;letter-spacing:.04em;text-align:center;}
+  .prop-online{margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--green-dim);background:var(--green-tint);color:var(--green);font-size:var(--fs-xs);letter-spacing:.06em;text-align:center;}
+  .prop-offline{margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);color:var(--ink-dim);font-size:var(--fs-xs);letter-spacing:.04em;text-align:center;}
 
   /* modal */
   .modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.66);display:flex;align-items:flex-end;justify-content:center;}
-  .sheet{width:100%;max-width:760px;background:var(--panel2);border-top:1px solid var(--amber-dim);
-    border-radius:16px 16px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.6);}
-  .sheet h3{margin:0 0 12px;font-size:12px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;}
 
   /* update-available banner — anchored above the bottom nav (thumb-reachable,
      no iOS status-bar conflict); slides up from below */
   .updbar{position:fixed;left:50%;bottom:calc(72px + env(safe-area-inset-bottom));z-index:90;
     transform:translate(-50%,calc(100% + 140px));display:flex;gap:12px;align-items:center;
     background:var(--panel2);border:1px solid var(--amber);border-radius:12px;
-    padding:11px 16px;box-shadow:0 6px 24px rgba(0,0,0,.55),0 0 14px rgba(255,176,0,.25);
-    transition:transform .35s ease;font-size:11px;letter-spacing:.06em;color:var(--ink);max-width:92vw;white-space:nowrap;}
+    padding:11px 16px;box-shadow:var(--shadow-pop);
+    transition:transform .35s ease;font-size:var(--fs-sm);letter-spacing:.06em;color:var(--ink);max-width:92vw;white-space:nowrap;}
   .updbar.show{transform:translate(-50%,0);}
   .updbar b{color:var(--amber);}
   @media(min-width:860px){.updbar{bottom:24px;}}
-  .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--green);color:#06170c;
-    font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:.25s;pointer-events:none;text-transform:uppercase;}
+  .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--green);color:var(--on-green);
+    font-size:var(--fs-sm);font-weight:700;letter-spacing:.08em;padding:9px 16px;border-radius:20px;z-index:80;opacity:0;transition:opacity .25s;pointer-events:none;text-transform:uppercase;max-width:92vw;text-align:center;}
+  /* an error stays until it is tapped away, and reads as a sentence */
+  .toast.err{background:var(--red);color:var(--on-red);pointer-events:auto;cursor:pointer;text-transform:none;letter-spacing:.03em;line-height:1.4;}
   .toast.show{opacity:1;}
   .ident{display:flex;gap:12px;align-items:baseline;justify-content:space-between;margin-top:5px;flex-wrap:wrap;}
-  .ident-grid{font-size:11px;letter-spacing:.16em;color:var(--blue);}
+  .ident-grid{font-size:var(--fs-xs);letter-spacing:.16em;color:var(--blue);}
 
   /* setup wizard */
   #wizardModal{align-items:center;padding:20px;}
   .wizard{width:100%;max-width:430px;background:var(--panel2);border:1px solid var(--amber-dim);
-    border-radius:14px;padding:28px 22px 24px;box-shadow:0 20px 60px rgba(0,0,0,.75);}
+    border-radius:14px;padding:28px 22px 24px;box-shadow:var(--shadow-modal);}
   .wiz-steps{display:flex;align-items:center;margin-bottom:26px;}
   .wiz-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);color:var(--ink-dim);
-    font-size:10px;font-weight:700;letter-spacing:0;display:flex;align-items:center;
-    justify-content:center;flex-shrink:0;transition:.25s;}
+    font-size:var(--fs-xs);font-weight:700;letter-spacing:0;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;transition:color .25s,border-color .25s,background-color .25s;}
   .wiz-dot.on{border-color:var(--amber);color:var(--amber);}
-  .wiz-dot.done{background:var(--amber);border-color:var(--amber);color:#000;}
-  .wiz-bar{flex:1;height:1px;background:var(--line);transition:.4s;}
+  .wiz-dot.done{background:var(--amber);border-color:var(--amber);color:var(--on-amber);}
+  .wiz-bar{flex:1;height:1px;background:var(--line);transition:background-color .4s;}
   .wiz-bar.done{background:var(--amber-dim);}
-  .wiz-head{font-size:15px;font-weight:700;letter-spacing:.12em;color:var(--amber);
+  .wiz-head{font-size:var(--fs-xl);font-weight:700;letter-spacing:.12em;color:var(--amber);
     margin:0 0 5px;text-transform:uppercase;}
-  .wiz-sub{font-size:11px;color:var(--ink-dim);line-height:1.65;margin:0 0 18px;letter-spacing:.03em;}
+  .wiz-sub{font-size:var(--fs-sm);color:var(--ink-dim);line-height:1.65;margin:0 0 18px;letter-spacing:.03em;}
   .wiz-preview{background:var(--panel);border:1px solid var(--line);border-radius:8px;
     padding:11px 13px;margin:12px 0 16px;}
   .wiz-prow{display:flex;justify-content:space-between;align-items:baseline;
-    padding:4px 0;border-bottom:1px solid var(--line);font-size:12px;}
+    padding:4px 0;border-bottom:1px solid var(--line);font-size:var(--fs-sm);}
   .wiz-prow:last-child{border-bottom:none;}
-  .wiz-pk{color:var(--ink-dim);font-size:9px;letter-spacing:.14em;text-transform:uppercase;}
+  .wiz-pk{color:var(--ink-dim);font-size:var(--fs-xs);letter-spacing:.14em;text-transform:uppercase;}
   .wiz-pv{color:var(--amber);font-weight:700;letter-spacing:.06em;}
   .wiz-nav{display:flex;gap:10px;align-items:center;margin-top:4px;}
-  .wiz-skip{background:none;border:none;color:var(--ink-dim);font-size:10px;font-family:var(--mono);
+  .wiz-skip{background:none;border:none;color:var(--ink-dim);font-size:var(--fs-xs);font-family:var(--mono);
     letter-spacing:.06em;cursor:pointer;text-decoration:underline;padding:4px 2px;margin-left:auto;}
 
-  .hdrver{font-size:8px;letter-spacing:.14em;color:var(--amber-dim);line-height:1;white-space:nowrap;}
+  .hdrver{font-size:var(--fs-xs);letter-spacing:.14em;color:var(--amber);line-height:1;white-space:nowrap;}
 
   /* scroll-minimized header */
   .brand,.ident{transition:max-height .28s ease,opacity .2s,margin .25s ease;max-height:220px;overflow:hidden;}
@@ -337,19 +360,19 @@
   header{transition:padding .25s ease;}
   header.min{padding-bottom:8px;}
 
-  footer{margin-top:16px;font-size:9.5px;color:var(--ink-dim);line-height:1.7;text-align:center;}
+  footer{margin:16px auto 0;max-width:72ch;font-size:var(--fs-xs);color:var(--ink-dim);line-height:1.7;text-align:center;}
   footer a{color:var(--amber);}
   .proptiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
   .proptile{display:block;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;text-decoration:none;color:var(--ink);}
   .proptile:active{border-color:var(--amber-dim);}
-  .proptile-name{font-size:13px;font-weight:700;color:var(--amber);letter-spacing:.06em;margin-bottom:3px;}
-  .proptile-desc{font-size:10px;color:var(--ink-dim);line-height:1.4;}
+  .proptile-name{font-size:var(--fs-md);font-weight:700;color:var(--amber);letter-spacing:.06em;margin-bottom:3px;}
+  .proptile-desc{font-size:var(--fs-xs);color:var(--ink-dim);line-height:1.4;}
   .propimg{width:100%;border-radius:6px;display:block;background:var(--panel2);}
   .propimgwrap{display:block;text-decoration:none;}
   .kbars{display:flex;gap:3px;align-items:flex-end;height:48px;}
   .kbar{flex:1;border-radius:3px 3px 0 0;min-width:6px;}
   .kval{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums;}
-  .ktime{font-size:10px;color:var(--ink-dim);margin-top:3px;letter-spacing:.04em;}
+  .ktime{font-size:var(--fs-xs);color:var(--ink-dim);margin-top:3px;letter-spacing:.04em;}
 
   /* responsive layout shell */
   #layout{max-width:760px;margin:0 auto;}
@@ -360,44 +383,41 @@
     #layout{display:flex;max-width:844px;align-items:flex-start;}
     .sidenav{display:flex;flex-direction:column;width:84px;flex-shrink:0;
       position:sticky;top:0;height:100vh;background:var(--nav-bg);
-      border-right:1px solid var(--line);box-shadow:2px 0 8px rgba(0,0,0,.3);
+      border-right:1px solid var(--line);box-shadow:var(--shadow-rail);
       padding:14px 0 24px;gap:2px;overflow-y:auto;}
-    .snav-brand{display:block;font-size:8px;letter-spacing:.3em;color:var(--amber);text-align:center;
+    .snav-brand{display:block;font-size:var(--fs-xs);letter-spacing:.3em;color:var(--amber);text-align:center;
       line-height:1.6;padding:0 4px 13px;border-bottom:1px solid var(--line);margin-bottom:8px;}
     .snav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;
       padding:11px 4px;background:none;border:none;color:var(--ink-dim);
-      font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;
-      cursor:pointer;border-radius:8px;margin:0 7px;width:calc(100% - 14px);transition:.15s;}
+      font-family:var(--mono);font-size:var(--fs-xs);letter-spacing:.1em;text-transform:uppercase;
+      cursor:pointer;border-radius:8px;margin:0 7px;width:calc(100% - 14px);transition:color .15s,background-color .15s;}
     .snav-btn .bicon{font-size:15px;line-height:1;}
-    .snav-btn.on{color:var(--amber);background:rgba(255,176,0,.08);}
+    .snav-btn.on{color:var(--amber);background:var(--amber-tint);font-weight:700;}
     .snav-btn.on .bicon{text-shadow:0 0 4px rgba(255,176,0,.55);}
     .wrap{max-width:760px;margin:0;flex:1;min-width:0;padding-bottom:20px;}
     .bottomnav{display:none;}
   }
 
   .tag.you{color:var(--blue);border-color:var(--blue);font-weight:700;margin-right:4px;}
-  .ck.me{border-left:2px solid var(--blue);padding-left:6px;background:rgba(61,240,255,.07);}
-  [data-theme="light"] .ck.me{background:rgba(31,95,176,.08);}
-  .farnote{cursor:pointer;}
+  .ck.me{border-left:2px solid var(--blue);padding-left:6px;background:var(--blue-tint);}
+  .farnote{cursor:pointer;display:block;width:100%;background:none;border:0;font:inherit;font-size:var(--fs-sm);color:var(--ink-dim);}
   .farnote b{color:var(--amber);}
   /* grayline alert strip (inside the sticky header) */
   .grayalert{display:flex;align-items:center;gap:8px;margin-top:7px;padding:6px 9px;border-radius:8px;
-    font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1.35;
-    border:1px solid var(--amber-dim);background:rgba(255,159,28,.10);color:var(--amber);}
-  .grayalert.now{border-color:var(--green);background:rgba(43,255,136,.10);color:var(--green);}
+    font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase;line-height:1.35;
+    border:1px solid var(--amber-dim);background:var(--amber-tint);color:var(--amber);}
+  .grayalert.now{border-color:var(--green);background:var(--green-tint);color:var(--green);}
   .grayalert .ga-txt{flex:1;min-width:0;}
-  .grayalert .ga-x{flex:none;background:none;border:none;color:inherit;opacity:.7;
-    font-family:var(--mono);font-size:12px;line-height:1;padding:2px 4px;cursor:pointer;}
+  .grayalert .ga-x{flex:none;background:none;border:none;color:inherit;opacity:.85;
+    font-family:var(--mono);font-size:var(--fs-sm);line-height:1;min-width:24px;min-height:24px;padding:0;cursor:pointer;}
   .grayalert .ga-x:hover{opacity:1;}
-  [data-theme="light"] .grayalert{background:rgba(200,96,15,.08);}
-  [data-theme="light"] .grayalert.now{background:rgba(46,139,122,.10);}
   /* Always-reachable kiosk exit. Kiosk mode hides the browser's own chrome, so
      the way out must never depend on finding a tab or scrolling to a button. */
   .kiosk-exit{position:fixed;z-index:95;top:max(10px,env(safe-area-inset-top));right:12px;
     background:var(--panel2);color:var(--amber);border:1px solid var(--amber);
-    font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    font-family:var(--mono);font-size:var(--fs-sm);letter-spacing:.1em;text-transform:uppercase;
     padding:9px 14px;border-radius:999px;cursor:pointer;line-height:1;
-    box-shadow:0 4px 16px rgba(0,0,0,.5);}
+    box-shadow:var(--shadow-pop);}
   .kiosk-exit:active{background:var(--panel);}
   /* kiosk button */
   .kiosk-btn{white-space:nowrap;}
@@ -406,7 +426,7 @@
   /* display settings card */
   .scale-btns{display:flex;gap:5px;margin-bottom:10px;}
   .scale-btn{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--ink-dim);
-    font-family:var(--mono);border-radius:6px;cursor:pointer;padding:6px 0;transition:.15s;line-height:1;}
+    font-family:var(--mono);border-radius:6px;cursor:pointer;padding:6px 0;transition:color .15s,border-color .15s;line-height:1;}
   .scale-btn.on{border-color:var(--amber);color:var(--amber);}
 
   /* right rail (≥1280px persistent panel) */
@@ -417,16 +437,16 @@
     #rightRail{display:flex;flex-direction:column;width:200px;flex-shrink:0;gap:8px;
       position:sticky;top:0;max-height:100vh;overflow-y:auto;overflow-x:hidden;
       padding:12px 10px 20px;border-left:1px solid var(--line);}
-    .rail-hd{font-size:8px;letter-spacing:.24em;color:var(--amber);text-transform:uppercase;
+    .rail-hd{font-size:var(--fs-xs);letter-spacing:.24em;color:var(--amber);text-transform:uppercase;
       border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px;}
     .rail-section{background:var(--panel);border:1px solid var(--line);border-radius:8px;
       padding:9px 10px;flex-shrink:0;}
     .rail-kval{font-size:28px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
-    .rail-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;padding:2px 0;}
-    .rail-rk{color:var(--ink-dim);font-size:9px;letter-spacing:.08em;}
+    .rail-row{display:flex;justify-content:space-between;align-items:baseline;font-size:var(--fs-xs);padding:2px 0;}
+    .rail-rk{color:var(--ink-dim);font-size:var(--fs-xs);letter-spacing:.08em;}
     .rail-rv{color:var(--amber);font-weight:600;font-variant-numeric:tabular-nums;}
-    .rail-good{color:var(--green);font-size:10px;}
-    .rail-dim{color:var(--ink-dim);font-size:10px;}
+    .rail-good{color:var(--green);font-size:var(--fs-xs);}
+    .rail-dim{color:var(--ink-dim);font-size:var(--fs-xs);}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -448,19 +468,20 @@
 </head>
 <body>
 <!-- Kiosk mode hides the browser chrome; this is the guaranteed way back out. -->
-<button class="kiosk-exit" id="kioskExit" hidden>✕ Exit kiosk</button>
+<button class="kiosk-exit" id="kioskExit" hidden><span aria-hidden="true">✕</span> Exit kiosk</button>
 <div id="errBar" hidden style="position:fixed;top:0;left:0;right:0;z-index:99;background:#3a1210;color:#f0b0a8;
   font:600 12px/1.5 ui-monospace,Menlo,monospace;padding:max(10px,env(safe-area-inset-top)) 14px 10px;text-align:center;border-bottom:1px solid #e8635a">
   ⚠ Something went wrong — <span id="errMsg"></span>.
-  <a href="" style="color:#f0923c">Tap to reload</a>
+  <a href="" style="color:#f0923c">Reload</a>
 </div>
+<a class="skip" href="#main">Skip to content</a>
 <div id="layout">
-<nav class="sidenav" id="sideNav">
+<nav class="sidenav" id="sideNav" aria-label="Sections">
   <div class="snav-brand wordmark" aria-label="SkyWave"><span>S</span><span>K</span><span>Y</span><br><span>W</span><span>A</span><span>V</span><span>E</span></div>
-  <button class="snav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
-  <button class="snav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
-  <button class="snav-btn" data-tab="ref"><span class="bicon">◆</span>Ref</button>
-  <button class="snav-btn" data-tab="prop"><span class="bicon">≈</span>Prop</button>
+  <button class="snav-btn on" data-tab="listen" aria-current="page"><span class="bicon" aria-hidden="true">▶</span>Stations</button>
+  <button class="snav-btn" data-tab="log"><span class="bicon" aria-hidden="true">✦</span>Saved</button>
+  <button class="snav-btn" data-tab="ref"><span class="bicon" aria-hidden="true">◆</span>Ref</button>
+  <button class="snav-btn" data-tab="prop"><span class="bicon" aria-hidden="true">≈</span>Prop</button>
 </nav>
 <div class="wrap">
   <header>
@@ -485,41 +506,42 @@
          every tab; hidden except in the ~2.5 h a day around a grayline window. -->
     <div class="grayalert" id="grayAlert" role="status" hidden>
       <span class="ga-txt" id="grayAlertTxt"></span>
-      <button class="ga-x" id="grayAlertX" aria-label="Dismiss grayline alert">✕</button>
+      <button class="ga-x" id="grayAlertX" aria-label="Dismiss grayline alert"><span aria-hidden="true">✕</span></button>
     </div>
   </header>
 
+  <main id="main">
   <!-- ============ LISTEN ============ -->
-  <section id="tab-listen">
+  <section id="tab-listen" aria-label="Stations">
     <div class="seg" id="seg-listen">
-      <button data-sub="nets" class="on">Nets</button>
-      <button data-sub="now">On Air</button>
-      <button data-sub="search">Search</button>
-      <button data-sub="freq">By Freq</button>
+      <button data-sub="nets" class="on" aria-pressed="true">Nets</button>
+      <button data-sub="now" aria-pressed="false">On Air</button>
+      <button data-sub="search" aria-pressed="false">Search</button>
+      <button data-sub="freq" aria-pressed="false">By Freq</button>
     </div>
 
     <div id="sub-now" hidden>
       <div class="chips" id="nowChips" role="group" aria-label="Quick filters">
         <button type="button" class="chip on" data-chip="all" aria-pressed="true">All</button>
-        <button type="button" class="chip" data-chip="fav" aria-pressed="false">★ Favorites</button>
+        <button type="button" class="chip" data-chip="fav" aria-pressed="false"><span aria-hidden="true">★</span> Favorites</button>
         <button type="button" class="chip" data-chip="E" aria-pressed="false">English</button>
         <button type="button" class="chip" data-chip="S" aria-pressed="false">Spanish</button>
         <button type="button" class="chip" data-chip="F" aria-pressed="false">French</button>
       </div>
       <div class="ctrl">
-        <input type="search" id="nowFilter" placeholder="filter on-air (station / target / country)…" autocomplete="off">
-        <select id="nowBand"><option value="">All bands</option></select>
+        <input type="search" id="nowFilter" aria-label="Filter on-air stations" placeholder="station, target or country…" autocomplete="off">
+        <select id="nowBand" aria-label="Band"><option value="">All bands</option></select>
       </div>
       <div class="count" id="nowCount"></div>
       <div class="rows" id="nowRows"></div>
     </div>
 
     <div id="sub-search" hidden>
-      <div class="ctrl"><input type="search" id="q" placeholder="search station, language, country, target…" autocomplete="off"></div>
+      <div class="ctrl"><input type="search" id="q" aria-label="Search stations" placeholder="station, language, country or target…" autocomplete="off"></div>
       <div class="ctrl">
-        <select id="fBand"><option value="">All bands</option></select>
-        <select id="fLang"><option value="">All languages</option></select>
-        <select id="fTarget"><option value="">All targets</option></select>
+        <select id="fBand" aria-label="Band"><option value="">All bands</option></select>
+        <select id="fLang" aria-label="Language"><option value="">All languages</option></select>
+        <select id="fTarget" aria-label="Target area"><option value="">All targets</option></select>
       </div>
       <div class="count" id="searchCount"></div>
       <div class="rows" id="searchRows"></div>
@@ -527,8 +549,8 @@
 
     <div id="sub-freq" hidden>
       <div class="ctrl">
-        <input type="text" id="freqIn" inputmode="decimal" placeholder="frequency — e.g. 9420 or 9.420" autocomplete="off">
-        <select id="freqTol"><option value="2">± 2 kHz</option><option value="5" selected>± 5 kHz</option><option value="10">± 10 kHz</option></select>
+        <input type="text" id="freqIn" inputmode="decimal" aria-label="Dial frequency" placeholder="e.g. 9420 or 9.420" autocomplete="off">
+        <select id="freqTol" aria-label="Match tolerance"><option value="2">± 2 kHz</option><option value="5" selected>± 5 kHz</option><option value="10">± 10 kHz</option></select>
       </div>
       <div class="hint">Heard a signal and want to know who it is? Type the dial frequency — matches within tolerance, on-air first.</div>
       <div class="count" id="freqCount"></div>
@@ -537,12 +559,12 @@
 
     <div id="sub-nets">
       <div class="ctrl">
-        <input type="search" id="netsFilter" placeholder="filter nets (name / mode / NCS)…" autocomplete="off">
-        <button class="btn ghost sm" id="netsRefresh" style="flex:0 0 auto">⟳ Refresh</button>
+        <input type="search" id="netsFilter" aria-label="Filter nets" placeholder="name, mode or NCS…" autocomplete="off">
+        <button class="btn ghost sm" id="netsRefresh" style="flex:0 0 auto"><span aria-hidden="true">⟳</span> Refresh</button>
       </div>
       <div class="hint" id="netsMsg" style="margin-bottom:10px"></div>
       <div id="callSetup" class="ctrl" hidden style="margin-bottom:10px">
-        <input type="text" id="callQuick" placeholder="your callsign — get ✓ LOGGED when NCS logs you" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:1;text-transform:uppercase">
+        <input type="text" id="callQuick" aria-label="Your callsign" placeholder="your callsign" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:1;text-transform:uppercase">
         <button class="btn ghost sm" id="callQuickSave" style="flex:0 0 auto">Save</button>
       </div>
       <div class="count" id="netsCount"></div>
@@ -552,20 +574,20 @@
   </section>
 
   <!-- ============ SAVED ============ -->
-  <section id="tab-log" hidden>
+  <section id="tab-log" aria-label="Saved" hidden>
     <div class="seg" id="seg-log">
-      <button data-sub="stars" class="on">Favorites</button>
-      <button data-sub="mine">My Freq</button>
+      <button data-sub="stars" class="on" aria-pressed="true">Favorites</button>
+      <button data-sub="mine" aria-pressed="false">My Freq</button>
     </div>
 
     <div id="sub-stars">
-      <div class="hint" style="margin-bottom:10px">Tap ★ on any listing to keep it here. Favorites on the air now are highlighted. Tap ✓ to mark one heard today — it dims until 0000 UTC.</div>
+      <div class="hint" style="margin-bottom:10px">Select ★ on any listing to keep it here. Favorites on the air now are highlighted. Select ✓ to mark one heard today — it dims until 0000 UTC.</div>
       <div class="rows" id="starRows"></div>
     </div>
 
     <div id="sub-mine" hidden>
       <div class="card">
-        <h3>◆ Add your own frequency</h3>
+        <h2><span aria-hidden="true">◆</span> Add your own frequency</h2>
         <div class="formgrid">
           <label>Frequency kHz<input type="number" id="mFreq" inputmode="decimal" placeholder="7256"></label>
           <label>Mode<select id="mMode"><option value=""></option><option>LSB</option><option>USB</option><option>AM</option><option>CW</option><option>FM</option><option>DRM</option><option>DATA</option></select></label>
@@ -589,25 +611,25 @@
 
   <!-- ============ TOOLS ============ -->
   <!-- ============ REF ============ -->
-  <section id="tab-ref" hidden>
+  <section id="tab-ref" aria-label="Reference" hidden>
     <div class="card" id="displayCard">
-      <h3>◆ Display</h3>
+      <h2><span aria-hidden="true">◆</span> Display</h2>
       <div class="hint" style="margin-bottom:6px">Font size</div>
       <div class="scale-btns">
-        <button class="scale-btn on" data-zoom-btn="1" style="font-size:11px">A</button>
-        <button class="scale-btn" data-zoom-btn="1.15" style="font-size:14px">A</button>
-        <button class="scale-btn" data-zoom-btn="1.3" style="font-size:17px">A</button>
+        <button class="scale-btn on" data-zoom-btn="1" aria-pressed="true" aria-label="Normal text" style="font-size:11px">A</button>
+        <button class="scale-btn" data-zoom-btn="1.15" aria-pressed="false" aria-label="Large text" style="font-size:14px">A</button>
+        <button class="scale-btn" data-zoom-btn="1.3" aria-pressed="false" aria-label="Larger text" style="font-size:17px">A</button>
       </div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-dim);cursor:pointer">
+      <label style="display:flex;align-items:center;gap:8px;font-size:var(--fs-xs);color:var(--ink-dim);cursor:pointer">
         <input type="checkbox" id="hr24Toggle" checked style="accent-color:var(--amber);width:15px;height:15px">
         24-hour local clock
       </label>
-      <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-dim);margin-top:8px">
+      <label style="display:flex;align-items:center;gap:8px;font-size:var(--fs-xs);color:var(--ink-dim);margin-top:8px">
         Your callsign
         <input type="text" id="callIn" placeholder="e.g. KD5XYZ" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:0 1 130px;text-transform:uppercase">
       </label>
       <div class="hint">Used only to highlight you in live net rosters and mark nets "✓ logged" once net control logs you. Stored on-device.</div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-dim);margin-top:8px">
+      <label style="display:flex;align-items:center;gap:8px;font-size:var(--fs-xs);color:var(--ink-dim);margin-top:8px">
         Hide VHF/UHF nets farther than
         <select id="vhfMiSel" style="flex:0 0 auto">
           <option value="50">50 mi</option><option value="100">100 mi</option>
@@ -616,26 +638,26 @@
         </select>
       </label>
       <div class="hint">Above ~50 MHz propagation is line of sight, so a distant 2m/70cm net in the live list usually can't be worked. Distance is measured to the net's nearest checked-in station; nets with no location data are always shown. HF nets are never hidden.</div>
-      <button class="btn ghost kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode" style="margin-top:12px">⛶&nbsp;Kiosk / shack-monitor mode</button>
-      <div class="hint" style="margin-top:6px">Full-screen clock &amp; on-air view that keeps the screen awake — ideal for a shack monitor. Some browsers (iPhone Safari) don't allow full-screen; the keep-awake half still works. Tap again to exit.</div>
+      <button class="btn ghost kiosk-btn" id="kioskBtn" title="Kiosk / shack-monitor mode" style="margin-top:12px"><span aria-hidden="true">⛶</span>&nbsp;Kiosk / shack-monitor mode</button>
+      <div class="hint" style="margin-top:6px">Full-screen clock &amp; on-air view that keeps the screen awake — ideal for a shack monitor. Some browsers (iPhone Safari) don't allow full-screen; the keep-awake half still works. Select it again to exit.</div>
     </div>
     <div class="loadbox">
-      <h3>◆ Full EiBi schedule <span id="netDot" class="netdot off"></span></h3>
+      <h2><span aria-hidden="true">◆</span> Full EiBi schedule <span id="netDot" class="netdot off" aria-hidden="true"></span><span id="netTxt" class="netlbl">offline</span></h2>
       <div class="hint" id="lastUpd" style="margin-bottom:10px"></div>
       <div class="updrow">
-        <button class="btn" id="updBtn">⟳&nbsp;Update&nbsp;now</button>
-        <select id="seasonSel"></select>
+        <button class="btn" id="updBtn"><span aria-hidden="true">⟳</span>&nbsp;Update&nbsp;now</button>
+        <select id="seasonSel" aria-label="Schedule season"></select>
         <button class="btn ghost" id="clearBtn" hidden>Clear</button>
       </div>
       <div class="hint" id="updMsg" style="margin-top:10px"></div>
-      <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--ink-dim);cursor:pointer">
+      <label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:var(--fs-xs);color:var(--ink-dim);cursor:pointer">
         <input type="checkbox" id="autoUpd" checked style="accent-color:var(--amber);width:16px;height:16px">
         Auto-update on launch when online (else use stored copy)
       </label>
       <details>
         <summary>Manual load (when auto-update can't reach the server)</summary>
         <ol><li>Download <a id="eibiLink" href="http://www.eibispace.de/dx/sked-a26.csv">sked-a26.csv</a> on this device.</li>
-        <li>Tap <b>Load file</b> and pick it — parsing is fully on-device.</li></ol>
+        <li>Select <b>Load file</b> and pick it — parsing is fully on-device.</li></ol>
         <input type="file" id="fileIn" accept=".csv,.txt" hidden>
         <button class="btn ghost" id="loadBtn">Load file</button>
         <div class="hint" id="loadMsg" style="margin-top:8px"></div>
@@ -644,7 +666,7 @@
         <summary>Custom relay (your own Cloudflare Worker — most reliable)</summary>
         <div class="hint" style="margin:8px 0">Not needed for normal use — the schedule and live nets both come from SkyWave's own mirror. This is a fallback for reaching EiBi and NetLogger <i>directly</i> if the mirror is ever unavailable: deploy the tiny worker in <b>workers/relay.js</b> from the repo and paste its URL here. No third-party proxies are used.</div>
         <div class="updrow">
-          <input type="text" id="relayIn" placeholder="https://skywave-relay.you.workers.dev" autocomplete="off" style="flex:1">
+          <input type="text" id="relayIn" aria-label="Relay URL" placeholder="https://skywave-relay.you.workers.dev" autocomplete="off" style="flex:1">
           <button class="btn ghost" id="relaySave">Save</button>
         </div>
         <div class="hint" id="relayMsg" style="margin-top:8px"></div>
@@ -654,7 +676,7 @@
     <div class="card" id="refTime"></div>
     <div class="card" id="refHam"></div>
     <div class="card">
-      <h3>◆ Export &amp; print</h3>
+      <h2><span aria-hidden="true">◆</span> Export &amp; print</h2>
       <div class="btnrow">
         <button class="btn ghost sm" id="copyNow">Copy on-air list</button>
         <button class="btn ghost sm" id="dlCard">Download band card</button>
@@ -662,7 +684,7 @@
       </div>
       <div class="hint">Copy the current On-Air list as plain text (good for a net log or report), save an offline band card, or print a clean reference sheet for the go-kit.</div>
     </div>
-    <div class="card"><h3>◆ Code key</h3><div class="legend" id="legend"></div></div>
+    <div class="card"><h2><span aria-hidden="true">◆</span> Code key</h2><div class="legend" id="legend"></div></div>
     <footer>
       <span id="verFoot"></span><br>
       Schedule data: EiBi Shortwave Schedules by Eike Bierwirth — <a href="http://www.eibispace.de/">eibispace.de</a> · free to copy &amp; distribute.<br>
@@ -672,39 +694,39 @@
   </section>
 
   <!-- ============ PROP ============ -->
-  <section id="tab-prop" hidden>
-    <div id="propStatus" class="hint" style="margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);text-align:center;"></div>
+  <section id="tab-prop" aria-label="Propagation" hidden>
+    <div id="propStatus" class="hint" style="max-width:none;margin-bottom:10px;padding:9px 12px;border-radius:8px;border:1px solid var(--line);text-align:center;"></div>
 
     <div class="card">
-      <h3>◆ Grayline &amp; band planner <small id="grayLoc"></small></h3>
+      <h2><span aria-hidden="true">◆</span> Grayline &amp; band planner <small id="grayLoc"></small></h2>
       <div class="formgrid">
         <label>Latitude<input type="number" id="geoLat" step="0.01" inputmode="decimal"></label>
         <label>Longitude<input type="number" id="geoLng" step="0.01" inputmode="decimal"></label>
       </div>
       <div class="btnrow"><button class="btn ghost sm" id="useLoc">Use my location</button>
-        <button class="btn ghost sm" id="dlGray">⤓ Calendar reminders</button></div>
+        <button class="btn ghost sm" id="dlGray"><span aria-hidden="true">⤓</span> Calendar reminders</button></div>
       <div class="kv" id="sunKv"></div>
       <div class="advise" id="bandAdvise" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px"></div>
       <div class="hint" style="margin-top:8px">Computed on-device from your coordinates — no network needed. Grayline (sunrise/sunset terminator) gives an enhanced DX window on the lower bands.</div>
     </div>
 
     <div class="card">
-      <h3>◆ Solar conditions <small>HamQSL · N0NBH / K4HG</small></h3>
+      <h2><span aria-hidden="true">◆</span> Solar conditions <small>HamQSL · N0NBH / K4HG</small></h2>
       <a class="propimgwrap" href="https://www.hamqsl.com/solar.html" target="_blank" rel="noopener">
         <img class="propimg" src="https://www.hamqsl.com/solar101pic.php" alt="Solar conditions widget"
              onerror="this.style.opacity='.3'">
       </a>
-      <div class="hint" style="margin-top:8px">Solar flux (SFI), A &amp; K index, HF band conditions. Updates every ~5 min. Tap to open full page.</div>
+      <div class="hint" style="margin-top:8px">Solar flux (SFI), A &amp; K index, HF band conditions. Updates every ~5 min. Select it to open the full page.</div>
     </div>
 
     <div class="card">
-      <h3>◆ Planetary K-index <small>NOAA SWPC</small></h3>
+      <h2><span aria-hidden="true">◆</span> Planetary K-index <small>NOAA SWPC</small></h2>
       <div id="kIdxDisplay" style="min-height:56px"></div>
       <div class="hint" style="margin-top:4px">Kp ≤ 2 quiet · 3–4 unsettled · ≥ 5 storm (HF degraded, aurora possible). <a href="https://www.swpc.noaa.gov/products/planetary-k-index" target="_blank" rel="noopener" style="color:var(--amber)">Full chart ↗</a></div>
     </div>
 
     <div class="card">
-      <h3>◆ Live tools &amp; maps</h3>
+      <h2><span aria-hidden="true">◆</span> Live tools &amp; maps</h2>
       <div class="proptiles">
         <a class="proptile" href="https://prop.kc2g.com/" target="_blank" rel="noopener">
           <div class="proptile-name">Proppy</div>
@@ -731,17 +753,18 @@
           <div class="proptile-desc">Live DX spots — DXHeat</div>
         </a>
       </div>
-      <div class="hint" style="margin-top:10px">All links open in your browser. For offline band advice, see the <b style="color:var(--ink)">Tools</b> tab — grayline and band planner work without a connection.</div>
+      <div class="hint" style="margin-top:10px">All links open in your browser. The grayline and band planner above work without a connection.</div>
     </div>
   </section>
 
+  </main>
   <div id="printArea"></div>
 </div><!-- /.wrap -->
 
 <div id="rightRail">
   <div class="rail-section">
     <div class="rail-hd">K-index · NOAA</div>
-    <div id="railK"><div class="hint" style="font-size:10px">Go to Prop tab to load</div></div>
+    <div id="railK"><div class="hint">Go to Prop tab to load</div></div>
   </div>
   <div class="rail-section">
     <div class="rail-hd">Grayline</div>
@@ -755,7 +778,7 @@
 
 </div><!-- /#layout -->
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"></div>
 
 <div class="updbar" id="updBar" role="status" aria-live="polite">
   <span>⟳ <b>New version ready</b></span>
@@ -765,15 +788,15 @@
 <!-- ============ MORE SHEET ============ -->
 
 <!-- ============ BOTTOM NAV ============ -->
-<nav class="bottomnav" id="bottomNav">
-  <button class="bnav-btn on" data-tab="listen"><span class="bicon">▶</span>Stations</button>
-  <button class="bnav-btn" data-tab="log"><span class="bicon">✦</span>Saved</button>
-  <button class="bnav-btn" data-tab="prop"><span class="bicon">≈</span>Prop</button>
-  <button class="bnav-btn" data-tab="ref"><span class="bicon">◆</span>Ref</button>
+<nav class="bottomnav" id="bottomNav" aria-label="Sections">
+  <button class="bnav-btn on" data-tab="listen" aria-current="page"><span class="bicon" aria-hidden="true">▶</span>Stations</button>
+  <button class="bnav-btn" data-tab="log"><span class="bicon" aria-hidden="true">✦</span>Saved</button>
+  <button class="bnav-btn" data-tab="prop"><span class="bicon" aria-hidden="true">≈</span>Prop</button>
+  <button class="bnav-btn" data-tab="ref"><span class="bicon" aria-hidden="true">◆</span>Ref</button>
 </nav>
 
 <!-- ============ SETUP WIZARD ============ -->
-<div class="modal" id="wizardModal" role="dialog" aria-modal="true" aria-label="Station setup" hidden>
+<div class="modal" id="wizardModal" role="dialog" aria-modal="true" aria-labelledby="wizH1" hidden>
   <div class="wizard">
     <div class="wiz-steps">
       <div class="wiz-dot on" id="wd1">1</div>
@@ -787,20 +810,20 @@
 
     <!-- Step 1: Welcome -->
     <div id="wiz1">
-      <p class="wiz-head">Welcome to SKYWAVE</p>
+      <h2 class="wiz-head" id="wizH1">Welcome to SKYWAVE</h2>
       <p class="wiz-sub">Let's set up your station in 60 seconds.</p>
       <div class="wiz-nav">
-        <button class="btn sm" id="wizNext1">Next →</button>
-        <button class="wiz-skip" id="wizSkip">Skip for now</button>
+        <button class="btn sm" id="wizNext1">Next <span aria-hidden="true">→</span></button>
+        <button class="wiz-skip" id="wizSkip">Skip</button>
       </div>
     </div>
 
     <!-- Step 2: Where are you? -->
     <div id="wiz2" hidden>
-      <p class="wiz-head">Your location</p>
+      <h2 class="wiz-head" id="wizH2">Your location</h2>
       <p class="wiz-sub">Used for grayline, sunrise/sunset, and your Maidenhead grid square.</p>
       <div class="btnrow" style="margin-bottom:14px">
-        <button class="btn sm ghost" id="wizGPS">◉ Use my GPS</button>
+        <button class="btn sm ghost" id="wizGPS"><span aria-hidden="true">◉</span> Use my GPS</button>
       </div>
       <div class="formgrid" style="margin-bottom:4px">
         <label>Latitude<input type="number" id="wizLat" placeholder="30.61" step="0.001"></label>
@@ -812,28 +835,28 @@
         <div class="wiz-prow"><span class="wiz-pk">Sunset</span><span class="wiz-pv" id="wizSSPrev">—</span></div>
       </div>
       <div class="wiz-nav">
-        <button class="btn sm ghost" id="wizBack2">← Back</button>
-        <button class="btn sm" id="wizNext2">Next →</button>
+        <button class="btn sm ghost" id="wizBack2"><span aria-hidden="true">←</span> Back</button>
+        <button class="btn sm" id="wizNext2">Next <span aria-hidden="true">→</span></button>
       </div>
     </div>
 
     <!-- Step 3: Callsign (optional) -->
     <div id="wiz3" hidden>
-      <p class="wiz-head">Your callsign</p>
+      <h2 class="wiz-head" id="wizH3">Your callsign</h2>
       <p class="wiz-sub">Optional. When a live net logs you, SkyWave highlights your entry in the roster and marks the net "✓ logged" — confirmation that net control got you in the log. Stored on this device only.</p>
       <div class="formgrid" style="margin-bottom:14px">
         <label>Callsign<input type="text" id="wizCall" placeholder="e.g. KD5XYZ" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
       </div>
       <div class="wiz-nav">
-        <button class="btn sm ghost" id="wizBack3">← Back</button>
-        <button class="btn sm" id="wizNext3">Next →</button>
+        <button class="btn sm ghost" id="wizBack3"><span aria-hidden="true">←</span> Back</button>
+        <button class="btn sm" id="wizNext3">Next <span aria-hidden="true">→</span></button>
         <button class="wiz-skip" id="wizSkip3">Skip</button>
       </div>
     </div>
 
     <!-- Step 4: All set -->
     <div id="wiz4" hidden>
-      <p class="wiz-head">◆ All set!</p>
+      <h2 class="wiz-head" id="wizH4"><span aria-hidden="true">◆</span> All set</h2>
       <p class="wiz-sub">Your station is saved on this device only — no account, no server, no tracking.</p>
       <div class="wiz-preview">
         <div class="wiz-prow"><span class="wiz-pk">Grid</span><span class="wiz-pv" id="wiz3Grid">—</span></div>
@@ -841,7 +864,7 @@
         <div class="wiz-prow"><span class="wiz-pk">Sunset</span><span class="wiz-pv" id="wiz3SS">—</span></div>
       </div>
       <div class="wiz-nav">
-        <button class="btn" id="wizDone">▶ Start listening</button>
+        <button class="btn" id="wizDone"><span aria-hidden="true">▶</span> Start listening</button>
       </div>
     </div>
   </div>
@@ -862,7 +885,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.09.13.054";
+const VERSION="2026.09.17.055";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -1131,7 +1154,8 @@ function renderLastUpd(){const el=document.getElementById("lastUpd");
   const age=days<=0?"today":days===1?"yesterday":days+" days ago";
   const stale=days>STALE_DAYS?"  ·  ⚠ may be out of date":"";
   el.innerHTML="Season <b style='color:var(--amber)'>"+META.code.toUpperCase()+"</b> · "+META.count.toLocaleString()+" entries · updated "+when+" ("+age+")"+stale;}
-function setNetDot(){const d=document.getElementById("netDot");d.className="netdot "+(navigator.onLine?"on":"off");}
+function setNetDot(){const on=navigator.onLine,d=document.getElementById("netDot"),l=document.getElementById("netTxt");
+  d.className="netdot "+(on?"on":"off");if(l)l.textContent=on?"online":"offline";}
 
 /* ============ day-of-week + on-air ============ */
 function cap(x){return x.charAt(0).toUpperCase()+x.slice(1).toLowerCase();}
@@ -1212,13 +1236,17 @@ function rowHTML(e,tagOverride,expandable){
   const k=keyOf(e),fav=favSet.has(k)?" on":"";
   const da="data-f=\""+attr(e.freq)+"\" data-st=\""+attr(e.station)+"\" data-tm=\""+attr(e.time)+"\" data-lg=\""+attr(e.lang)+"\" data-tg=\""+attr(e.target)+"\" data-it=\""+attr(e.itu)+"\" data-md=\""+attr(md)+"\"";
   const cls='row'+(live&&!isRef?' now':'')+(isMine?' mine':'')+(isNet?' netrow'+(exp?' exp':''):'');
-  const rowAttrs=isNet?(' data-act="netx" data-nid="'+attr(id)+'" role="button" tabindex="0" aria-expanded="'+(exp?"true":"false")+'"'):'';
+  const rowAttrs=isNet?(' data-act="netx" data-nid="'+attr(id)+'"'):'';
   return '<div class="'+cls+'"'+rowAttrs+'>'+
     '<div class="freq">'+fmtFreq(e.freq)+'<span class="u">'+freqUnit(e.freq)+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(e.station||"(unknown)")+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
     '<div class="right">'+tag+'<span class="time">'+esc(e.time)+(e.days?' '+esc(e.days):'')+'</span>'+
-      '<span class="acts"><span class="act fav'+fav+'" data-act="fav" role="button" tabindex="0" aria-label="Toggle favorite" aria-pressed="'+(fav?"true":"false")+'" '+da+'>★</span></span>'+
-    '</div>'+(isNet?'<span class="chev">›</span>':'')+'</div>'+(exp?dirNetPanel(e):'');
+      '<span class="acts"><button type="button" class="act fav'+fav+'" data-act="fav" aria-label="Favorite" aria-pressed="'+(fav?"true":"false")+'" '+da+'>★</button></span>'+
+    '</div>'+(isNet?chevHTML(id,exp,e.station):'')+'</div>'+(exp?dirNetPanel(e):'');
+}
+// the expander is a real button so the keyboard and screen readers reach it; the row itself stays tappable
+function chevHTML(id,exp,name){
+  return '<button type="button" class="chev" data-act="netx" data-nid="'+attr(id)+'" aria-expanded="'+(exp?"true":"false")+'" aria-label="Details: '+attr(name||"")+'"><span aria-hidden="true">›</span></button>';
 }
 function renderRows(elId,list,countId,label){
   const el=document.getElementById(elId);
@@ -1301,22 +1329,22 @@ function starRowHTML(e){
   const md=modeOf(e),badge=md?'<span class="badge">'+md+'</span>':'';
   const meta=[langName(e.lang)?'<span class="lang">'+esc(langName(e.lang))+'</span>':'',tgtName(e.target),e.itu,e.notes].filter(Boolean).join(" · ");
   const k=keyOf(e),worked=heardToday(k);
-  const wkd=worked?'<span class="wkd">✓ heard</span>':'';
+  const wkd=worked?'<span class="wkd"><span aria-hidden="true">✓</span> heard</span>':'';
   const da="data-f=\""+attr(e.freq)+"\" data-st=\""+attr(e.station)+"\" data-tm=\""+attr(e.time)+"\" data-lg=\""+attr(e.lang)+"\" data-tg=\""+attr(e.target)+"\" data-it=\""+attr(e.itu)+"\" data-md=\""+attr(md)+"\"";
   return '<div class="row'+(live&&!isRef?' now':'')+(worked?' worked':'')+'">'+
     '<div class="freq">'+fmtFreq(e.freq)+'<span class="u">'+freqUnit(e.freq)+'</span></div>'+
     '<div class="mid"><div class="st"><span class="callsign">'+esc(e.station||"(unknown)")+'</span>'+badge+wkd+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
     '<div class="right">'+tag+'<span class="time">'+esc(e.time)+(e.days?' '+esc(e.days):'')+'</span>'+
       '<span class="acts">'+
-        '<span class="act heard'+(worked?' on':'')+'" data-act="heard" data-k="'+attr(k)+'" role="button" tabindex="0" aria-label="Mark heard today" aria-pressed="'+(worked?"true":"false")+'" title="Mark heard today — clears at 0000 UTC">✓</span>'+
-        '<span class="act fav on" data-act="fav" role="button" tabindex="0" aria-label="Remove favorite" aria-pressed="true" '+da+'>★</span>'+
+        '<button type="button" class="act heard'+(worked?' on':'')+'" data-act="heard" data-k="'+attr(k)+'" aria-label="Heard today" aria-pressed="'+(worked?"true":"false")+'" title="Heard today — clears at 0000 UTC">✓</button>'+
+        '<button type="button" class="act fav on" data-act="fav" aria-label="Favorite" aria-pressed="true" '+da+'>★</button>'+
       '</span>'+
     '</div></div>';
 }
 function renderStars(){
   const list=FAVS.map(o=>{const e=entry(o.freq,o.time,o.days||"",o.itu||"",o.station,o.lang||"",o.target||"","","fav");return e;});
   list.sort((a,b)=>(onAir(b)-onAir(a))||a.freq-b.freq);
-  if(!list.length){document.getElementById("starRows").innerHTML='<div class="empty">No favorites yet.<br>Tap ★ on any listing to keep it here.</div>';return;}
+  if(!list.length){document.getElementById("starRows").innerHTML='<div class="empty">No favorites yet.<br>Select ★ on any listing to keep it here.</div>';return;}
   document.getElementById("starRows").innerHTML=list.map(starRowHTML).join("");
 }
 
@@ -1350,7 +1378,7 @@ function renderMine(){
   el.innerHTML=MINE.map((o,i)=>{const md=o.mode?'<span class="badge">'+esc(o.mode)+'</span>':'';
     return '<div class="row mine"><div class="freq">'+fmtFreq(+o.freq)+'<span class="u">'+freqUnit(+o.freq)+'</span></div>'+
     '<div class="mid"><div class="st">'+esc(o.station)+md+'</div><div class="meta">'+esc(o.time)+(o.days?' '+esc(o.days):'')+(o.notes?' · '+esc(o.notes):'')+'</div></div>'+
-    '<div class="right"><span class="act log" data-act="delmine" data-i="'+i+'" role="button" tabindex="0" aria-label="Delete '+attr(o.station)+'">delete</span></div></div>';}).join("");
+    '<div class="right"><button type="button" class="act log" data-act="delmine" data-i="'+i+'" aria-label="Delete '+attr(o.station)+'">Delete</button></div></div>';}).join("");
 }
 
 /* ============ live nets (NetLogger) ============ */
@@ -1626,23 +1654,23 @@ function renderNets(){
       const badge=n.mode?'<span class="badge">'+esc(n.mode)+'</span>':'';
       const meta=[n.ncs?'<span class="lang">NCS '+esc(n.ncs)+'</span>':'',n.band,netsStartStr(n.start)?("since "+netsStartStr(n.start)):""].filter(Boolean).join(" · ");
       const id=liveNetId(n),exp=netOpen.has(id);
-      return '<div class="row now netrow'+(exp?' exp':'')+'" data-act="netx" data-nid="'+attr(id)+'" role="button" tabindex="0" aria-expanded="'+(exp?"true":"false")+'">'+
+      return '<div class="row now netrow'+(exp?' exp':'')+'" data-act="netx" data-nid="'+attr(id)+'">'+
         '<div class="freq">'+fmtFreq(n.freq)+'<span class="u">'+freqUnit(n.freq)+'</span></div>'+
         '<div class="mid"><div class="st">'+esc(n.name)+badge+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div>'+
-        '<div class="right">'+(selfInRoster(n)?'<span class="tag you">✓ LOGGED</span>':'')+'<span class="tag live"><i class="dot"></i>LIVE</span></div>'+
-        '<span class="chev">›</span></div>'+(exp?liveNetPanel(n):"");
+        '<div class="right">'+(selfInRoster(n)?'<span class="tag you"><span aria-hidden="true">✓</span> LOGGED</span>':'')+'<span class="tag live"><i class="dot"></i>LIVE</span></div>'+
+        chevHTML(id,exp,n.name)+'</div>'+(exp?liveNetPanel(n):"");
     }).join("");
-    if(far.length)html+='<div class="empty farnote" data-act="farnets" role="button" tabindex="0">'+
-      far.length+' VHF/UHF net'+(far.length===1?"":"s")+' beyond '+(+PREFS.vhfMi)+' mi hidden (line of sight) · <b>show</b></div>';
+    if(far.length)html+='<button type="button" class="empty farnote" data-act="farnets">'+
+      far.length+' VHF/UHF net'+(far.length===1?"":"s")+' beyond '+(+PREFS.vhfMi)+' mi hidden (line of sight) · <b>show</b></button>';
     else if(_showFarNets&&list.some(n=>netTooFar(n)))
-      html+='<div class="empty farnote" data-act="farnets" role="button" tabindex="0">showing distant VHF/UHF nets · <b>hide again</b></div>';
+      html+='<button type="button" class="empty farnote" data-act="farnets">showing distant VHF/UHF nets · <b>hide again</b></button>';
   } else if(far.length){
     cnt.innerHTML="";
-    html='<div class="empty farnote" data-act="farnets" role="button" tabindex="0">All '+far.length+
-      ' live nets are VHF/UHF beyond '+(+PREFS.vhfMi)+' mi (line of sight) · <b>show anyway</b></div>';
+    html='<button type="button" class="empty farnote" data-act="farnets">All '+far.length+
+      ' live nets are VHF/UHF beyond '+(+PREFS.vhfMi)+' mi (line of sight) · <b>show anyway</b></button>';
   } else {
     cnt.innerHTML="";
-    html='<div class="empty">'+(NETS.list&&NETS.list.length?'No live nets match your filter.':(navigator.onLine?'No live nets loaded yet — tap ⟳ Refresh.':'Offline — live nets need a connection.'))+'</div>';
+    html='<div class="empty">'+(NETS.list&&NETS.list.length?'No live nets match your filter.':(navigator.onLine?'No live nets loaded yet — select Refresh.':'Offline — live nets need a connection.'))+'</div>';
   }
   // starting soon: scheduled nets that begin within the next 60 minutes
   const now=new Date(),soonSet=new Set();
@@ -1716,24 +1744,27 @@ function validGeo(la,ln){return isFinite(la)&&isFinite(ln)&&la>=-90&&la<=90&&ln>
 let _wakeLock=null,_lastKp=null,_kFetched=false,_kiosk=false;
 
 function applyTheme(t){
+  // every colour transition would fire at once on a theme flip, so switch them off for one frame
+  const st=document.createElement("style");st.textContent="*,*::before,*::after{transition:none!important}";document.head.appendChild(st);
   document.documentElement.dataset.theme=t||"";
   PREFS.theme=t||"";saveJSON(K.prefs,PREFS);
   const tc=document.querySelector('meta[name="theme-color"]');
   if(tc)tc.setAttribute("content",t==="light"?"#F7F7F7":"#0B1325");
   const b=document.getElementById("themeToggle");
   if(b){
-    const sun='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#f5a623" stroke="none"/><line x1="12" y1="2.6" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.4"/><line x1="4.3" y1="4.3" x2="6" y2="6"/><line x1="18" y1="18" x2="19.7" y2="19.7"/><line x1="2.6" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.4" y2="12"/><line x1="4.3" y1="19.7" x2="6" y2="18"/><line x1="18" y1="6" x2="19.7" y2="4.3"/></svg>';
-    const moon='<svg viewBox="0 0 24 24" width="16" height="16"><path fill="#5aa0f0" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.91-.1-1.35A5.5 5.5 0 0 1 13.35 3.1 9.05 9.05 0 0 0 12 3z"/></svg>';
-    b.innerHTML=t==="light"?sun:moon;
+    const sun='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/><line x1="12" y1="2.6" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.4"/><line x1="4.3" y1="4.3" x2="6" y2="6"/><line x1="18" y1="18" x2="19.7" y2="19.7"/><line x1="2.6" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.4" y2="12"/><line x1="4.3" y1="19.7" x2="6" y2="18"/><line x1="18" y1="6" x2="19.7" y2="4.3"/></svg>';
+    const moon='<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.91-.1-1.35A5.5 5.5 0 0 1 13.35 3.1 9.05 9.05 0 0 0 12 3z"/></svg>';
+    b.innerHTML=t==="light"?sun:moon;b.classList.toggle("sun",t==="light");b.classList.toggle("moon",t!=="light");
     b.title=t==="light"?"Switch to dark theme":"Switch to light theme";
     b.setAttribute("aria-label",b.title);}
+  void document.body.offsetHeight;requestAnimationFrame(()=>st.remove());
 }
 function applyZoom(z){
   PREFS.zoom=z;saveJSON(K.prefs,PREFS);
   if(z===1){document.body.style.zoom="";document.body.style.transform="";}
   else if(CSS.supports("zoom","1")){document.body.style.zoom=String(z);document.body.style.transform="";}
   else{document.body.style.zoom="";document.body.style.transform="scale("+z+")";document.body.style.transformOrigin="0 0";}
-  document.querySelectorAll("[data-zoom-btn]").forEach(b=>b.classList.toggle("on",b.dataset.zoomBtn===String(z)));
+  document.querySelectorAll("[data-zoom-btn]").forEach(b=>{const on=b.dataset.zoomBtn===String(z);b.classList.toggle("on",on);b.setAttribute("aria-pressed",String(on));});
   const fb=document.getElementById("fontToggle");
   if(fb){fb.classList.toggle("on",z>1);fb.title="Text size: "+(z===1?"Normal":z===1.15?"Large":"Larger");}
 }
@@ -1780,7 +1811,7 @@ async function toggleKiosk(){
     try{await document.documentElement.requestFullscreen();full=!!document.fullscreenElement;}catch(e){}
   }
   if(navigator.wakeLock){try{_wakeLock=await navigator.wakeLock.request("screen");awake=!!_wakeLock;}catch(e){}}
-  if(!full&&!awake){setKioskUI(false);toast("Kiosk mode isn't available in this browser");return;}
+  if(!full&&!awake){setKioskUI(false);toast("Kiosk mode isn't available in this browser. Add SkyWave to your home screen for a full-screen view.",true);return;}
   _kiosk=true;setKioskUI(true);
   toast(full?(awake?"Kiosk mode on":"Kiosk mode on — screen may still sleep")
            :"Screen kept awake — full-screen isn't available here");
@@ -1797,12 +1828,12 @@ function renderRail(){
     const c=_lastKp<=2?"var(--green)":_lastKp<=4?"var(--amber)":"var(--red)";
     const desc=_lastKp<=2?"Quiet":_lastKp<=4?"Unsettled":"Storm";
     railK.innerHTML='<div class="rail-kval" style="color:'+c+'">'+_lastKp.toFixed(1)+'</div>'+
-      '<div style="font-size:9px;color:var(--ink-dim);margin-top:2px">'+desc+'</div>';
+      '<div style="font-size:var(--fs-xs);color:var(--ink-dim);margin-top:2px">'+desc+'</div>';
   } else if(navigator.onLine&&!_kFetched&&typeof matchMedia==="function"&&matchMedia("(min-width:1280px)").matches){
     _kFetched=true;fetchKIndex();
-    railK.innerHTML='<div class="hint" style="font-size:10px">Loading…</div>';
+    railK.innerHTML='<div class="hint">Loading…</div>';
   } else {
-    railK.innerHTML='<div class="hint" style="font-size:10px">'+(navigator.onLine?"":"Offline — ")+'Go to Prop tab to load</div>';
+    railK.innerHTML='<div class="hint">'+(navigator.onLine?"":"Offline — ")+'Go to Prop tab to load</div>';
   }
   // Grayline
   const now=new Date(),st=sunTimes(now,GEO.lat,GEO.lng);
@@ -1951,8 +1982,9 @@ function renderAdvise(isDay,nearGray){
 }
 
 /* ============ export / print ============ */
-function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");
-  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("show"),1600);}
+function toast(t,err){const el=document.getElementById("toast");el.textContent=t;el.classList.toggle("err",!!err);el.classList.add("show");
+  clearTimeout(toast._t);if(!err)toast._t=setTimeout(()=>el.classList.remove("show"),1600);}
+document.getElementById("toast").addEventListener("click",()=>document.getElementById("toast").classList.remove("show"));
 /* Grayline windows as an .ics calendar feed. This is the only alert that can
    reach you with SkyWave closed: your own calendar app fires it. No server, no
    push subscription, no third party — the file is generated on-device. */
@@ -1994,14 +2026,14 @@ function graylineIcs(days){
 function downloadBlob(name,text,mime){
   try{const b=new Blob([text],{type:mime||"text/plain"}),u=URL.createObjectURL(b),a=document.createElement("a");
     a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Saved "+name);}
-  catch(e){toast("Download failed");}
+  catch(e){toast("Unable to save the file. Try again, or copy the list instead.",true);}
 }
 function copyText(t){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast("Copied")).catch(()=>fallbackCopy(t));
   else fallbackCopy(t);
 }
 function fallbackCopy(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";
-  document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copied");}catch(e){toast("Copy not supported");}ta.remove();}
+  document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copied");}catch(e){toast("Copying isn't available here. Select the text and copy it by hand.",true);}ta.remove();}
 function onAirText(){
   const n=new Date();
   const f=document.getElementById("nowFilter").value.trim().toLowerCase();
@@ -2038,9 +2070,9 @@ function doPrint(){
 
 /* ============ reference tab ============ */
 function renderRef(){
-  document.getElementById("refMeter").innerHTML='<h3>◆ Shortwave broadcast bands</h3>'+tableHTML(["Band","From kHz","To kHz"],METER);
-  document.getElementById("refHam").innerHTML='<h3>◆ Amateur HF bands (US)</h3>'+tableHTML(["Band","From","To","Notes"],HAM,true);
-  document.getElementById("refTime").innerHTML='<h3>◆ Time &amp; frequency standards</h3>'+
+  document.getElementById("refMeter").innerHTML='<h2><span aria-hidden="true">◆</span> Shortwave broadcast bands</h2>'+tableHTML(["Band","From kHz","To kHz"],METER);
+  document.getElementById("refHam").innerHTML='<h2><span aria-hidden="true">◆</span> Amateur HF bands (US)</h2>'+tableHTML(["Band","From","To","Notes"],HAM,true);
+  document.getElementById("refTime").innerHTML='<h2><span aria-hidden="true">◆</span> Time &amp; frequency standards</h2>'+
     '<table><tr><th>Station</th><th>kHz</th></tr>'+
     '<tr><td>WWV / WWVH</td><td class="f">2500 · 5000 · 10000 · 15000 · 20000</td></tr>'+
     '<tr><td>CHU Canada</td><td class="f">3330 · 7850 · 14670</td></tr>'+
@@ -2081,6 +2113,7 @@ function wizStep(n){
     d.className="wiz-dot"+(i<n?" done":i===n?" on":"");
   });
   [1,2,3].forEach(i=>document.getElementById("wb"+i).className="wiz-bar"+(i<n?" done":""));
+  document.getElementById("wizardModal").setAttribute("aria-labelledby","wizH"+n);
 }
 function updateWiz2Preview(){
   const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
@@ -2091,17 +2124,26 @@ function updateWiz2Preview(){
   document.getElementById("wizSRPrev").textContent=st.sunrise?fmtUTC(st.sunrise)+"Z":st.polar||"—";
   document.getElementById("wizSSPrev").textContent=st.sunset?fmtUTC(st.sunset)+"Z":st.polar||"—";
 }
+let _wizOpener=null;
+function setBackgroundInert(on){["layout","bottomNav"].forEach(id=>{const n=document.getElementById(id);if(n)n.inert=on;});}
 function showWizard(){
   document.getElementById("wizLat").value=GEO.lat;
   document.getElementById("wizLng").value=GEO.lng;
   updateWiz2Preview();
   wizStep(1);
+  _wizOpener=document.activeElement;
+  setBackgroundInert(true);
   document.getElementById("wizardModal").hidden=false;
   document.getElementById("wizNext1").focus();
 }
 function closeWizard(){
   document.getElementById("wizardModal").hidden=true;
+  setBackgroundInert(false);
   PREFS.setup=true;saveJSON(K.prefs,PREFS);
+  // hand focus back to whatever opened the wizard, or to the current section's nav button
+  const back=(_wizOpener&&_wizOpener!==document.body&&_wizOpener.isConnected&&_wizOpener.offsetParent!==null)?_wizOpener
+    :[...document.querySelectorAll(".snav-btn.on,.bnav-btn.on")].find(b=>b.offsetParent!==null);
+  if(back)back.focus();
 }
 
 /* ============ navigation ============ */
@@ -2116,11 +2158,11 @@ function fetchKIndex(){
       const kp=parseFloat(last[1]);
       _lastKp=kp;renderRail();
       const ts=String(last[0]).slice(0,16);
-      const kColor=kp<=2?"var(--green)":kp<=4?"var(--amber)":"#ff5555";
+      const kColor=kp<=2?"var(--green)":kp<=4?"var(--amber)":"var(--red)";
       const bars=rows.slice(-8).map(r=>{
         const k=parseFloat(r[1]);
         const h=Math.max(4,Math.round((k/9)*44));
-        const c=k<=2?"var(--green)":k<=4?"var(--amber)":"#ff5555";
+        const c=k<=2?"var(--green)":k<=4?"var(--amber)":"var(--red)";
         return'<div class="kbar" style="height:'+h+'px;background:'+c+'" title="Kp '+k.toFixed(1)+'"></div>';
       }).join("");
       el.innerHTML=
@@ -2132,7 +2174,7 @@ function fetchKIndex(){
       _kFetched=false;  // allow the rail to retry on a later tick
       el.innerHTML='<div class="hint">Could not load — check connection</div>';
       const rk=document.getElementById("railK");
-      if(rk)rk.innerHTML='<div class="hint" style="font-size:10px">Could not load</div>';
+      if(rk)rk.innerHTML='<div class="hint">Could not load</div>';
     });
 }
 function renderProp(){
@@ -2142,19 +2184,20 @@ function renderProp(){
     fetchKIndex();
   } else {
     el.className="prop-offline";
-    el.innerHTML="⚠ Offline — images and links need a connection. Offline band advice is on the <b style='color:var(--ink)'>Tools</b> tab.";
+    el.innerHTML="⚠ Offline — images and links need a connection. The grayline and band planner below work offline.";
     const kEl=document.getElementById("kIdxDisplay");
     if(kEl)kEl.innerHTML='<div class="hint" style="padding:10px 0">Offline — K-index unavailable</div>';
   }
 }
 function showTab(name){
-  document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
-  document.querySelectorAll(".snav-btn[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
+  document.querySelectorAll(".bnav-btn[data-tab],.snav-btn[data-tab]").forEach(b=>{
+    const on=b.dataset.tab===name;b.classList.toggle("on",on);
+    if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
   ["listen","log","ref","prop"].forEach(t=>document.getElementById("tab-"+t).hidden=(t!==name));
   if(name==="prop"){renderGray();renderProp();}
 }
 function showSub(group,sub){
-  document.querySelectorAll("#seg-"+group+" button").forEach(b=>b.classList.toggle("on",b.dataset.sub===sub));
+  document.querySelectorAll("#seg-"+group+" button").forEach(b=>{const on=b.dataset.sub===sub;b.classList.toggle("on",on);b.setAttribute("aria-pressed",String(on));});
   const map={listen:["nets","now","search","freq"],log:["stars","mine"]};
   map[group].forEach(s=>document.getElementById("sub-"+s).hidden=(s!==sub));
 }
@@ -2181,9 +2224,9 @@ document.getElementById("shareBtn").addEventListener("click",async()=>{
 document.getElementById("grayAlertX").addEventListener("click",()=>{
   _grayHidden=_grayKey;document.getElementById("grayAlert").hidden=true;});
 document.getElementById("dlGray").addEventListener("click",()=>{
-  if(!validGeo(GEO.lat,GEO.lng)){toast("Set your location first");return;}
+  if(!validGeo(GEO.lat,GEO.lng)){toast("Set your location above first, then download the reminders.",true);return;}
   const ics=graylineIcs(14);
-  if(!/BEGIN:VEVENT/.test(ics)){toast("No grayline events — polar day/night here");return;}
+  if(!/BEGIN:VEVENT/.test(ics)){toast("No grayline windows in the next 14 days — polar day or night at this location.",true);return;}
   downloadBlob("skywave-grayline.ics",ics,"text/calendar");});
 
 document.querySelectorAll(".bnav-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
@@ -2198,21 +2241,21 @@ document.getElementById("wizNext1").addEventListener("click",()=>{
 document.getElementById("wizSkip").addEventListener("click",closeWizard);
 document.getElementById("wizBack2").addEventListener("click",()=>wizStep(1));
 document.getElementById("wizGPS").addEventListener("click",()=>{
-  if(!navigator.geolocation){toast("No geolocation");return;}
+  if(!navigator.geolocation){toast("This device has no location service. Type the coordinates instead.",true);return;}
   const btn=document.getElementById("wizGPS");btn.textContent="Locating…";btn.disabled=true;
   navigator.geolocation.getCurrentPosition(p=>{
     const la=+p.coords.latitude.toFixed(3),ln=+p.coords.longitude.toFixed(3);
     document.getElementById("wizLat").value=la;document.getElementById("wizLng").value=ln;
     GEO={lat:la,lng:ln,label:"My location"};saveJSON(K.geo,GEO);
-    updateWiz2Preview();btn.textContent="◉ Use my GPS";btn.disabled=false;
-  },()=>{btn.textContent="◉ Use my GPS";btn.disabled=false;toast("Location denied");});
+    updateWiz2Preview();btn.innerHTML='<span aria-hidden="true">◉</span> Use my GPS';btn.disabled=false;
+  },()=>{btn.innerHTML='<span aria-hidden="true">◉</span> Use my GPS';btn.disabled=false;toast("Location access is blocked. Allow it in your browser settings, or type the coordinates.",true);});
 });
 ["wizLat","wizLng"].forEach(id=>document.getElementById(id).addEventListener("input",updateWiz2Preview));
 document.getElementById("wizNext2").addEventListener("click",()=>{
   const la=parseFloat(document.getElementById("wizLat").value),ln=parseFloat(document.getElementById("wizLng").value);
   if(validGeo(la,ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);}
   else if(document.getElementById("wizLat").value.trim()||document.getElementById("wizLng").value.trim()){
-    toast("Latitude −90…90 · longitude −180…180");return;}
+    toast("Enter a latitude from −90 to 90 and a longitude from −180 to 180.",true);return;}
   renderGray();renderIdent();
   document.getElementById("wizCall").value=PREFS.call||"";
   wizStep(3);
@@ -2227,7 +2270,7 @@ function fillWizDone(){
 document.getElementById("wizBack3").addEventListener("click",()=>wizStep(2));
 document.getElementById("wizNext3").addEventListener("click",()=>{
   const v=document.getElementById("wizCall").value.trim().toUpperCase();
-  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("That doesn't look like a callsign");return;}
+  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("Use 3–12 letters, digits or / for a callsign.",true);return;}
   PREFS.call=v;saveJSON(K.prefs,PREFS);fillWizDone();
 });
 // Skip = continue without saving anything — settable later in Ref
@@ -2252,7 +2295,7 @@ document.getElementById("freqTol").addEventListener("change",refreshFreq);
 
 // row action delegation — shared by click and keyboard (Enter/Space)
 function handleAct(t){
-  const a=t.dataset.act;
+  const a=t.dataset.act,hadFocus=document.activeElement===t,d=t.dataset;
   if(a==="fav"){
     const o={freq:+t.dataset.f,station:t.dataset.st,time:t.dataset.tm,lang:t.dataset.lg,target:t.dataset.tg,itu:t.dataset.it,days:""};
     toggleFav(o);
@@ -2260,16 +2303,16 @@ function handleAct(t){
   else if(a==="delmine"){delMine(+t.dataset.i);}
   else if(a==="netx"){const id=t.dataset.nid;netOpen.has(id)?netOpen.delete(id):netOpen.add(id);renderNets();}
   else if(a==="farnets"){_showFarNets=!_showFarNets;renderNets();}
+  // views re-render with innerHTML, which drops keyboard focus; put it back on the same control
+  if(hadFocus&&!t.isConnected){
+    const m=[...document.querySelectorAll('button[data-act="'+a+'"]')].find(b=>b.dataset.nid===d.nid&&b.dataset.k===d.k&&b.dataset.f===d.f&&b.dataset.st===d.st&&b.dataset.i===d.i);
+    if(m)m.focus({preventScroll:true});
+  }
 }
 document.addEventListener("click",ev=>{
   const t=ev.target.closest("[data-act]");if(t)handleAct(t);
 });
 document.addEventListener("keydown",ev=>{
-  // activate row actions from the keyboard
-  if(ev.key==="Enter"||ev.key===" "){
-    const t=ev.target&&ev.target.closest?ev.target.closest("[data-act]"):null;
-    if(t){ev.preventDefault();handleAct(t);return;}
-  }
   // Escape leaves kiosk first, then closes the wizard
   if(ev.key==="Escape"){
     if(_kiosk){exitKiosk();toast("Kiosk mode off");return;}
@@ -2296,14 +2339,14 @@ document.getElementById("exMine").addEventListener("click",addExamples);
 document.getElementById("geoLat").addEventListener("change",saveGeo);
 document.getElementById("geoLng").addEventListener("change",saveGeo);
 document.getElementById("useLoc").addEventListener("click",()=>{
-  if(!navigator.geolocation){toast("No geolocation");return;}
+  if(!navigator.geolocation){toast("This device has no location service. Type the coordinates instead.",true);return;}
   toast("Locating…");
   navigator.geolocation.getCurrentPosition(p=>{GEO={lat:+p.coords.latitude.toFixed(3),lng:+p.coords.longitude.toFixed(3),label:"My location"};
-    saveJSON(K.geo,GEO);renderGray();renderIdent();toast("Location set");},()=>toast("Location denied"));
+    saveJSON(K.geo,GEO);renderGray();renderIdent();toast("Location set");},()=>toast("Location access is blocked. Allow it in your browser settings, or type the coordinates.",true));
 });
 function saveGeo(){const la=parseFloat(document.getElementById("geoLat").value),ln=parseFloat(document.getElementById("geoLng").value);
   if(validGeo(la,ln)){GEO={lat:la,lng:ln,label:GEO.label==="My location"?"My location":"custom"};saveJSON(K.geo,GEO);renderGray();renderIdent();}
-  else toast("Latitude −90 to 90, longitude −180 to 180");}
+  else toast("Enter a latitude from −90 to 90 and a longitude from −180 to 180.",true);}
 document.getElementById("copyNow").addEventListener("click",()=>copyText(onAirText()));
 document.getElementById("dlCard").addEventListener("click",()=>downloadBlob("skywave-band-card.txt",bandCardText()));
 document.getElementById("printCard").addEventListener("click",doPrint);
@@ -2317,12 +2360,12 @@ document.getElementById("fileIn").addEventListener("change",ev=>{const file=ev.t
   msg("Reading "+file.name+"…",false);const r=new FileReader();
   r.onload=()=>{loadText(r.result,{code:selectedSeason()}).then(res=>{
     if(res.ok)msg("Loaded "+META.count.toLocaleString()+" entries."+storedNote(res.stored,res.why),!res.stored);});};
-  r.onerror=()=>msg("Could not read the file.",true);r.readAsText(file,"ISO-8859-1");});
+  r.onerror=()=>msg("Unable to read the file. Choose the EiBi .csv you downloaded.",true);r.readAsText(file,"ISO-8859-1");});
 document.getElementById("relaySave").addEventListener("click",()=>{
   const v=document.getElementById("relayIn").value.trim();
   if(v&&!/^https:\/\/[a-z0-9.-]+/i.test(v)){document.getElementById("relayMsg").textContent="Must be an https:// URL (or blank to disable).";return;}
   PREFS.relay=v;saveJSON(K.prefs,PREFS);
-  document.getElementById("relayMsg").textContent=v?"Saved — your relay is tried first for all live data.":"Cleared — using public relays only.";
+  document.getElementById("relayMsg").textContent=v?"Saved — your relay is tried first for all live data.":"Cleared — using SkyWave's own mirror.";
   toast(v?"Relay saved":"Relay cleared");
 });
 document.getElementById("clearBtn").addEventListener("click",()=>{
@@ -2383,7 +2426,7 @@ applyTheme(PREFS.theme||"");applyZoom(PREFS.zoom||1);
 document.getElementById("hr24Toggle").checked=PREFS.hr24!==false;
 function saveCall(v){
   v=String(v||"").trim().toUpperCase();
-  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("That doesn't look like a callsign");return false;}
+  if(v&&!/^[A-Z0-9/]{3,12}$/.test(v)){toast("Use 3–12 letters, digits or / for a callsign.",true);return false;}
   PREFS.call=v;saveJSON(K.prefs,PREFS);
   const a=document.getElementById("callIn"),b=document.getElementById("callQuick");
   if(a)a.value=v;if(b)b.value=v;
