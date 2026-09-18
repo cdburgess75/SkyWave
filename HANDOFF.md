@@ -281,7 +281,7 @@ node test/smoke.mjs
 - **C8 — Antenna math uses classic 468/234/1005 approximations.** Ignores height, wire diameter, velocity factor.
 - **C9 — Grayline advice is rule-of-thumb, not a propagation model.**
 - ~~**C10 — No committed automated tests.**~~ **Resolved:** `test/smoke.mjs`, `test/domain.mjs` (on-air/day/season/sun/parse/net-field logic) and `test/nets-parser.mjs` run in CI via `npm test`.
-- **C11 — Accessibility not audited.** (R8)
+- ~~**C11 — Accessibility not audited.**~~ **Addressed 2026.09.17:** interface review pass (names on every control, tab state exposed, native buttons for row actions, 24 px targets, inert wizard, landmarks, 11 px type floor, light-theme contrast, error copy). Screen-reader run-through on a real device still owed.
 - **C12 — `tab-log` section ID means the Saved tab.** Historical artifact; rename with care.
 
 ---
@@ -314,4 +314,4 @@ node test/smoke.mjs
 - **R4 — Modularize + build + tests.** ES modules + esbuild/vite still emitting one file; Vitest unit tests for the pure functions listed in §9.
 - **R5 — Schema versioning/migration.** Formal migration path when a key bump is needed (C6).
 - **R6 — Self-hosted CORS relay** (Cloudflare Worker). Eliminates dependency on public relays (C1).
-- **R7 — Accessibility pass** (C11).
+- ✅ **R7 — Accessibility pass** (C11) — see 2026.09.17.055 in CHANGELOG.md.

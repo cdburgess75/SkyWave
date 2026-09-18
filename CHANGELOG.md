@@ -2,6 +2,28 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.09.17.055] — 2026-09-17
+
+### Fixed
+- **Interface review pass** (accessibility, layout, writing, typography, colour, UI polish).
+- Every filter field and select now has an accessible name (`aria-label` on the compact `.ctrl` rows; the three text-size buttons are "Normal / Large / Larger text"). Placeholders shortened so they no longer clip at 320 px.
+- Selected tab, sub-tab and text-size buttons expose their state (`aria-current="page"` / `aria-pressed`) and carry a bold weight as a non-colour cue.
+- Row actions (★ favorite, ✓ heard, Delete), the net-row expander and the "show distant nets" reveal are real `<button>`s with 24 × 24 px minimum targets; the whole net row stays tappable. Keyboard focus is put back on the same control after a view re-renders. The bespoke Enter/Space keydown handler was deleted as redundant.
+- First-run wizard: the page behind it is `inert` while open, focus returns to the opener (or the current nav button) on close, and each step's title is a real `<h2>` that labels the dialog.
+- Page structure: a "Skip to content" link, a `<main>` landmark, labelled sections and nav, card titles promoted to `<h2>`, and every decorative glyph (◆ ▶ ✦ ≈ ⟳ ★ ✓ ✕ → ←) hidden from screen readers. The EiBi network dot has a visible "online / offline" word beside it.
+- Fields no longer strip the focus outline: a 2 px amber `:focus-visible` ring replaces the 22 %-alpha glow. Inputs are 16 px on phones (no iOS focus zoom) and 14 px in the desktop layout.
+- Toast is a `role="status"` live region. Errors render as a red toast that stays until tapped, and every error now says how to recover ("Location access is blocked. Allow it in your browser settings, or type the coordinates.").
+- Stale copy: the Prop tab and its offline banner pointed at a "Tools" tab that no longer exists; the relay-cleared message still described public relays.
+
+### Changed
+- **Type scale.** All sizes come from `--fs-xs … --fs-2xl` (11 / 12 / 13 / 14 / 18 / 22 px). Nothing renders below 11 px any more (nav labels, tags, badges and the version line were 7–8.5 px). Hints, the code key, band advice and the footer cap their measure at 72 ch.
+- **Light theme contrast.** `--amber` → `#a84e0a` and `--green` → `#247061` (both ≥ 5.5:1 on white as text and under white as a fill); `--amber-dim` → `#c8600f`. New role tokens `--on-amber`, `--on-green`, `--on-red`, `--amber-tint`, `--green-tint`, `--blue-tint` and per-theme `--shadow-*` replace the raw `#000`, `rgba(255,176,0,.08)`, NC-badge and storm-red values, so the light theme no longer shows the dark theme's amber wash behind the active segment or its heavy header shadow. Theme-toggle icons use `currentColor`.
+- Transitions name their properties (`color`, `background-color`, `border-color`, `opacity`) and `applyTheme` suppresses them for one frame, so a theme flip snaps instead of smearing. Buttons press with `scale(.96)`.
+- Wizard uses one word, "Skip", on both steps; pointer-neutral "Select …" replaces "Tap …" in copy that desktop users also read.
+- Dead `.sheet` and `.row.stale` rules removed.
+
+---
+
 ## [2026.09.13.054] — 2026-09-13
 
 ### Changed
