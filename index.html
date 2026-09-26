@@ -885,7 +885,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.09.17.055";
+const VERSION="2026.09.26.056";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
@@ -2378,12 +2378,18 @@ window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("t
 window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-prop").hidden)renderProp();});
 
 /* ============ scroll-minimize header ============ */
-(function(){let lastY=0;
+// Collapsing the sticky header changes the page height, which makes the browser
+// shift scrollY on its own. Reacting to that shift re-toggles the header and it
+// bounces forever, so ignore scroll events while the collapse/expand settles and
+// measure direction from the furthest point reached, not the previous event.
+(function(){let anchorY=window.scrollY,lockUntil=0,isMin=false;
   window.addEventListener("scroll",()=>{
     const y=window.scrollY,hdr=document.querySelector("header");if(!hdr)return;
-    if(y>lastY&&y>70)hdr.classList.add("min");
-    else if(y<lastY-20)hdr.classList.remove("min");
-    lastY=y;
+    if(performance.now()<lockUntil){anchorY=y;return;}
+    let next=isMin;
+    if(!isMin){anchorY=Math.min(anchorY,y);if(y>70&&y-anchorY>10)next=true;}
+    else{anchorY=Math.max(anchorY,y);if(y<=10||anchorY-y>30)next=false;}
+    if(next!==isMin){isMin=next;hdr.classList.toggle("min",isMin);anchorY=y;lockUntil=performance.now()+400;}
   },{passive:true});
 })();
 
