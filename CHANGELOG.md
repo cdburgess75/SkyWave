@@ -2,6 +2,11 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.09.26.057] — 2026-09-26
+
+### Changed
+- **No more glow in the header.** The SKYWAVE wordmark (and the desktop side-rail brand), both clocks and the locator/grid readout no longer carry the soft LED halo (stacked `text-shadow`). It made the whole header look out of focus. Colours, ghost segments and the warm-up animation are unchanged.
+
 ## [2026.09.26.056] — 2026-09-26
 
 ### Fixed

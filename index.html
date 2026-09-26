@@ -41,34 +41,31 @@
     --shadow-hdr:0 6px 18px rgba(0,0,0,.5);--shadow-nav:0 -4px 14px rgba(0,0,0,.45);--shadow-pop:0 6px 24px rgba(0,0,0,.55);
     --shadow-modal:0 20px 60px rgba(0,0,0,.75);--shadow-rail:2px 0 8px rgba(0,0,0,.3);
   }
-  /* Retro LED — glow on readouts only, as stacked text-shadows (no filters) */
+  /* Retro LED — header readouts (wordmark, clocks, locator) are drawn crisp, with
+     no glow: the halo made the whole header look out of focus. */
   /* Wordmark: seven letters, seven LEDs — a band scale from long wave (red)
-     to short wave (violet). Each glows in its own hue. --wm-N holds the
-     colour, --wm-gN its glow, so the light theme can swap in deeper inks. */
+     to short wave (violet). --wm-N holds the colour, so the light theme can
+     swap in deeper inks. */
   :root{
     --wm-1:#FF2D1C;--wm-2:#FF7A1A;--wm-3:#FFB000;--wm-4:#E8FF3D;--wm-5:#2BFF88;--wm-6:#3DF0FF;--wm-7:#7B8CFF;
-    --wm-g1:255,45,28;--wm-g2:255,122,26;--wm-g3:255,176,0;--wm-g4:232,255,61;--wm-g5:43,255,136;--wm-g6:61,240,255;--wm-g7:123,140,255;
   }
-  .wordmark span{display:inline-block;color:var(--wm);text-shadow:0 0 4px rgba(var(--wm-g),.55),0 0 14px rgba(var(--wm-g),.25);
+  .wordmark span{display:inline-block;color:var(--wm);
     animation:wm-warm .9s ease-out both;animation-delay:calc(var(--wm-i)*70ms);}
-  .wordmark span:nth-child(1){--wm:var(--wm-1);--wm-g:var(--wm-g1);--wm-i:0}
-  .wordmark span:nth-child(2){--wm:var(--wm-2);--wm-g:var(--wm-g2);--wm-i:1}
-  .wordmark span:nth-child(3){--wm:var(--wm-3);--wm-g:var(--wm-g3);--wm-i:2}
-  .wordmark span:nth-child(4){--wm:var(--wm-4);--wm-g:var(--wm-g4);--wm-i:3}
-  .wordmark span:nth-child(5){--wm:var(--wm-5);--wm-g:var(--wm-g5);--wm-i:4}
-  .wordmark span:nth-child(6){--wm:var(--wm-6);--wm-g:var(--wm-g6);--wm-i:5}
-  .wordmark span:nth-child(7){--wm:var(--wm-7);--wm-g:var(--wm-g7);--wm-i:6}
+  .wordmark span:nth-child(1){--wm:var(--wm-1);--wm-i:0}
+  .wordmark span:nth-child(2){--wm:var(--wm-2);--wm-i:1}
+  .wordmark span:nth-child(3){--wm:var(--wm-3);--wm-i:2}
+  .wordmark span:nth-child(4){--wm:var(--wm-4);--wm-i:3}
+  .wordmark span:nth-child(5){--wm:var(--wm-5);--wm-i:4}
+  .wordmark span:nth-child(6){--wm:var(--wm-6);--wm-i:5}
+  .wordmark span:nth-child(7){--wm:var(--wm-7);--wm-i:6}
   /* the side-rail brand has a <br> in the middle, so nth-child shifts by one after it */
-  .snav-brand span:nth-child(5){--wm:var(--wm-4);--wm-g:var(--wm-g4);--wm-i:3}
-  .snav-brand span:nth-child(6){--wm:var(--wm-5);--wm-g:var(--wm-g5);--wm-i:4}
-  .snav-brand span:nth-child(7){--wm:var(--wm-6);--wm-g:var(--wm-g6);--wm-i:5}
-  .snav-brand span:nth-child(8){--wm:var(--wm-7);--wm-g:var(--wm-g7);--wm-i:6}
+  .snav-brand span:nth-child(5){--wm:var(--wm-4);--wm-i:3}
+  .snav-brand span:nth-child(6){--wm:var(--wm-5);--wm-i:4}
+  .snav-brand span:nth-child(7){--wm:var(--wm-6);--wm-i:5}
+  .snav-brand span:nth-child(8){--wm:var(--wm-7);--wm-i:6}
   /* VFD warm-up: each segment fades up in turn, once, on load */
   @keyframes wm-warm{from{opacity:.15;filter:none}to{opacity:1}}
   @media (prefers-reduced-motion:reduce){.wordmark span{animation:none;}}
-  .clock .val{text-shadow:0 0 4px rgba(255,176,0,.55),0 0 14px rgba(255,176,0,.25);}
-  .clock.local .val{text-shadow:0 0 4px rgba(61,240,255,.55),0 0 14px rgba(61,240,255,.25);}
-  .ident-grid{text-shadow:0 0 4px rgba(61,240,255,.45),0 0 12px rgba(61,240,255,.2);}
   .freq{text-shadow:0 0 3px rgba(255,176,0,.45);}
   .bnav-btn.on .bicon,.bnav-btn.on{text-shadow:0 0 4px rgba(255,176,0,.5);}
   .tag.live .dot{box-shadow:0 0 5px rgba(43,255,136,.9);}
@@ -103,7 +100,6 @@
   [data-theme="light"]{
     --wm-1:#C8241A;--wm-2:#C55A0F;--wm-3:#B07A00;--wm-4:#7A8A00;--wm-5:#1F8A55;--wm-6:#0E7E9C;--wm-7:#4650B8;
   }
-  [data-theme="light"] .wordmark span{text-shadow:none;}
   [data-theme="light"] body{background-image:none;}
   [data-theme="light"] .brand h1,
   [data-theme="light"] .clock .val,
@@ -885,7 +881,7 @@ window.addEventListener("unhandledrejection",function(ev){
   try{console.warn("Unhandled:",ev.reason);}catch(e){}
 });
 
-const VERSION="2026.09.26.056";
+const VERSION="2026.09.26.057";
 const TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(e){return"";}})();
 
 /* ============ reference data ============ */
