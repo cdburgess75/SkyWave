@@ -2378,12 +2378,30 @@ window.addEventListener("online",()=>{setNetDot();if(!document.getElementById("t
 window.addEventListener("offline",()=>{setNetDot();if(!document.getElementById("tab-prop").hidden)renderProp();});
 
 /* ============ scroll-minimize header ============ */
-(function(){let lastY=0;
+// The header is sticky but still in the document flow, so collapsing or
+// expanding it changes the page height by ~200px. The browser then shifts
+// scrollY (scroll anchoring, or clamping on short pages), which looks like
+// the user scrolling the other way and flips the header back: a rapid
+// up/down jitter. So: ignore scroll events while the header animates, only
+// react to accumulated travel in one direction, and never collapse a page
+// that is too short to stay scrolled once the header shrinks.
+(function(){let lastY=window.scrollY,travel=0,lockUntil=0;
+  const LOCK_MS=400,DOWN=40,UP=60,TOP=70;
+  function set(hdr,min){
+    if(hdr.classList.contains("min")===min)return;
+    hdr.classList.toggle("min",min);
+    lockUntil=performance.now()+LOCK_MS;travel=0;
+  }
   window.addEventListener("scroll",()=>{
     const y=window.scrollY,hdr=document.querySelector("header");if(!hdr)return;
-    if(y>lastY&&y>70)hdr.classList.add("min");
-    else if(y<lastY-20)hdr.classList.remove("min");
-    lastY=y;
+    if(performance.now()<lockUntil){lastY=y;return;}
+    const d=y-lastY;lastY=y;
+    if(y<=TOP){set(hdr,false);return;}
+    travel=(d>0)===(travel>0)?travel+d:d;
+    const isMin=hdr.classList.contains("min");
+    const room=document.documentElement.scrollHeight-window.innerHeight;
+    if(!isMin&&travel>DOWN&&room>hdr.offsetHeight+TOP*2)set(hdr,true);
+    else if(isMin&&travel<-UP)set(hdr,false);
   },{passive:true});
 })();
 
