@@ -2,6 +2,11 @@
 
 All notable changes to SKYWAVE are documented here.
 
+## [2026.09.26.056] — 2026-09-26
+
+### Fixed
+- **Header no longer jumps up and down while scrolling.** Collapsing the sticky header shortens the page, so the browser moves the scroll position by itself; the scroll handler took that for the user scrolling back up, expanded the header, and looped. Scroll events are now ignored for 400 ms after each collapse/expand, and direction is measured from the furthest point reached (collapse after 10 px down, expand after 30 px up or at the top) rather than from the previous event, so slow upward scrolls also bring the header back.
+
 ## [2026.09.17.055] — 2026-09-17
 
 ### Fixed
