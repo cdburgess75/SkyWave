@@ -1,0 +1,312 @@
+{
+ "ts": 1791048001944,
+ "nets": [
+  {
+   "name": "3905 20m SSB Net",
+   "freq": 14320,
+   "mode": "SSB",
+   "band": "20m",
+   "ncs": "KB3ONN",
+   "start": "16:59",
+   "server": "NETLOGGER3",
+   "dur": "00:20:38",
+   "subs": 12,
+   "checkins": 16,
+   "roster": [
+    {
+     "call": "WN1F",
+     "name": "David",
+     "qth": "SCARBOROUGH, ME",
+     "grid": "FN43to"
+    },
+    {
+     "call": "AK1SS",
+     "name": "Club of: WN1F",
+     "qth": "Scarborough, ME",
+     "grid": "FN43to"
+    },
+    {
+     "call": "N0PUI",
+     "name": "Jay",
+     "qth": "ST PETER, MN",
+     "grid": "EN34bl"
+    },
+    {
+     "call": "W5IL",
+     "name": "Richard",
+     "qth": "LOS ALAMOS, NM",
+     "grid": "DM65uv"
+    },
+    {
+     "call": "K4JEL",
+     "name": "Jeff",
+     "qth": "WILMINGTON, NC",
+     "grid": "FM14be"
+    },
+    {
+     "call": "NH7DX",
+     "name": "Club",
+     "qth": "Kershaw, NC",
+     "grid": "BL11bh"
+    },
+    {
+     "call": "N8BF",
+     "name": "Byron",
+     "qth": "International Falls, MN",
+     "grid": "EN38hn"
+    },
+    {
+     "call": "N5WGA",
+     "name": "Chuck",
+     "qth": "VALLIANT, OK",
+     "grid": "EM24ka"
+    },
+    {
+     "call": "WU2T",
+     "name": "Rusty",
+     "qth": "Moore, SC",
+     "grid": "EM94av"
+    },
+    {
+     "call": "W5WJN",
+     "name": "Bill",
+     "qth": "OLD HICKORY, TN",
+     "grid": "EM66qg"
+    },
+    {
+     "call": "NN0PE",
+     "name": "Club of: KA2M",
+     "qth": "Bridgeton, TN",
+     "grid": "FM29ik"
+    },
+    {
+     "call": "KO8MD",
+     "name": "Doc",
+     "qth": "Louisville, KY",
+     "grid": "EM78fg"
+    },
+    {
+     "call": "WB8LZR",
+     "name": "Ron",
+     "qth": "CARY, NC",
+     "grid": "FM05ot"
+    },
+    {
+     "call": "KB3ONN",
+     "name": "Denny",
+     "qth": "HAGERSTOWN, MD",
+     "grid": "FM19dp",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "Racine-Kenosha ARES RACES",
+   "freq": 146430,
+   "mode": "FM",
+   "band": "2 M",
+   "ncs": "W9AUA",
+   "start": "13:47",
+   "server": "NETLOGGER",
+   "dur": "03:32:49",
+   "subs": 5,
+   "checkins": 9,
+   "roster": [
+    {
+     "call": "W9AUA",
+     "name": "Dick",
+     "qth": "Racine",
+     "nc": 1
+    },
+    {
+     "call": "K9RZL",
+     "name": "TIM",
+     "qth": "Pleasant Prairie - 30th + 85th"
+    },
+    {
+     "call": "K9JRG",
+     "name": "Jim",
+     "qth": "Kenosha"
+    },
+    {
+     "call": "KD9UQE",
+     "name": "Craig",
+     "qth": "Antioch"
+    },
+    {
+     "call": "W9MRL",
+     "name": "Mike",
+     "qth": "Racine"
+    },
+    {
+     "call": "KA9KJE",
+     "name": "Tom",
+     "qth": "Honey Lake"
+    },
+    {
+     "call": "K9UUT",
+     "name": "Reese",
+     "qth": "Racine"
+    },
+    {
+     "call": "KE9JCS",
+     "name": "Chris",
+     "qth": "Wisconsin Rapids"
+    },
+    {
+     "call": "WI9X",
+     "name": "Aaron",
+     "qth": "Waterford"
+    }
+   ]
+  },
+  {
+   "name": "RCWA Boredom Breaker(w AllStar)",
+   "freq": 147390,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "K5CFY",
+   "start": "16:42",
+   "server": "NETLOGGER",
+   "dur": "00:37:33",
+   "subs": 5,
+   "checkins": 13,
+   "roster": [
+    {
+     "call": "K5CFY",
+     "name": "Ray",
+     "qth": "TULSA, OK",
+     "grid": "EM26bc",
+     "nc": 1
+    },
+    {
+     "call": "KI5TAQ",
+     "name": "Tim",
+     "qth": "Tulsa, OK",
+     "grid": "EM26bc"
+    },
+    {
+     "call": "KD5ENU",
+     "name": "Gil",
+     "qth": "Claremore, OK",
+     "grid": "EM26ei"
+    },
+    {
+     "call": "KD4YVV",
+     "name": "Jeff",
+     "qth": "Prince George, VA",
+     "grid": "FM17hf"
+    },
+    {
+     "call": "KA5OWI",
+     "name": "Dave",
+     "qth": "OWASSO, OK",
+     "grid": "EM26bg"
+    },
+    {
+     "call": "N3MDC",
+     "name": "Michael",
+     "qth": "Winston-Salem, NC",
+     "grid": "EM96ud"
+    },
+    {
+     "call": "KI5DAY",
+     "name": "Allen",
+     "qth": "Sperry, OK",
+     "grid": "EM26ag"
+    },
+    {
+     "call": "KC8ODI",
+     "name": "John",
+     "qth": "MAYSVILLE, WV",
+     "grid": "FM09jc"
+    },
+    {
+     "call": "KM7BHS",
+     "name": "John",
+     "qth": "Phoenix, AZ",
+     "grid": "DM33wo"
+    },
+    {
+     "call": "KI5WDM",
+     "name": "Donald",
+     "qth": "Barnsdall, OK",
+     "grid": "EM16wm"
+    },
+    {
+     "call": "K5BVD",
+     "name": "Jack",
+     "qth": "PONCHATOULA, LA",
+     "grid": "EM40tj"
+    },
+    {
+     "call": "KE8SFS",
+     "name": "Mark",
+     "qth": "Wadsworth, OH",
+     "grid": "EN91da"
+    },
+    {
+     "call": "KC5FM",
+     "name": "Lloyd",
+     "qth": "Arkansas City, KS",
+     "grid": "EM17lc"
+    }
+   ]
+  },
+  {
+   "name": "alaska morning net",
+   "freq": 422900,
+   "mode": "SSB",
+   "band": "2mm",
+   "ncs": "N6MOT",
+   "start": "16:22",
+   "server": "NETLOGGER",
+   "dur": "00:57:24",
+   "subs": 7,
+   "checkins": 8,
+   "roster": [
+    {
+     "call": "N6MOT",
+     "name": "Alfonso",
+     "qth": "Monterey, CA",
+     "nc": 1
+    },
+    {
+     "call": "W9JAY",
+     "name": "Jay",
+     "qth": "SEALY, TX"
+    },
+    {
+     "call": "KK7HLD",
+     "name": "David",
+     "qth": "Portland, OR"
+    },
+    {
+     "call": "G1DTV",
+     "name": "Irene",
+     "qth": "Atherton Manchester"
+    },
+    {
+     "call": "KM4VPG",
+     "name": "Douglas",
+     "qth": "Fayette, AL"
+    },
+    {
+     "call": "K0KON",
+     "name": "Roger",
+     "qth": "Houston, TX"
+    },
+    {
+     "call": "W5XUK",
+     "name": "Martin",
+     "qth": "Houston, TX"
+    },
+    {
+     "call": "KM7MM",
+     "name": "Edward",
+     "qth": "Fossil, OR"
+    }
+   ]
+  }
+ ]
+}
