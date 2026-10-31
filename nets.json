@@ -1,0 +1,1783 @@
+{
+ "ts": 1793451947489,
+ "nets": [
+  {
+   "name": "SINBAD OFF THE WALL ROUNDTABLE",
+   "freq": 3832,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "W3GBI",
+   "start": "12:49",
+   "server": "NETLOGGER",
+   "dur": "00:16:24",
+   "subs": 2,
+   "checkins": 1,
+   "roster": [
+    {
+     "call": "W3GBI",
+     "name": "George",
+     "qth": "PRICE, UT",
+     "grid": "DM49oo",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "West Coast Bible Study",
+   "freq": 3975,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "KD7ES",
+   "start": "12:13",
+   "server": "NETLOGGER",
+   "dur": "00:52:23",
+   "subs": 8,
+   "checkins": 26,
+   "roster": [
+    {
+     "call": "WB7MAX",
+     "name": "Max",
+     "qth": "Foster, OR",
+     "grid": "CN84qj"
+    },
+    {
+     "call": "W6YSI",
+     "name": "Steve",
+     "qth": "CHALLENGE, CA",
+     "grid": "CM99jl"
+    },
+    {
+     "call": "AK6OK",
+     "name": "Jeff",
+     "qth": "LINCOLN, CA",
+     "grid": "CM98kw"
+    },
+    {
+     "call": "KI6WXP",
+     "name": "Joe",
+     "qth": "Vacaville, CA",
+     "grid": "CM98ai"
+    },
+    {
+     "call": "N6XOH",
+     "name": "Ed",
+     "qth": "PRINEVILLE, OR",
+     "grid": "DM07ce"
+    },
+    {
+     "call": "KK7TPO",
+     "name": "Carol",
+     "qth": "Everson, WA",
+     "grid": "CN88uw"
+    },
+    {
+     "call": "KJ7QQH",
+     "name": "Al",
+     "qth": "Veneta, OR",
+     "grid": "CN84hb"
+    },
+    {
+     "call": "KG6J",
+     "name": "Jerry",
+     "qth": "Jamestown, CA",
+     "grid": "CM97sw"
+    },
+    {
+     "call": "AE7ER",
+     "name": "Jerry",
+     "qth": "ROSEBURG, OR",
+     "grid": "CN83kf"
+    },
+    {
+     "call": "N7GND",
+     "name": "Mike",
+     "qth": "Bend, OR",
+     "grid": "CN94hc"
+    },
+    {
+     "call": "KM5F",
+     "name": "Will",
+     "qth": "Lava Hot Springs, ID",
+     "grid": "DN32xq"
+    },
+    {
+     "call": "N7BKE",
+     "name": "Jim",
+     "qth": "IDAHO FALLS, ID",
+     "grid": "CN87qp"
+    },
+    {
+     "call": "KD7ES",
+     "name": "Eric",
+     "qth": "Salem, OR",
+     "grid": "CN84lw",
+     "nc": 1
+    },
+    {
+     "call": "KB7CL",
+     "name": "Rob",
+     "qth": "PAYETTE, ID",
+     "grid": "DN14mb"
+    },
+    {
+     "call": "WS7SAB",
+     "name": "Sandy",
+     "qth": "Reedsport, OR",
+     "grid": "CN73wq"
+    },
+    {
+     "call": "AA5Y",
+     "name": "Beck",
+     "qth": "Reedsport, OR",
+     "grid": "CN73wq"
+    },
+    {
+     "call": "KJ7PWM",
+     "name": "Brian",
+     "qth": "Port Angeles, WA",
+     "grid": "CN88ic"
+    },
+    {
+     "call": "K1KOY",
+     "name": "George",
+     "qth": "Meridian, ID",
+     "grid": "DN13sp"
+    },
+    {
+     "call": "K7GWR",
+     "name": "Gene",
+     "qth": "Tacoma, WA",
+     "grid": "CN87sg"
+    },
+    {
+     "call": "K6HSV",
+     "name": "Phil",
+     "qth": "VANCOUVER, WA",
+     "grid": "CN85rr"
+    },
+    {
+     "call": "K7NEB",
+     "name": "Keith",
+     "qth": "Sandpoint, ID",
+     "grid": "DN18rg"
+    },
+    {
+     "call": "N6TNI",
+     "name": "Dan",
+     "qth": "NORTH HIGHLANDS, CA",
+     "grid": "CM98hq"
+    },
+    {
+     "call": "WB7VZL",
+     "name": "Roger",
+     "qth": "COLLEGE PLACE, WA",
+     "grid": "DN06tb"
+    },
+    {
+     "call": "KJ7BA",
+     "name": "Peter",
+     "qth": "Bremerton, WA",
+     "grid": "CN87qp"
+    },
+    {
+     "call": "N6MOT",
+     "name": "Al",
+     "qth": "Monterey, CA",
+     "grid": "CM96bo"
+    }
+   ]
+  },
+  {
+   "name": "NUTNET",
+   "freq": 3985,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "N9CFG",
+   "start": "12:45",
+   "server": "NETLOGGER",
+   "dur": "00:20:10",
+   "subs": 3,
+   "checkins": 89,
+   "roster": [
+    {
+     "call": "WB9IXS",
+     "name": "JIM",
+     "qth": "Egg Harbor, WI",
+     "grid": "EN65ia"
+    },
+    {
+     "call": "KB9GDY",
+     "name": "LEN",
+     "qth": "Randolph, WI",
+     "grid": "EN53ln"
+    },
+    {
+     "call": "KA9FZR",
+     "name": "FRANK",
+     "qth": "Hales Corners, WI",
+     "grid": "EN52xw"
+    },
+    {
+     "call": "K9AQ",
+     "name": "DON",
+     "qth": "Townsend, WI",
+     "grid": "EN55ri"
+    },
+    {
+     "call": "W9PCS",
+     "name": "PAUL",
+     "qth": "Waukesha, WI",
+     "grid": "EN53ua"
+    },
+    {
+     "call": "N9CFG",
+     "name": "JAY",
+     "qth": "Greenfield, WI",
+     "grid": "EN62aw",
+     "nc": 1
+    },
+    {
+     "call": "KA9VRK",
+     "name": "PAT",
+     "qth": "Athelstane, WI",
+     "grid": "EN55wi"
+    },
+    {
+     "call": "KD9PHM",
+     "name": "DEAN",
+     "qth": "Green Bay, WI",
+     "grid": "EN54wl"
+    },
+    {
+     "call": "WS9I",
+     "name": "MIKE",
+     "qth": "Fish Creek, WI",
+     "grid": "EN65jd"
+    },
+    {
+     "call": "KE9UR",
+     "name": "GREG",
+     "qth": "Princeton, WI",
+     "grid": "EN53jt"
+    },
+    {
+     "call": "W9WLX",
+     "name": "CHUCK",
+     "qth": "Milwaukee, WI",
+     "grid": "EN52xx"
+    },
+    {
+     "call": "K9WOC",
+     "name": "CHERI",
+     "qth": "Brookfield, WI",
+     "grid": "EN53wb"
+    },
+    {
+     "call": "K9FI",
+     "name": "JERRY",
+     "qth": "Brookfield, WI",
+     "grid": "EN53wb"
+    },
+    {
+     "call": "N9NYX",
+     "name": "DON",
+     "qth": "Wheaton, IL",
+     "grid": "EN51wu"
+    },
+    {
+     "call": "KD9FM",
+     "name": "PAUL",
+     "qth": "Mequon, WI",
+     "grid": "EN63ae"
+    },
+    {
+     "call": "K9QLP",
+     "name": "JIM",
+     "qth": "Cedarburg, WI",
+     "grid": "EN63ai"
+    },
+    {
+     "call": "K9STN",
+     "name": "STAN",
+     "qth": "New London, WI",
+     "grid": "EN55lu"
+    },
+    {
+     "call": "WB9POW",
+     "name": "SUE",
+     "qth": "Franklin, WI",
+     "grid": "EN62av"
+    },
+    {
+     "call": "W9SAB",
+     "name": "STEVE",
+     "qth": "Franklin, WI",
+     "grid": "EN62av"
+    },
+    {
+     "call": "W9RNA",
+     "name": "BOB",
+     "qth": "Hortonville, WI",
+     "grid": "EN54qh"
+    },
+    {
+     "call": "WB9AZH",
+     "name": "ROD",
+     "qth": "Grafton, WI",
+     "grid": "EN63ah"
+    },
+    {
+     "call": "KW5AS",
+     "name": "SKIP",
+     "qth": "Menominee, MI",
+     "grid": "EN65ed"
+    },
+    {
+     "call": "WO9B",
+     "name": "MIKE",
+     "qth": "New Berlin, WI",
+     "grid": "EN52xx"
+    },
+    {
+     "call": "W9FAD",
+     "name": "JOHN",
+     "qth": "Cedarburg, WI",
+     "grid": "EN63ag"
+    },
+    {
+     "call": "N9FBG",
+     "name": "GLEN",
+     "qth": "Wales, WI",
+     "grid": "EN53ta"
+    },
+    {
+     "call": "N9TUU",
+     "name": "DAVID",
+     "qth": "WONEWOC, WI",
+     "grid": "EN43un"
+    },
+    {
+     "call": "WB9LBT",
+     "name": "BOB",
+     "qth": "Greendale, WI",
+     "grid": "EN62aw"
+    },
+    {
+     "call": "W9MWP",
+     "name": "Mike",
+     "qth": "Green Bay, WI",
+     "grid": "EN54xm"
+    },
+    {
+     "call": "KE9ALY",
+     "name": "MARK",
+     "qth": "New Franken, WI",
+     "grid": "EN64bn"
+    },
+    {
+     "call": "K9UDS",
+     "name": "TONY",
+     "qth": "Sussex, WI",
+     "grid": "EN53ud"
+    },
+    {
+     "call": "N9EMC",
+     "name": "JOE",
+     "qth": "Genesee, WI",
+     "grid": "EN52tx"
+    },
+    {
+     "call": "W9IPR",
+     "name": "TOM",
+     "qth": "Cedarburg, WI",
+     "grid": "EN53xg"
+    },
+    {
+     "call": "K9BTQ",
+     "name": "TOM",
+     "qth": "Milwaukee, WI",
+     "grid": "EN52xx"
+    },
+    {
+     "call": "AA9SR",
+     "name": "GEORGE",
+     "qth": "New Berlin, WI",
+     "grid": "EN53wa"
+    },
+    {
+     "call": "KB9ASU",
+     "name": "BOB",
+     "qth": "Lake Mills, WI",
+     "grid": "EN53nb"
+    },
+    {
+     "call": "W9NAW",
+     "name": "PHIL",
+     "qth": "Muskego, WI",
+     "grid": "EN52xw"
+    },
+    {
+     "call": "N9LGD",
+     "name": "JOHN",
+     "qth": "Brookfield, WI",
+     "grid": "EN53wb"
+    },
+    {
+     "call": "WA9STI",
+     "name": "SCOTTY",
+     "qth": "Granada Hills, CA",
+     "grid": "DM04rg"
+    },
+    {
+     "call": "W9JU",
+     "name": "SCOTT",
+     "qth": "Two Rivers, WI",
+     "grid": "EN64fd"
+    },
+    {
+     "call": "NF9A",
+     "name": "BILL",
+     "qth": "Gleason, WI",
+     "grid": "EN55gi"
+    },
+    {
+     "call": "KA1RB",
+     "name": "PATRICK",
+     "qth": "Dousman, WI",
+     "grid": "EN52sx"
+    },
+    {
+     "call": "N9ZXR",
+     "name": "JOHN",
+     "qth": "New London, WI",
+     "grid": "EN54oj"
+    },
+    {
+     "call": "KC9KRX",
+     "name": "BRAD",
+     "qth": "Hobart, IN",
+     "grid": "EN61jm"
+    },
+    {
+     "call": "KF9D",
+     "name": "ROGER",
+     "qth": "Algonquin, IL",
+     "grid": "EN52ud"
+    },
+    {
+     "call": "KD9MQU",
+     "name": "PAUL",
+     "qth": "Greeneville, TN",
+     "grid": "EM86nc"
+    },
+    {
+     "call": "W9REL",
+     "name": "SKIP",
+     "qth": "Waukesha, WI",
+     "grid": "EN52uw"
+    },
+    {
+     "call": "N9TMK",
+     "name": "TIM",
+     "qth": "Stevens Point, WI",
+     "grid": "EN54em"
+    },
+    {
+     "call": "N9FBF",
+     "name": "EMIL",
+     "qth": "Milwaukee, WI",
+     "grid": "EN63ab"
+    },
+    {
+     "call": "W9GN",
+     "name": "BRUCE",
+     "qth": "Rhinelande, WI",
+     "grid": "EN55hp"
+    },
+    {
+     "call": "KD9OHP",
+     "name": "BOB",
+     "qth": "La Crosse, WI",
+     "grid": "EN43iu"
+    },
+    {
+     "call": "WA0UIG",
+     "name": "LEE",
+     "qth": "Robins, IA",
+     "grid": "EN42eb"
+    },
+    {
+     "call": "N9KJT",
+     "name": "GARY",
+     "qth": "Oshkosh, WI",
+     "grid": "EN54ra"
+    },
+    {
+     "call": "N9KS",
+     "name": "KEN",
+     "qth": "Pewaukee, WI",
+     "grid": "EN53ub"
+    },
+    {
+     "call": "KC9PEL",
+     "name": "RICH",
+     "qth": "Waukesha, WI",
+     "grid": "EN53va"
+    },
+    {
+     "call": "W9RA",
+     "name": "DON",
+     "qth": "Buckanan, TN",
+     "grid": "EM56wk"
+    },
+    {
+     "call": "KD9JAI",
+     "name": "CHRIS",
+     "qth": "Waukesha, WI",
+     "grid": "EN53ua"
+    },
+    {
+     "call": "KF9AQ",
+     "name": "KEVIN",
+     "qth": "Madison, WI",
+     "grid": "EN53fa"
+    }
+   ]
+  },
+  {
+   "name": "NWNM DIGI NET",
+   "freq": 7120,
+   "mode": "OLIVIA",
+   "band": "40m",
+   "ncs": "N5QDH",
+   "start": "12:46",
+   "server": "NETLOGGER",
+   "dur": "00:18:55",
+   "subs": 3
+  },
+  {
+   "name": "40-8ers",
+   "freq": 7140,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "N9MW",
+   "start": "12:56",
+   "server": "NETLOGGER",
+   "dur": "00:08:53",
+   "subs": 9,
+   "checkins": 8,
+   "roster": [
+    {
+     "call": "N9MW",
+     "name": "Edwin",
+     "qth": "BLANCHARDVILLE, WI",
+     "grid": "EN52cu",
+     "nc": 1
+    },
+    {
+     "call": "W0LUN",
+     "name": "Brian",
+     "qth": "LYONS, KS",
+     "grid": "EM08vf"
+    },
+    {
+     "call": "W4AWJ",
+     "name": "Joseph",
+     "qth": "Lucedale, MS",
+     "grid": "EM50sq"
+    },
+    {
+     "call": "N8GGG",
+     "name": "Lawrence",
+     "qth": "WESTMINSTER, CO",
+     "grid": "DM79lx"
+    },
+    {
+     "call": "WB2GFC",
+     "name": "Scott",
+     "qth": "Kansas City, KS",
+     "grid": "EM29oe"
+    },
+    {
+     "call": "W5AP/5",
+     "name": "James",
+     "qth": "Colleyville, TX",
+     "grid": "EM12kv"
+    },
+    {
+     "call": "W5AP",
+     "name": "James",
+     "qth": "LAKE GEORGE, CO",
+     "grid": "EM12kv"
+    },
+    {
+     "call": "W0IVJ",
+     "name": "Thomas",
+     "qth": "BOULDER, CO",
+     "grid": "DM79jx"
+    }
+   ]
+  },
+  {
+   "name": "TreasureCoasters",
+   "freq": 7153,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "N1PZB",
+   "start": "10:58",
+   "server": "NETLOGGER",
+   "dur": "02:07:12",
+   "subs": 10,
+   "checkins": 26,
+   "roster": [
+    {
+     "call": "AA4E",
+     "name": "Bruce",
+     "qth": "ANDERSON, SC",
+     "grid": "EM84qm"
+    },
+    {
+     "call": "AA1TG",
+     "name": "Donald",
+     "qth": "Summerfield, FL",
+     "grid": "FN42mm"
+    },
+    {
+     "call": "WK8G",
+     "name": "Gale",
+     "qth": "Minneola, FL",
+     "grid": "EL98do"
+    },
+    {
+     "call": "N1PZB",
+     "name": "Gary",
+     "qth": "Vero Beach, FL",
+     "grid": "EL97sp",
+     "nc": 1
+    },
+    {
+     "call": "KF4XD",
+     "name": "Stephen",
+     "qth": "Palm Bay, FL",
+     "grid": "EL98qa"
+    },
+    {
+     "call": "W0PC",
+     "name": "Richard",
+     "qth": "O Fallon, MO",
+     "grid": "EM48pt"
+    },
+    {
+     "call": "AB4AZ",
+     "name": "Richard",
+     "qth": "Vero Beach, FL",
+     "grid": "EL97to"
+    },
+    {
+     "call": "N4WRW",
+     "name": "William",
+     "qth": "Vero Beach, FL",
+     "grid": "EL97tp"
+    },
+    {
+     "call": "W2KS",
+     "name": "Kenneth",
+     "qth": "Vero Beach, FL",
+     "grid": "EL97sq"
+    },
+    {
+     "call": "NA3AR",
+     "name": "Anthony",
+     "qth": "Collegeville, PA",
+     "grid": "FN20ge"
+    },
+    {
+     "call": "VE3BW",
+     "name": "Matthew",
+     "qth": "LaSalle, ON",
+     "grid": "EN82lf"
+    },
+    {
+     "call": "K3HP",
+     "name": "Timothy",
+     "qth": "Myersville, MD",
+     "grid": "FM19fm"
+    },
+    {
+     "call": "KB3TRR",
+     "name": "Herschel",
+     "qth": "GLEN BURNIE, MD",
+     "grid": "FM19qd"
+    },
+    {
+     "call": "NC4EN",
+     "name": "Richard",
+     "qth": "Raleigh, NC",
+     "grid": "FM05pw"
+    },
+    {
+     "call": "K8EA",
+     "name": "Edward",
+     "qth": "Irondale, AL",
+     "grid": "EM63qm"
+    },
+    {
+     "call": "N1GE",
+     "name": "Robert",
+     "qth": "Kingsport, TN",
+     "grid": "EM86sm"
+    },
+    {
+     "call": "W3DK",
+     "name": "Robert",
+     "qth": "Vero Beach, FL",
+     "grid": "EL97sp"
+    },
+    {
+     "call": "WB9UHL",
+     "name": "John",
+     "qth": "ROCKFORD, IL",
+     "grid": "EN52lf"
+    },
+    {
+     "call": "W4HI",
+     "name": "Bruce Ed",
+     "qth": "Seneca, SC",
+     "grid": "EM84mp"
+    },
+    {
+     "call": "AJ9T",
+     "name": "Brian",
+     "qth": "Collettsville, NC",
+     "grid": "EM95dw"
+    },
+    {
+     "call": "WU5E",
+     "name": "James",
+     "qth": "Cusseta, GA",
+     "grid": "EM72ph"
+    },
+    {
+     "call": "K4RJT",
+     "name": "Ron",
+     "qth": "Raleigh, NC",
+     "grid": "FM05pw"
+    },
+    {
+     "call": "KE4SKA",
+     "name": "Troy",
+     "qth": "New Market, AL",
+     "grid": "EM64sv"
+    },
+    {
+     "call": "N9GUN",
+     "name": "Thomas",
+     "qth": "Schaumburg, IL",
+     "grid": "EN52wa"
+    },
+    {
+     "call": "K4PX",
+     "name": "Joseph",
+     "qth": "Louisville, KY",
+     "grid": "EM78eg"
+    },
+    {
+     "call": "N9PL",
+     "name": "Paul",
+     "qth": "Youngsville, NC",
+     "grid": "FM06rb"
+    }
+   ]
+  },
+  {
+   "name": "Early CRACKER BARREL NET",
+   "freq": 7185.5,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "KD6HNN",
+   "start": "12:36",
+   "server": "NETLOGGER",
+   "dur": "00:28:59",
+   "subs": 4,
+   "checkins": 1,
+   "roster": [
+    {
+     "call": "KD6HNN",
+     "name": "Kenneth",
+     "qth": "Big Oak Flat 0175, CA",
+     "nc": 1
+    }
+   ]
+  },
+  {
+   "name": "EYEBANK 40",
+   "freq": 7238,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "WD5HUU",
+   "start": "11:49",
+   "server": "NETLOGGER",
+   "dur": "01:16:19",
+   "subs": 11,
+   "checkins": 303,
+   "roster": [
+    {
+     "call": "AD4NY",
+     "name": "WAYNE",
+     "qth": "URIAH, AL"
+    },
+    {
+     "call": "WB4CVA",
+     "name": "John",
+     "qth": "URIAH, AL"
+    },
+    {
+     "call": "KE5QB",
+     "name": "Othal",
+     "qth": "DAYTON, TX"
+    },
+    {
+     "call": "K5EFY",
+     "name": "MIKE",
+     "qth": "NAVARRE, FL"
+    },
+    {
+     "call": "KA4JSQ",
+     "name": "Robert",
+     "qth": "DALLAS, TX"
+    },
+    {
+     "call": "KI5NNF",
+     "name": "NICK",
+     "qth": "FRISCO, TX"
+    },
+    {
+     "call": "WD5HUU",
+     "name": "James",
+     "qth": "Petal, MS",
+     "nc": 1
+    },
+    {
+     "call": "WD5BPC",
+     "name": "FREDE",
+     "qth": "LEAGUE CITY, TX"
+    },
+    {
+     "call": "WB9YTG",
+     "name": "DR",
+     "qth": "AURORA, MO"
+    },
+    {
+     "call": "WA4EX",
+     "name": "SONNY",
+     "qth": "ZEPHER HILL, FL"
+    },
+    {
+     "call": "WD9ISQ",
+     "name": "DON",
+     "qth": "ROATAN, CC"
+    },
+    {
+     "call": "W5WES",
+     "name": "Wesley",
+     "qth": "Baytown, TX"
+    },
+    {
+     "call": "K5DKH",
+     "name": "Robert",
+     "qth": "DECATUR, TX"
+    },
+    {
+     "call": "W5NF",
+     "name": "James",
+     "qth": "SWEENY, TX"
+    },
+    {
+     "call": "K4RAL",
+     "name": "Ronny",
+     "qth": "Decatur, AL"
+    },
+    {
+     "call": "KN4WPH",
+     "name": "Richard",
+     "qth": "Decatur, AL"
+    },
+    {
+     "call": "KQ4BAP",
+     "name": "John",
+     "qth": "Frisco City, AL"
+    },
+    {
+     "call": "KJ5DHH",
+     "name": "Brian",
+     "qth": "Deer Park, TX"
+    },
+    {
+     "call": "K5TEW",
+     "name": "RL",
+     "qth": "UNCERTAIN, TX"
+    },
+    {
+     "call": "K5IRA",
+     "name": "DOROTHY",
+     "qth": "UNCERTAIN, TX"
+    },
+    {
+     "call": "KA0ARW",
+     "name": "JEFF",
+     "qth": "LLEAVENWORTH, KS"
+    },
+    {
+     "call": "KC4YCH",
+     "name": "WINSTON",
+     "qth": "MONTGOMERY, AL"
+    },
+    {
+     "call": "W5GYN",
+     "name": "DR",
+     "qth": "NEW ALBANY, MS"
+    },
+    {
+     "call": "KI5THB",
+     "name": "KEVIN",
+     "qth": "WACO, TX"
+    },
+    {
+     "call": "KC5GWR",
+     "name": "BANJO",
+     "qth": "CAMERON, TX"
+    },
+    {
+     "call": "KC5YMC",
+     "name": "Bobby",
+     "qth": "CRYSTAL BEACH, TX"
+    },
+    {
+     "call": "KC5YSR",
+     "name": "Karen",
+     "qth": "CRYSTAL BEACH, TX"
+    },
+    {
+     "call": "KJ5AJB",
+     "name": "Peter",
+     "qth": "FOREST, MS"
+    },
+    {
+     "call": "KC0UKA",
+     "name": "Michael",
+     "qth": "Billings, MO"
+    },
+    {
+     "call": "KO4ZMT",
+     "name": "ERIC",
+     "qth": "BRADENTON, FL"
+    },
+    {
+     "call": "KD9VQK",
+     "name": "Ray",
+     "qth": "Waverly, IL"
+    },
+    {
+     "call": "WD0BYM",
+     "name": "LEE",
+     "qth": "AUSTIN, MI"
+    },
+    {
+     "call": "N4TLN",
+     "name": "TOM",
+     "qth": "HUNTSVILLE, AL"
+    },
+    {
+     "call": "W5BSP",
+     "name": "ROBERT",
+     "qth": "CLARKSTON, WA"
+    },
+    {
+     "call": "KE4USD",
+     "name": "WILL",
+     "qth": "MONTEZUMA, GA"
+    },
+    {
+     "call": "KU4RC",
+     "name": "BILL",
+     "qth": "CROWLEY, TX"
+    },
+    {
+     "call": "K4VOT",
+     "name": "JERRY",
+     "qth": "PENSACOLA, FL"
+    },
+    {
+     "call": "KI5UXF",
+     "name": "Gary",
+     "qth": "Alvord, TX"
+    },
+    {
+     "call": "KI5TCK",
+     "name": "BILL",
+     "qth": "GILMER, TX"
+    },
+    {
+     "call": "KI5YXE",
+     "name": "LINDA",
+     "qth": "GILMER, TX"
+    },
+    {
+     "call": "KC0DSM",
+     "name": "JOHN",
+     "qth": "SIKESTON, MO"
+    },
+    {
+     "call": "WB4ZQU",
+     "name": "STEVE",
+     "qth": "TOCCOA, GA"
+    },
+    {
+     "call": "KJ5FOF",
+     "name": "DON",
+     "qth": "OCEAN SPRINGS, MS"
+    },
+    {
+     "call": "N4ZHM",
+     "name": "Jeffrey",
+     "qth": "WAYNESVILLE, NC"
+    },
+    {
+     "call": "KN5E",
+     "name": "DON",
+     "qth": "TEXARKANA, TX"
+    },
+    {
+     "call": "KJ5FAP",
+     "name": "ERIC",
+     "qth": "MONTGOMERY, LA"
+    },
+    {
+     "call": "KJ5DLY",
+     "name": "TODD",
+     "qth": "HOT SPRINGS, AR"
+    },
+    {
+     "call": "K0VE",
+     "name": "DENNIS",
+     "qth": "NAVARRE, FL"
+    },
+    {
+     "call": "WB9EDP",
+     "name": "DR",
+     "qth": "BATAVIA, IL"
+    },
+    {
+     "call": "WB5MR",
+     "name": "Maurice",
+     "qth": "Crystal Beach, TX"
+    },
+    {
+     "call": "W2VET",
+     "name": "CARL",
+     "qth": "HAZEL GREEN, AL"
+    },
+    {
+     "call": "KJ5GRE",
+     "name": "ROB",
+     "qth": "CONWAY, AR"
+    },
+    {
+     "call": "KD5KTB",
+     "name": "TIM",
+     "qth": "KINGFISHER, OK"
+    },
+    {
+     "call": "K4IR",
+     "name": "John",
+     "qth": "BOLIVIA, NC",
+     "grid": "FM04va"
+    },
+    {
+     "call": "KI5AYW",
+     "name": "STEVE",
+     "qth": "Bremond, TX",
+     "grid": "EM11"
+    },
+    {
+     "call": "KC4VFI",
+     "name": "Frank",
+     "qth": "Crossville, TN",
+     "grid": "EM75jv"
+    },
+    {
+     "call": "KD5HLB",
+     "name": "Henry",
+     "qth": "HUNTINGTON, TX",
+     "grid": "EM21rg"
+    },
+    {
+     "call": "KJ5EQM",
+     "name": "James",
+     "qth": "Jonesboro, AR",
+     "grid": "EM45ps"
+    },
+    {
+     "call": "N4RJR",
+     "name": "Robert",
+     "qth": "Palm City, FL"
+    },
+    {
+     "call": "KM4YVX",
+     "name": "Timothy",
+     "qth": "Means, KY"
+    },
+    {
+     "call": "KW4RI",
+     "name": "MIKE",
+     "qth": "MILLINGTON, TN",
+     "grid": "EM55ah"
+    },
+    {
+     "call": "WB5OXQ",
+     "name": "James",
+     "qth": "Woodway, TX"
+    },
+    {
+     "call": "KB4LJJ",
+     "name": "John",
+     "qth": "Hobe Sound, FL"
+    },
+    {
+     "call": "KM4QZF",
+     "name": "David",
+     "qth": "Harvest, AL"
+    },
+    {
+     "call": "W4SUL",
+     "name": "Sparrow",
+     "qth": "Brooksville, FL"
+    },
+    {
+     "call": "W8DMX",
+     "name": "Gilbert",
+     "qth": "COLUMBUS, OH"
+    },
+    {
+     "call": "W4CBH",
+     "name": "Clifton",
+     "qth": "Pensacola, FL"
+    },
+    {
+     "call": "W5RGO",
+     "name": "MAURICE/"
+    },
+    {
+     "call": "WN4TMR",
+     "name": "Billy",
+     "qth": "E Flat Rock, NC"
+    },
+    {
+     "call": "KK4SME",
+     "name": "Micheal",
+     "qth": "Rockledge, FL"
+    },
+    {
+     "call": "KQ4FPO",
+     "name": "Leonard",
+     "qth": "Humboldt, TN"
+    },
+    {
+     "call": "KC3YUN",
+     "name": "James",
+     "qth": "Lincoln, DE"
+    },
+    {
+     "call": "KQ4AQO",
+     "name": "Brian",
+     "qth": "BLYTHEWOOD, SC"
+    },
+    {
+     "call": "KI4GYI",
+     "name": "Fred",
+     "qth": "Pinellas Park, FL"
+    },
+    {
+     "call": "K5GEE",
+     "name": "Brian",
+     "qth": "Hot Springs, AR"
+    },
+    {
+     "call": "K4RCD",
+     "name": "William",
+     "qth": "Lewisburg, TN"
+    },
+    {
+     "call": "KI4TYK",
+     "name": "Danny",
+     "qth": "Cedar Bluff, VA"
+    },
+    {
+     "call": "K5GGC",
+     "name": "Bobby",
+     "qth": "Aubrey, TX"
+    },
+    {
+     "call": "W4WKC",
+     "name": "Johnny",
+     "qth": "N WILKESBORO, NC"
+    },
+    {
+     "call": "KR4HIE",
+     "name": "Don",
+     "qth": "NEW BROCKTON, AL"
+    },
+    {
+     "call": "KC5RJL",
+     "name": "Rod",
+     "qth": "Houston, TX"
+    },
+    {
+     "call": "N5XES",
+     "name": "Tyrone",
+     "qth": "Springfield, LA"
+    },
+    {
+     "call": "KT4CO",
+     "name": "Gary",
+     "qth": "Brierfield, AL"
+    },
+    {
+     "call": "AA5TG",
+     "name": "Thomas",
+     "qth": "Jonesboro, LA"
+    },
+    {
+     "call": "KD9GRL",
+     "name": "Steven",
+     "qth": "Mobile, AL"
+    },
+    {
+     "call": "KI5VGO",
+     "name": "Ronald",
+     "qth": "Columbus, MS"
+    },
+    {
+     "call": "AI5YQ",
+     "name": "Marvin",
+     "qth": "Jacksonville, AR"
+    },
+    {
+     "call": "KG5FZ",
+     "name": "Charles",
+     "qth": "Livingston, LA"
+    },
+    {
+     "call": "K3MG",
+     "name": "Michael",
+     "qth": "BUTLER, PA"
+    },
+    {
+     "call": "N2HGL",
+     "name": "Joseph",
+     "qth": "Dallas, GA"
+    },
+    {
+     "call": "KQ4STB",
+     "name": "John",
+     "qth": "CHARLESTON, SC"
+    },
+    {
+     "call": "KC1MR",
+     "name": "Raymond",
+     "qth": "READING, MA"
+    },
+    {
+     "call": "W1DRS",
+     "name": "Dennis",
+     "qth": "Murfreesboro, TN"
+    },
+    {
+     "call": "AB0H",
+     "name": "Tim",
+     "qth": "BATTLEFIELD, MO"
+    },
+    {
+     "call": "KI5NIH",
+     "name": "Roland",
+     "qth": "San Antonio, TX"
+    },
+    {
+     "call": "N2UTY",
+     "name": "George",
+     "qth": "WILMINGTON, NY"
+    },
+    {
+     "call": "K4UBT",
+     "name": "Don",
+     "qth": "SAINT AGUSTINE, FL"
+    },
+    {
+     "call": "KB5SQG",
+     "name": "Robert",
+     "qth": "GRANBURY, TX"
+    },
+    {
+     "call": "WA3VSO",
+     "name": "David",
+     "qth": "Jupiter, FL"
+    },
+    {
+     "call": "KC5MWD",
+     "name": "Cynthia",
+     "qth": "Cameron, TX"
+    },
+    {
+     "call": "W3MAT",
+     "name": "Matthew",
+     "qth": "Allison Park, PA"
+    },
+    {
+     "call": "WB6DXR",
+     "name": "Lester",
+     "qth": "PETALUMA, CA"
+    },
+    {
+     "call": "N5USK",
+     "name": "James",
+     "qth": "Watsonville, CA"
+    },
+    {
+     "call": "N4TOF",
+     "name": "Jack",
+     "qth": "MIDDLESBORO, KY"
+    },
+    {
+     "call": "KQ1USA",
+     "name": "James",
+     "qth": "Wetumpka, AL"
+    },
+    {
+     "call": "KC6ESN",
+     "name": "Walt",
+     "qth": "COLTON, CA"
+    },
+    {
+     "call": "KG5RRH",
+     "name": "Ron",
+     "qth": "Flower Mound, TX"
+    },
+    {
+     "call": "WD8IIJ",
+     "name": "Monte",
+     "qth": "TORONTO, OH"
+    },
+    {
+     "call": "W4MTO",
+     "name": "Maynard",
+     "qth": "Bluff City, TN"
+    },
+    {
+     "call": "KE9EEN",
+     "name": "Richard",
+     "qth": "COWDEN, IL"
+    },
+    {
+     "call": "W1VSX",
+     "name": "David",
+     "qth": "CORAL SPRINGS, FL"
+    },
+    {
+     "call": "N5ICT",
+     "name": "Jerry",
+     "qth": "FORT MYERS, FL"
+    },
+    {
+     "call": "N5LER",
+     "name": "Donald",
+     "qth": "Onalaska, TX"
+    },
+    {
+     "call": "KJ5ANB",
+     "name": "Thomas",
+     "qth": "Philadelphia, MS"
+    },
+    {
+     "call": "KQ4ESA",
+     "name": "Robert",
+     "qth": "LOUISVILLE, KY"
+    },
+    {
+     "call": "KQ4ERZ",
+     "name": "Sherry",
+     "qth": "LOUISVILLE, KY"
+    },
+    {
+     "call": "KI5TNB",
+     "name": "Daniel",
+     "qth": "Azle, TX"
+    },
+    {
+     "call": "KJ5JJV",
+     "name": "Kevin",
+     "qth": "Delhi, LA"
+    },
+    {
+     "call": "KE8SXM",
+     "name": "Leamond",
+     "qth": "RIPLEY, WV"
+    },
+    {
+     "call": "KQ4DMA",
+     "name": "Kellyn",
+     "qth": "OVIEDO, FL"
+    }
+   ]
+  },
+  {
+   "name": "W4AX 7290 Sat AM Net",
+   "freq": 7290,
+   "mode": "AM",
+   "band": "40m",
+   "ncs": "NZ1Q",
+   "start": "11:55",
+   "server": "NETLOGGER",
+   "dur": "01:10:44",
+   "subs": 6,
+   "checkins": 14,
+   "roster": [
+    {
+     "call": "W.",
+     "name": "--",
+     "qth": "--"
+    },
+    {
+     "call": "4.",
+     "name": "--",
+     "qth": "--"
+    },
+    {
+     "call": "A."
+    },
+    {
+     "call": "X."
+    },
+    {
+     "call": "KD4UMU",
+     "name": "Dan",
+     "qth": "Shepherdsville, KY"
+    },
+    {
+     "call": "K1HH",
+     "name": "Rodger",
+     "qth": "Beverly Hills, FL"
+    },
+    {
+     "call": "NZ1Q",
+     "name": "Ed",
+     "qth": "St Petersburg, FL",
+     "nc": 1
+    },
+    {
+     "call": "KI4HHK",
+     "name": "Bruce",
+     "qth": "St Petersburg, FL"
+    },
+    {
+     "call": "K4LDR",
+     "name": "Leo",
+     "qth": "Chapel Hill, NC"
+    },
+    {
+     "call": "KN4HH",
+     "name": "Bob",
+     "qth": "Woodstock, GA"
+    },
+    {
+     "call": "KK4GZQ",
+     "name": "Kevin",
+     "qth": "None Such (Lex), KY"
+    },
+    {
+     "call": "W3RX",
+     "name": "Steve",
+     "qth": "TREASURE ISLAND, FL"
+    },
+    {
+     "call": "K4JCP",
+     "name": "Joe",
+     "qth": "Ringgold, GA"
+    },
+    {
+     "call": "WB4WCJ",
+     "name": "Paul",
+     "qth": "Hardeeville, SC"
+    }
+   ]
+  },
+  {
+   "name": "KNOTHEADS",
+   "freq": 14320,
+   "mode": "SSB",
+   "band": "20m",
+   "ncs": "W1FUU",
+   "start": "13:02",
+   "server": "NETLOGGER",
+   "dur": "00:03:29",
+   "subs": 2
+  },
+  {
+   "name": "YL SYSTEM SUNRISE",
+   "freq": 14332,
+   "mode": "SSB",
+   "band": "20m",
+   "ncs": "KK4DYI",
+   "start": "12:30",
+   "server": "NETLOGGER3",
+   "dur": "00:35:25",
+   "subs": 11,
+   "checkins": 8,
+   "roster": [
+    {
+     "call": "KK4DYI",
+     "name": "Norma",
+     "qth": "HOMOSASSA, FL",
+     "grid": "EL88rq",
+     "nc": 1
+    },
+    {
+     "call": "W4WSB",
+     "name": "William",
+     "qth": "TRION, GA",
+     "grid": "EM74in"
+    },
+    {
+     "call": "W0MTM",
+     "name": "Scott",
+     "qth": "SPRINGFIELD, MO",
+     "grid": "EM37he"
+    },
+    {
+     "call": "AA1XD",
+     "name": "Gene",
+     "qth": "FAYETTE, ME",
+     "grid": "FN44xl"
+    },
+    {
+     "call": "W9LLW",
+     "name": "Leland",
+     "qth": "McLeansboro, IL",
+     "grid": "EM58sb"
+    },
+    {
+     "call": "KD8OVQ",
+     "name": "Joseph",
+     "qth": "Cleveland, OH",
+     "grid": "EN91en"
+    },
+    {
+     "call": "KD9VAN",
+     "name": "James",
+     "qth": "EAST PEORIA, IL",
+     "grid": "EN50fo"
+    },
+    {
+     "call": "KJ5CF",
+     "name": "Robert",
+     "qth": "Henderson, TX",
+     "grid": "EM22od"
+    }
+   ]
+  },
+  {
+   "name": "The Morning Grind",
+   "freq": 145230,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "WB3HRQ",
+   "start": "12:58",
+   "server": "NETLOGGER",
+   "dur": "00:07:06",
+   "subs": 4,
+   "checkins": 3,
+   "roster": [
+    {
+     "call": "WB3HRQ",
+     "name": "JOHN",
+     "qth": "East Petersburg, PA",
+     "grid": "FN10tc",
+     "nc": 1
+    },
+    {
+     "call": "W3NDY",
+     "name": "WENDY",
+     "qth": "JONESTOWN, PA",
+     "grid": "FN10rl"
+    },
+    {
+     "call": "WB3HBX",
+     "name": "TIM",
+     "qth": "JONESTOWN, PA",
+     "grid": "FN10sj"
+    }
+   ]
+  },
+  {
+   "name": "KCARC ARES NET",
+   "freq": 146910,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "KB3L",
+   "start": "12:49",
+   "server": "NETLOGGER",
+   "dur": "00:16:05",
+   "subs": 3,
+   "checkins": 11,
+   "roster": [
+    {
+     "call": "KC3BTV",
+     "name": "James",
+     "qth": "Smyrna, DE",
+     "grid": "FM29eg"
+    },
+    {
+     "call": "AB3JS",
+     "name": "John",
+     "qth": "Dover, DE",
+     "grid": "FM29fe"
+    },
+    {
+     "call": "KD3DAW",
+     "name": "David",
+     "qth": "Dover, DE",
+     "grid": "FM29fd"
+    },
+    {
+     "call": "KB3PRW",
+     "name": "Douglas",
+     "qth": "Smyrna, DE",
+     "grid": "FM29ef"
+    },
+    {
+     "call": "KC3HUC",
+     "name": "Walter",
+     "qth": "Dover, DE",
+     "grid": "FM29ef"
+    },
+    {
+     "call": "KC3OO",
+     "name": "Timothy",
+     "qth": "Camden-Wyoming, DE",
+     "grid": "FM29fc"
+    },
+    {
+     "call": "KA3MSG",
+     "name": "Peggy",
+     "qth": "Camden Wyoming, DE",
+     "grid": "FM29hb"
+    },
+    {
+     "call": "KB0SHI",
+     "name": "William",
+     "qth": "Dover, DE",
+     "grid": "EL18lu"
+    },
+    {
+     "call": "N3ZFO",
+     "name": "Mark",
+     "qth": "Dover, DE",
+     "grid": "FM29eg"
+    },
+    {
+     "call": "KB3L",
+     "name": "Thomas",
+     "qth": "Felton, DE",
+     "grid": "FM29fa",
+     "nc": 1
+    },
+    {
+     "call": "AJ3L",
+     "name": "Deborah",
+     "qth": "Felton, DE",
+     "grid": "FM29fa"
+    }
+   ]
+  },
+  {
+   "name": "Elmira Radio Club Morning Net",
+   "freq": 147390,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "VE3TRQ",
+   "start": "12:04",
+   "server": "NETLOGGER",
+   "dur": "01:01:11",
+   "subs": 4,
+   "checkins": 11,
+   "roster": [
+    {
+     "call": "VE3TRQ",
+     "name": "Ted",
+     "qth": "WATERLOO, ON",
+     "grid": "EN93rl",
+     "nc": 1
+    },
+    {
+     "call": "VE3VEG",
+     "name": "Robert Campbell",
+     "qth": "KITCHENER, ON",
+     "grid": "EN93rk"
+    },
+    {
+     "call": "VA3ZZS",
+     "name": "Bob",
+     "qth": "Hamilton, ON",
+     "grid": "FN03cg"
+    },
+    {
+     "call": "VE7BM",
+     "name": "Trevor",
+     "qth": "Pitt Meadows, BC",
+     "grid": "CN89pf"
+    },
+    {
+     "call": "VE3DWI",
+     "name": "Tony",
+     "qth": "KITCHENER, ON",
+     "grid": "EN93rk"
+    },
+    {
+     "call": "VA3PT",
+     "name": "John",
+     "qth": "Waterloo, ON",
+     "grid": "EN93sk"
+    },
+    {
+     "call": "VE3CMN",
+     "name": "Jay W.",
+     "qth": "New Hamburg, ON",
+     "grid": "EN93pj"
+    },
+    {
+     "call": "VE3JMU",
+     "name": "James",
+     "qth": "WATERLOO, ON",
+     "grid": "EN93rm"
+    },
+    {
+     "call": "VA3AZH",
+     "name": "Mark",
+     "qth": "GUELPH, ON",
+     "grid": "EN93vm"
+    },
+    {
+     "call": "VA3TTJ",
+     "name": "Sorin",
+     "qth": "Belwood, ON",
+     "grid": "EN93ts"
+    },
+    {
+     "call": "VA3CRF",
+     "name": "Vernon",
+     "qth": "Waterdown, ON",
+     "grid": "FN03bi"
+    }
+   ]
+  }
+ ]
+}
