@@ -1,0 +1,349 @@
+{
+ "ts": 1794040790870,
+ "nets": [
+  {
+   "name": "THE BEFORE BREAKFAST CLUB",
+   "freq": 3973,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "WC9M",
+   "start": "06:41",
+   "server": "NETLOGGER",
+   "dur": "01:58:18",
+   "subs": 6,
+   "checkins": 47,
+   "roster": [
+    {
+     "call": "KD9TYO",
+     "name": "Jim",
+     "qth": "PLOVER, WI",
+     "grid": "EN54fk"
+    },
+    {
+     "call": "KN5E",
+     "name": "Don",
+     "qth": "Texarkana, TX",
+     "grid": "EM23xl"
+    },
+    {
+     "call": "N9ORD",
+     "name": "Bob",
+     "qth": "PARK FOREST, IL",
+     "grid": "EN61dl"
+    },
+    {
+     "call": "WC9M",
+     "name": "Tom",
+     "qth": "Wild Rose, WI",
+     "grid": "EN54je",
+     "nc": 1
+    },
+    {
+     "call": "WD8OAH",
+     "name": "George",
+     "qth": "HALE, MI",
+     "grid": "EN84bi"
+    },
+    {
+     "call": "KC0FSQ",
+     "name": "Bobby",
+     "qth": "EAST PRAIRIE, MO",
+     "grid": "EM56hs"
+    },
+    {
+     "call": "N8RBI",
+     "name": "Mike",
+     "qth": "Collins, OH",
+     "grid": "EN81rf"
+    },
+    {
+     "call": "NG0G",
+     "name": "Steve",
+     "qth": "Moorland, IA",
+     "grid": "EN22tj"
+    },
+    {
+     "call": "KG5GH",
+     "name": "Dave",
+     "qth": "DARDANELLE, AR",
+     "grid": "EM35jd"
+    },
+    {
+     "call": "VE3SU",
+     "name": "Paul",
+     "qth": "SELKIRK, ON",
+     "grid": "FN02cu"
+    },
+    {
+     "call": "KB3OXH",
+     "name": "Will",
+     "qth": "New Cumberland, WV",
+     "grid": "EN90rm"
+    },
+    {
+     "call": "W9AKW",
+     "name": "Gayland",
+     "qth": "ELDORADO, IL",
+     "grid": "EM57st"
+    },
+    {
+     "call": "KB8MCI",
+     "name": "Jody",
+     "qth": "FREELAND, MI",
+     "grid": "EN83ak"
+    },
+    {
+     "call": "KF0GE",
+     "name": "Earl",
+     "qth": "PRAIRIE HOME, MO",
+     "grid": "EM38qu"
+    },
+    {
+     "call": "K0IUQ",
+     "name": "Lou",
+     "qth": "OWATONNA, MN",
+     "grid": "EN33hp"
+    },
+    {
+     "call": "K4LFJ",
+     "name": "Jose",
+     "qth": "Powder Springs, GA",
+     "grid": "EM73qu"
+    },
+    {
+     "call": "N0MAR",
+     "name": "Jake",
+     "qth": "Jenkins, MN",
+     "grid": "EN26tp"
+    },
+    {
+     "call": "KE9EHD",
+     "name": "Mark",
+     "qth": "INDIANAPOLIS, IN",
+     "grid": "EM79as"
+    },
+    {
+     "call": "WC9M",
+     "name": "Tom",
+     "qth": "Wild Rose, WI",
+     "grid": "EN54je",
+     "nc": 1
+    },
+    {
+     "call": "K4LFJ",
+     "name": "Jose",
+     "qth": "Powder Springs, GA",
+     "grid": "EM73qu"
+    },
+    {
+     "call": "VE3SU",
+     "name": "Paul",
+     "qth": "SELKIRK, ON",
+     "grid": "FN02cu"
+    },
+    {
+     "call": "KD9TYO",
+     "name": "Jim",
+     "qth": "PLOVER, WI",
+     "grid": "EN54fk"
+    },
+    {
+     "call": "KN5E",
+     "name": "Don",
+     "qth": "Texarkana, TX",
+     "grid": "EM23xl"
+    },
+    {
+     "call": "N0AJ",
+     "name": "Jim",
+     "qth": "OFALLON, MO",
+     "grid": "EM48pt"
+    }
+   ]
+  },
+  {
+   "name": "HHHNET",
+   "freq": 7190,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "KO7V",
+   "start": "06:16",
+   "server": "NETLOGGER",
+   "dur": "02:23:41",
+   "subs": 20,
+   "checkins": 56,
+   "roster": [
+    {
+     "call": "KO7V",
+     "name": "Ronald",
+     "qth": "Milwaukie, OR",
+     "grid": "CN85qj",
+     "nc": 1
+    },
+    {
+     "call": "HP3EFS",
+     "name": "Mingo",
+     "qth": "Chiriqui, PN",
+     "grid": "FJ09fa"
+    },
+    {
+     "call": "VK2PWA",
+     "name": "Peter"
+    },
+    {
+     "call": "K8KA",
+     "name": "Glen",
+     "qth": "Mantua, OH",
+     "grid": "EN91jh"
+    },
+    {
+     "call": "W0JKT",
+     "name": "Dave",
+     "qth": "PHOENIX, WA",
+     "grid": "DM33xo"
+    },
+    {
+     "call": "KO7V *"
+    },
+    {
+     "call": "KE0CGJ",
+     "name": "Robert",
+     "qth": "Rapid City, SD",
+     "grid": "DN84jc"
+    },
+    {
+     "call": "W7MTV",
+     "name": "Michael",
+     "qth": "Las Vegas, NV",
+     "grid": "DM26ic"
+    },
+    {
+     "call": "W0WJE",
+     "name": "William",
+     "qth": "HUGO, CO",
+     "grid": "DM89gd"
+    },
+    {
+     "call": "KF0TXQ",
+     "name": "Paul",
+     "qth": "Longmont, CO",
+     "grid": "DN70ld"
+    },
+    {
+     "call": "N6YDP",
+     "name": "Rick",
+     "qth": "GARDNERVILLE, NV",
+     "grid": "DM08fr"
+    },
+    {
+     "call": "KE8ZOB",
+     "name": "Robert",
+     "qth": "OWOSSO, MI",
+     "grid": "EN72wx"
+    },
+    {
+     "call": "AB3LM",
+     "name": "Logan",
+     "qth": "BORREGO SPRINGS, CA",
+     "grid": "DM13tf"
+    },
+    {
+     "call": "KE2IFC",
+     "name": "Steven",
+     "qth": "Medford, NY",
+     "grid": "FN30mt"
+    },
+    {
+     "call": "KG5B",
+     "name": "Robert",
+     "qth": "Freeport, TX",
+     "grid": "EL28ix"
+    },
+    {
+     "call": "W1FAT",
+     "name": "Barry",
+     "qth": "Parkland, FL",
+     "grid": "EL96uh"
+    },
+    {
+     "call": "WW6JAY",
+     "name": "Jay",
+     "qth": "Los Angeles, CA",
+     "grid": "DM04tc"
+    },
+    {
+     "call": "KR4LEQ",
+     "name": "George",
+     "qth": "Durham, NC",
+     "grid": "FM05mv"
+    },
+    {
+     "call": "KJ6MS",
+     "name": "Mark",
+     "qth": "West Covina, CA",
+     "grid": "DM14ab"
+    },
+    {
+     "call": "W5WSS",
+     "name": "Robert",
+     "qth": "BLANCHARD, OK",
+     "grid": "EM26bb"
+    },
+    {
+     "call": "KE1AV",
+     "name": "David",
+     "qth": "North haven, CT",
+     "grid": "FN31nj"
+    },
+    {
+     "call": "KA4DQJ",
+     "name": "Thomas",
+     "qth": "Mt Juliet, TN",
+     "grid": "EM66sc"
+    },
+    {
+     "call": "K7NHC",
+     "name": "Nelson",
+     "qth": "Cave Creek, AZ",
+     "grid": "DM43at"
+    },
+    {
+     "call": "K9RM",
+     "name": "Charles",
+     "qth": "GREENWOOD, IN",
+     "grid": "EM69xp"
+    },
+    {
+     "call": "KC9TMH",
+     "name": "Richard",
+     "qth": "Algonquin, IL",
+     "grid": "EN52ue"
+    },
+    {
+     "call": "W4ACT",
+     "name": "Richard",
+     "qth": "Palm Coast, FL",
+     "grid": "EL99jp"
+    },
+    {
+     "call": "W7MHZ",
+     "name": "Paul",
+     "qth": "Tucson, AZ",
+     "grid": "DM42ki"
+    },
+    {
+     "call": "K7BOA",
+     "name": "Jared",
+     "qth": "Longview, WA",
+     "grid": "CN86md"
+    },
+    {
+     "call": "AB4WP",
+     "name": "Wayne",
+     "qth": "Ocala, FL",
+     "grid": "EL89vc"
+    }
+   ]
+  }
+ ]
+}
