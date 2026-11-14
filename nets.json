@@ -1,0 +1,332 @@
+{
+ "ts": 1794646774738,
+ "nets": [
+  {
+   "name": "THE BEFORE BREAKFAST CLUB",
+   "freq": 3973,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "WC9M",
+   "start": "06:41",
+   "server": "NETLOGGER",
+   "dur": "02:17:37",
+   "subs": 6,
+   "checkins": 43,
+   "roster": [
+    {
+     "call": "KD9TYO",
+     "name": "Jim",
+     "qth": "PLOVER, WI",
+     "grid": "EN54fk"
+    },
+    {
+     "call": "K4LFJ",
+     "name": "Jose",
+     "qth": "Powder Springs, GA",
+     "grid": "EM73qu"
+    },
+    {
+     "call": "W8LS",
+     "name": "Larry",
+     "qth": "Sanford, MI",
+     "grid": "EN73tq"
+    },
+    {
+     "call": "W8RRM",
+     "name": "Rodger",
+     "qth": "GAYLORD, MI",
+     "grid": "EN74px"
+    },
+    {
+     "call": "W9AKW",
+     "name": "Gayland",
+     "qth": "ELDORADO, IL",
+     "grid": "EM57st"
+    },
+    {
+     "call": "WC9M",
+     "name": "Tom",
+     "qth": "Wild Rose, WI",
+     "grid": "EN54je",
+     "nc": 1
+    },
+    {
+     "call": "KN5E",
+     "name": "Don",
+     "qth": "Texarkana, TX",
+     "grid": "EM23xl"
+    },
+    {
+     "call": "KD8ECQ",
+     "name": "Dave",
+     "qth": "Chardon, OH",
+     "grid": "EN91im"
+    },
+    {
+     "call": "KJ8Z",
+     "name": "John",
+     "qth": "PLEASANT HILL, OH",
+     "grid": "EN70tb"
+    },
+    {
+     "call": "N0MAR",
+     "name": "Jake",
+     "qth": "Jenkins, MN",
+     "grid": "EN26tp"
+    },
+    {
+     "call": "K4MIK",
+     "name": "Abner",
+     "qth": "GREENEVILLE, TN",
+     "grid": "EM86od"
+    },
+    {
+     "call": "WX4ID",
+     "name": "Jack",
+     "qth": "Clinton, TN",
+     "grid": "EM76wc"
+    },
+    {
+     "call": "VE3SU",
+     "name": "Paul",
+     "qth": "SELKIRK, ON",
+     "grid": "FN02cu"
+    },
+    {
+     "call": "W9WJO",
+     "name": "Earl",
+     "qth": "QUINCY, IL",
+     "grid": "EM49iv"
+    },
+    {
+     "call": "KE9EHD",
+     "name": "Mark",
+     "qth": "INDIANAPOLIS, IN",
+     "grid": "EM79as"
+    },
+    {
+     "call": "K5AVF",
+     "name": "Alex",
+     "qth": "Glenpool, OK",
+     "grid": "EM25ax"
+    },
+    {
+     "call": "KC0TGG",
+     "name": "Ron",
+     "qth": "SOUTH ST PAUL, MN",
+     "grid": "DM34ro"
+    },
+    {
+     "call": "N9"
+    },
+    {
+     "call": "WC9M",
+     "name": "Tom",
+     "qth": "Wild Rose, WI",
+     "grid": "EN54je",
+     "nc": 1
+    },
+    {
+     "call": "W8LS",
+     "name": "Larry",
+     "qth": "Sanford, MI",
+     "grid": "EN73tq"
+    },
+    {
+     "call": "VE3SU",
+     "name": "Paul",
+     "qth": "SELKIRK, ON",
+     "grid": "FN02cu"
+    },
+    {
+     "call": "KD9TYO",
+     "name": "Jim",
+     "qth": "PLOVER, WI",
+     "grid": "EN54fk"
+    },
+    {
+     "call": "KN5E",
+     "name": "Don",
+     "qth": "Texarkana, TX",
+     "grid": "EM23xl"
+    },
+    {
+     "call": "N0AJ",
+     "name": "Jim",
+     "qth": "OFALLON, MO",
+     "grid": "EM48pt"
+    }
+   ]
+  },
+  {
+   "name": "HHHNET",
+   "freq": 7190,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "KB1GGS",
+   "start": "06:13",
+   "server": "NETLOGGER",
+   "dur": "02:46:05",
+   "subs": 19,
+   "checkins": 57,
+   "roster": [
+    {
+     "call": "KO7V",
+     "name": "Ronald",
+     "qth": "Milwaukie, OR",
+     "grid": "CN85qj"
+    },
+    {
+     "call": "F4GGS",
+     "name": "Cyril",
+     "qth": "TREFLEZ",
+     "grid": "IN78up"
+    },
+    {
+     "call": "EA5IPM",
+     "name": "Diego",
+     "qth": "Elche",
+     "grid": "IM98qg"
+    },
+    {
+     "call": "KH6KW",
+     "name": "Craig",
+     "qth": "Waipahu, HI",
+     "grid": "BL01xj"
+    },
+    {
+     "call": "VE6APU",
+     "name": "Robert (bob)",
+     "qth": "ROCKY MOUNTAIN HOUSE, AB",
+     "grid": "DO22nj"
+    },
+    {
+     "call": "VK2PWA",
+     "name": "PETER",
+     "qth": "AU"
+    },
+    {
+     "call": "K8KA",
+     "name": "Glen",
+     "qth": "Mantua, OH",
+     "grid": "EN91jh"
+    },
+    {
+     "call": "K9RM",
+     "name": "Charles",
+     "qth": "GREENWOOD, IN",
+     "grid": "EM69xp"
+    },
+    {
+     "call": "W0JKT",
+     "name": "Dave",
+     "qth": "S. of Summit, NY, NY",
+     "grid": "FN22rn"
+    },
+    {
+     "call": "KB1GGS",
+     "name": "Michael",
+     "qth": "LYNDON, KS",
+     "grid": "EM28dq",
+     "nc": 1
+    },
+    {
+     "call": "KM6YON",
+     "name": "Michael",
+     "qth": "Roseville, CA",
+     "grid": "CM98ht"
+    },
+    {
+     "call": "KA4DQJ",
+     "name": "Thomas",
+     "qth": "Mt Juliet, TN",
+     "grid": "EM66sc"
+    },
+    {
+     "call": "AI4FU",
+     "name": "James",
+     "qth": "Knoxville, NE",
+     "grid": "EM86ca"
+    },
+    {
+     "call": "ND6V",
+     "name": "David",
+     "qth": "Campbell, CA",
+     "grid": "CM97ah"
+    },
+    {
+     "call": "KE2IFC",
+     "name": "Steven",
+     "qth": "Medford, NY",
+     "grid": "FN30mt"
+    },
+    {
+     "call": "N6WWW",
+     "name": "Jason",
+     "qth": "Gilmer, TX",
+     "grid": "EM22lr"
+    },
+    {
+     "call": "K7NHC",
+     "name": "Nelson",
+     "qth": "Cave Creek, AZ",
+     "grid": "DM43at"
+    },
+    {
+     "call": "W9BLI",
+     "name": "Jacob",
+     "qth": "Menasha, WI",
+     "grid": "EN54tf"
+    },
+    {
+     "call": "WW3K",
+     "name": "Dominick",
+     "qth": "ARLINGTON, TX",
+     "grid": "EM12ko"
+    },
+    {
+     "call": "W1FAT",
+     "name": "Barry",
+     "qth": "Parkland, FL",
+     "grid": "EL96uh"
+    },
+    {
+     "call": "KJ6MS",
+     "name": "Mark",
+     "qth": "West Covina, CA",
+     "grid": "DM14ab"
+    },
+    {
+     "call": "K2TRK",
+     "name": "Michael",
+     "qth": "LOCKPORT, NY",
+     "grid": "FN03pd"
+    },
+    {
+     "call": "WW6JAY",
+     "name": "Jay",
+     "qth": "Los Angeles, CA",
+     "grid": "DM04tc"
+    },
+    {
+     "call": "KO6LYD",
+     "name": "John",
+     "qth": "Sacramento, CA",
+     "grid": "CM98fp"
+    },
+    {
+     "call": "KC5HPK",
+     "name": "James",
+     "qth": "ANACOCO, LA",
+     "grid": "EM31hf"
+    },
+    {
+     "call": "KE1AV",
+     "name": "David",
+     "qth": "North haven, CT",
+     "grid": "FN31nj"
+    }
+   ]
+  }
+ ]
+}
