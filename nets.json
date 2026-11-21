@@ -1,0 +1,257 @@
+{
+ "ts": 1795245617387,
+ "nets": [
+  {
+   "name": "THE BEFORE BREAKFAST CLUB",
+   "freq": 3973,
+   "mode": "SSB",
+   "band": "80m",
+   "ncs": "WC9M",
+   "start": "06:31",
+   "server": "NETLOGGER",
+   "dur": "00:48:58",
+   "subs": 6,
+   "checkins": 24,
+   "roster": [
+    {
+     "call": "WC9M",
+     "name": "Tom",
+     "qth": "Wild Rose, WI",
+     "grid": "EN54je",
+     "nc": 1
+    },
+    {
+     "call": "K4LFJ",
+     "name": "Jose",
+     "qth": "Powder Springs, GA",
+     "grid": "EM73qu"
+    },
+    {
+     "call": "W9AKW",
+     "name": "Gayland",
+     "qth": "ELDORADO, IL",
+     "grid": "EM57st"
+    },
+    {
+     "call": "WT7C",
+     "name": "Marty",
+     "qth": "Orem, UT",
+     "grid": "DN40dh"
+    },
+    {
+     "call": "KN5E",
+     "name": "Don",
+     "qth": "Texarkana, TX",
+     "grid": "EM23xl"
+    },
+    {
+     "call": "WD8OAH",
+     "name": "George",
+     "qth": "HALE, MI",
+     "grid": "EN84bi"
+    },
+    {
+     "call": "KB2MHR",
+     "name": "Arnold",
+     "qth": "HOOSICK FALLS, NY",
+     "grid": "FN32hv"
+    },
+    {
+     "call": "W9QI",
+     "name": "Tom",
+     "qth": "MOLINE, IL",
+     "grid": "EN41sl"
+    },
+    {
+     "call": "KO4JQH",
+     "name": "Carl",
+     "qth": "Pelion, SC",
+     "grid": "EM93jt"
+    },
+    {
+     "call": "KK7OQQ",
+     "name": "Ted",
+     "qth": "Brightwood, OR",
+     "grid": "CN95ai"
+    },
+    {
+     "call": "KD8ECQ",
+     "name": "Dave",
+     "qth": "Chardon, OH",
+     "grid": "EN91im"
+    },
+    {
+     "call": "KN5E",
+     "name": "Don",
+     "qth": "Texarkana, TX",
+     "grid": "EM23xl"
+    },
+    {
+     "call": "WC9M",
+     "name": "Tom",
+     "qth": "Wild Rose, WI",
+     "grid": "EN54je",
+     "nc": 1
+    },
+    {
+     "call": "N0AJ",
+     "name": "Jim",
+     "qth": "OFALLON, MO",
+     "grid": "EM48pt"
+    }
+   ]
+  },
+  {
+   "name": "HHHNET",
+   "freq": 7198,
+   "mode": "SSB",
+   "band": "40m",
+   "ncs": "KO7V",
+   "start": "06:09",
+   "server": "NETLOGGER",
+   "dur": "01:11:16",
+   "subs": 22,
+   "checkins": 48,
+   "roster": [
+    {
+     "call": "KE2IFC",
+     "name": "Steven",
+     "qth": "Medford, NY",
+     "grid": "FN30mt"
+    },
+    {
+     "call": "KH6KW",
+     "name": "Craig",
+     "qth": "Waipahu, HI",
+     "grid": "BL01xj"
+    },
+    {
+     "call": "K8KA",
+     "name": "Glen",
+     "qth": "Mantua, OH",
+     "grid": "EN91jh"
+    },
+    {
+     "call": "K9RM",
+     "name": "Charles",
+     "qth": "GREENWOOD, IN",
+     "grid": "EM69xp"
+    },
+    {
+     "call": "W0JKT",
+     "name": "Dave",
+     "qth": "CO",
+     "grid": "FN22rn"
+    },
+    {
+     "call": "KO7V",
+     "name": "Ronald",
+     "qth": "Milwaukie, OR",
+     "grid": "CN85qj",
+     "nc": 1
+    },
+    {
+     "call": "W1FAT",
+     "name": "Barry",
+     "qth": "Parkland, FL",
+     "grid": "EL96uh"
+    },
+    {
+     "call": "KN4ABF",
+     "name": "Sergio",
+     "qth": "Centennial, CO",
+     "grid": "DM79nn"
+    },
+    {
+     "call": "W3VF",
+     "name": "Ryan",
+     "qth": "Fairview, PA",
+     "grid": "EN92xd"
+    },
+    {
+     "call": "K4ITH",
+     "name": "Keith",
+     "qth": "Mc Kenzie, TN",
+     "grid": "EM56rd"
+    },
+    {
+     "call": "WB5RY",
+     "name": "Jimmy",
+     "qth": "HOUSTON, TX",
+     "grid": "EL29dx"
+    },
+    {
+     "call": "N6WWW",
+     "name": "Jason",
+     "qth": "Gilmer, TX",
+     "grid": "EM22lr"
+    },
+    {
+     "call": "KL1Y",
+     "name": "Roderick",
+     "qth": "El Paso, TX",
+     "grid": "DM61vt"
+    },
+    {
+     "call": "WW6JAY",
+     "name": "Jay",
+     "qth": "Los Angeles, CA",
+     "grid": "DM04tc"
+    },
+    {
+     "call": "W5KDI",
+     "name": "Kenneth",
+     "qth": "ODESSA, TX",
+     "grid": "DM81tu"
+    },
+    {
+     "call": "K7AER",
+     "name": "Anthony",
+     "qth": "Vernon, AZ",
+     "grid": "DM54ei"
+    },
+    {
+     "call": "K4LO",
+     "name": "Phillip",
+     "qth": "Pace, FL",
+     "grid": "EM60ko"
+    },
+    {
+     "call": "KJ6MS",
+     "name": "Mark",
+     "qth": "West Covina, CA",
+     "grid": "DM14ab"
+    },
+    {
+     "call": "N1PGF",
+     "name": "Edward / Archie",
+     "qth": "Chichester, NH",
+     "grid": "FN43hh"
+    },
+    {
+     "call": "W4AGT",
+     "name": "Donald",
+     "qth": "ODESSA, FL",
+     "grid": "EL88qc"
+    },
+    {
+     "call": "KE0CGJ",
+     "name": "Robert",
+     "qth": "Rapid City, SD",
+     "grid": "DN84jc"
+    }
+   ]
+  },
+  {
+   "name": "K9BAR AV Net- Echolink too",
+   "freq": 147330,
+   "mode": "FM",
+   "band": "2m",
+   "ncs": "KE9NT",
+   "start": "01:26",
+   "server": "NETLOGGER",
+   "dur": "05:53:31",
+   "subs": 4
+  }
+ ]
+}
